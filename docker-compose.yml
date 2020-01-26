@@ -6,7 +6,7 @@ services:
     image: postgres:latest
     env_file:
       ./.env
-  web:
+  backend:
     build:
       .
     command:
