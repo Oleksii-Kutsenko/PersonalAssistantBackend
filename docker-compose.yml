@@ -4,18 +4,25 @@ services:
 
   db:
     image: postgres:latest
+    ports:
+      - "5432:5432"
     env_file:
-      .db_env
+      .env
+    volumes:
+      - postgres_data:/var/lib/postgresql
   backend:
     build:
       .
     command:
       python manage.py runserver 0.0.0.0:8000
-    volumes:
-    - ./pa:/pa
     env_file:
-      - .backend_env
+      - .env
     ports:
-    - "8000:8000"
+      - "8000:8000"
     depends_on:
       - db
+    volumes:
+    - ./pa:/pa
+
+volumes:
+  postgres_data:
