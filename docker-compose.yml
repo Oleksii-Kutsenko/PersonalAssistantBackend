@@ -5,7 +5,7 @@ services:
   db:
     image: postgres:latest
     env_file:
-      ./.env
+      .db_env
   backend:
     build:
       .
@@ -13,6 +13,8 @@ services:
       python manage.py runserver 0.0.0.0:8000
     volumes:
     - ./pa:/pa
+    env_file:
+      - .backend_env
     ports:
     - "8000:8000"
     depends_on:
