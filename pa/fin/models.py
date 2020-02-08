@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 import urllib.request
 
+
 class TimeStampMixin(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -43,8 +44,8 @@ class Index(TimeStampMixin):
             req = urllib.request.Request(self.url, headers={'User-Agent': 'Magic Browser'})
             page = urllib.request.urlopen(req).read().decode('utf-8')
 
-            trs = BeautifulSoup(page, 'html.parser')\
-                .find('table', class_='table table-hover table-borderless table-sm')\
+            trs = BeautifulSoup(page, 'html.parser') \
+                .find('table', class_='table table-hover table-borderless table-sm') \
                 .find('tbody')
 
             for node in trs:

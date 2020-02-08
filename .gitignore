@@ -1,4 +1,4 @@
-.env
+.env.dev
 *.sqlite3
 __pycache__
 *.pyc
