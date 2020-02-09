@@ -70,7 +70,6 @@ class Index(TimeStampMixin):
                     ticker = Ticker(name=str(tds[2].text),
                                     weight=Decimal(tds[3].text),
                                     price=Decimal(tds[4].text.replace(',', '')),
-                                    deleted=False,
                                     index=self)
                     ticker.save()
 
@@ -82,7 +81,6 @@ class Ticker(TimeStampMixin):
     name = models.CharField(max_length=100)
     weight = models.DecimalField(max_digits=12, decimal_places=10)
     price = models.DecimalField(max_digits=19, decimal_places=2)
-    deleted = models.BooleanField()
     index = models.ForeignKey(Index, related_name='tickers', on_delete=models.CASCADE)
 
     def __str__(self):

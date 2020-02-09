@@ -1,3 +1,4 @@
+from django.conf.urls import url
 from django.urls import path, include
 from rest_framework import routers
 from fin import views
@@ -7,6 +8,7 @@ router.register(r'accounts', views.AccountViewSet)
 router.register(r'indices', views.IndexViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api/', include(router.urls)),
+    url(r'^api/adjusted-index/index/(?P<index_id>[1-9][0-9]*)/$', views.AdjustedIndex.as_view()),
+    url(r'api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
