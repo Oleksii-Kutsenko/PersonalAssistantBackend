@@ -25,6 +25,5 @@ class IndexViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         if request.GET.get('reload', ''):
-            index = self.get_object()
-            index.recalculate()
+            self.get_object().update()
         return super().retrieve(request, *args, **kwargs)
