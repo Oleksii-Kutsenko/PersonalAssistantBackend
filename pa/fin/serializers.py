@@ -17,8 +17,9 @@ class TickerSerializer(serializers.ModelSerializer):
         fields = ['name', 'weight', 'price']
 
 
-class IndexSerializer(serializers.HyperlinkedModelSerializer):
+class IndexSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
+    tickers = TickerSerializer(many=True, read_only=True)
     tickers_last_updated = serializers.DateTimeField(read_only=True)
 
     class Meta:
