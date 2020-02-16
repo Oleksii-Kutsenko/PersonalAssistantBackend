@@ -1,11 +1,15 @@
+"""
+URLs
+"""
 from django.conf.urls import url
-from django.urls import path, include
+from django.urls import include
 from rest_framework import routers
 from fin import views
 
 router = routers.DefaultRouter()
 router.register(r'accounts', views.AccountViewSet)
 router.register(r'indices', views.IndexViewSet)
+router.register(r'goals', views.GoalViewSet)
 
 urlpatterns = [
     url(r'^api/', include(router.urls)),
