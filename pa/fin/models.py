@@ -125,6 +125,7 @@ class Goal(TimeStampMixin):
     coefficient = models.DecimalField(max_digits=3, decimal_places=2,
                                       validators=[MinValueValidator(0.000001),
                                                   MaxValueValidator(1.000001)])
+    level = models.IntegerField(validators=[MinValueValidator(1)])
     current_money_amount = models.DecimalField(max_digits=19, decimal_places=2,
                                                validators=[MinValueValidator(0)])
     target_money_amount = models.DecimalField(max_digits=19, decimal_places=2,
@@ -133,5 +134,6 @@ class Goal(TimeStampMixin):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if self.current_money_amount == self.target_money_amount:
             self.target_money_amount *= (self.coefficient + Decimal(1))
+            self.level += 1
         super(Goal, self).save(force_insert=False, force_update=False, using=None,
                                update_fields=None)

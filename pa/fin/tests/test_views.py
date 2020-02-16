@@ -22,15 +22,18 @@ class GoalsTest(APITestCase):
         Goal.objects.create(name='First',
                             coefficient=0.1,
                             current_money_amount=0,
-                            target_money_amount=1000).save()
+                            target_money_amount=1000,
+                            level=1).save()
         Goal.objects.create(name='Second',
                             coefficient=0.5,
                             current_money_amount=0,
-                            target_money_amount=1000).save()
+                            target_money_amount=1000,
+                            level=1).save()
         Goal.objects.create(name='Third',
                             coefficient=1,
                             current_money_amount=0,
-                            target_money_amount=1000).save()
+                            target_money_amount=1000,
+                            level=1).save()
         self.test_objects = Goal.objects.all()
 
     def test_get_all_goals(self):
@@ -75,7 +78,8 @@ class GoalsTest(APITestCase):
         response = self.client.post(url, {"name": "test_name",
                                           "coefficient": "1.00",
                                           "current_money_amount": "0.00",
-                                          "target_money_amount": "10000.00"})
+                                          "target_money_amount": "10000.00",
+                                          "level": "1"})
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -86,7 +90,8 @@ class GoalsTest(APITestCase):
         json_data = {"name": "test_name",
                      "coefficient": "1.00",
                      "current_money_amount": "10001.00",
-                     "target_money_amount": "10000.00"}
+                     "target_money_amount": "10000.00",
+                     "level": "1"}
 
         url = reverse('goal-list')
         response = self.client.post(url, json_data)
@@ -94,7 +99,7 @@ class GoalsTest(APITestCase):
         serializer.is_valid()
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json().get('current_money_amount')[0],
+        self.assertEqual(response.data.get('current_money_amount')[0],
                          serializer.errors.get('current_money_amount')[0])
 
     def test_valid_update_goal(self):
@@ -105,7 +110,8 @@ class GoalsTest(APITestCase):
         response = self.client.put(url, {"name": "Updated",
                                          "coefficient": "1.00",
                                          "current_money_amount": "10.00",
-                                         "target_money_amount": "10050.00"})
+                                         "target_money_amount": "10050.00",
+                                         "level": "2"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_invalid_update_goal(self):
@@ -127,20 +133,16 @@ class GoalsTest(APITestCase):
         test_object = self.test_objects[1]
         url = reverse('goal-detail', kwargs={'pk': test_object.pk})
 
-        self.client.put(url, {"name": test_object.name,
-                              "coefficient": test_object.coefficient,
-                              "current_money_amount": test_object.target_money_amount,
-                              "target_money_amount": test_object.target_money_amount})
-        response = self.client.get(url)
-
+        response = self.client.put(url, {"name": test_object.name,
+                                         "coefficient": test_object.coefficient,
+                                         "current_money_amount": test_object.target_money_amount,
+                                         "target_money_amount": test_object.target_money_amount,
+                                         "level": test_object.level})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        test_object.current_money_amount = test_object.target_money_amount
-        test_object.save()
-        serializer = GoalSerializer(test_object,
-                                    context={'request': Request(APIRequestFactory().get(url))})
-        self.assertEqual(response.data.get('target_money_amount'),
-                         serializer.data.get('target_money_amount'))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get('level'), test_object.level+1)
 
     def test_valid_delete_goal(self):
         """
