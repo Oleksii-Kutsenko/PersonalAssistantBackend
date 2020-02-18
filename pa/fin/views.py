@@ -49,7 +49,7 @@ class AdjustedIndex(APIView):
         Calculate index adjusted by the amount of money
         """
         # check if money parameter exists
-        money = Decimal(request.GET.get('money'))
+        money = Decimal(request.GET.get('money', 0))
         if not money:
             raise BadRequest(detail="Money parameter is missing")
 
