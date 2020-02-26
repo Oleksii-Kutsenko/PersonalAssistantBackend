@@ -6,5 +6,6 @@ __pycache__
 *.pyc
 .idea
 .idea/*
+venv/*
 .coverage
 .pytest_cache
