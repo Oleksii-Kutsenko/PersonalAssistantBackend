@@ -17,6 +17,8 @@ List of what you need to run the application:
 
 ## FIN
 
+###Description
+
 This is a module of the system that responses for tracking the financial information
 
 Key features:
@@ -26,3 +28,7 @@ Key features:
 4. Tracking shares weight in different stock market indices
 5. Analyse investment portfolio (MDP, SimplyWallSt)
 6. Adjusting the stock market index by the possible amount of money
+
+### ER-diagram
+
+![ER-diagram](public.png)
