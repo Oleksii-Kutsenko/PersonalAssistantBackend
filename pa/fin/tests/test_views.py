@@ -12,7 +12,6 @@ from fin.models import Goal
 from fin.serializers import GoalSerializer
 
 faker = Factory.create()
-boundary_money_value = 100
 
 
 class GoalFactory(factory.DjangoModelFactory):
@@ -22,8 +21,8 @@ class GoalFactory(factory.DjangoModelFactory):
     name = faker.pystr(min_chars=None, max_chars=50)
     coefficient = faker.pyfloat(left_digits=None, right_digits=2, positive=True,
                                 min_value=0, max_value=1)
-    target_money_amount = faker.pyint(min_value=boundary_money_value)
-    current_money_amount = faker.pyint(max_value=boundary_money_value)
+    target_money_amount = faker.pyint(min_value=101)
+    current_money_amount = faker.pyint(max_value=100)
     level = faker.pyint()
 
 
@@ -34,7 +33,7 @@ class GoalsTest(APITestCase):
 
     def setUp(self):
         """
-        Set Up
+        Creating goal objects
         """
         self.test_objects = []
         for _ in range(0, 3):
