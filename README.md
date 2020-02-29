@@ -17,7 +17,7 @@ List of what you need to run the application:
 
 ## FIN
 
-###Description
+### Description
 
 This is a module of the system that responses for tracking the financial information
 
