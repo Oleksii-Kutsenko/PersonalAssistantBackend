@@ -1,13 +1,29 @@
 """
 Tests
 """
+import factory
 from django.urls import reverse
+from faker import Factory
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.test import APITestCase, APIRequestFactory
 
 from fin.models import Goal
 from fin.serializers import GoalSerializer
+
+faker = Factory.create()
+
+
+class GoalFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Goal
+
+    name = faker.pystr(min_chars=None, max_chars=50)
+    coefficient = faker.pyfloat(left_digits=None, right_digits=2, positive=True,
+                                min_value=0, max_value=1)
+    target_money_amount = faker.pyint(min_value=101)
+    current_money_amount = faker.pyint(max_value=100)
+    level = faker.pyint()
 
 
 class GoalsTest(APITestCase):
@@ -17,24 +33,11 @@ class GoalsTest(APITestCase):
 
     def setUp(self):
         """
-        Set Up
+        Creating goal objects
         """
-        Goal.objects.create(name='First',
-                            coefficient=0.1,
-                            current_money_amount=0,
-                            target_money_amount=1000,
-                            level=1).save()
-        Goal.objects.create(name='Second',
-                            coefficient=0.5,
-                            current_money_amount=0,
-                            target_money_amount=1000,
-                            level=1).save()
-        Goal.objects.create(name='Third',
-                            coefficient=1,
-                            current_money_amount=0,
-                            target_money_amount=1000,
-                            level=1).save()
-        self.test_objects = Goal.objects.all()
+        self.test_objects = []
+        for _ in range(0, 3):
+            self.test_objects.append(GoalFactory())
 
     def test_get_all_goals(self):
         """
@@ -142,7 +145,7 @@ class GoalsTest(APITestCase):
 
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data.get('level'), test_object.level+1)
+        self.assertEqual(response.data.get('level'), test_object.level + 1)
 
     def test_valid_delete_goal(self):
         """

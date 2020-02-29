@@ -26,16 +26,13 @@ class AccountViewSet(viewsets.ModelViewSet):
 class IndexViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows indices to be viewed or edited
+
+    Send PUT request with the same data_source_url for reloading index data
     """
     queryset = Index.objects.all().order_by('updated')
     serializer_class = IndexSerializer
     filter_backends = [filters.OrderingFilter]
     ordering_fields = '__all__'
-
-    def retrieve(self, request, *args, **kwargs):
-        if request.GET.get('reload', ''):
-            self.get_object().update()
-        return super().retrieve(request, *args, **kwargs)
 
 
 class AdjustedIndex(APIView):
