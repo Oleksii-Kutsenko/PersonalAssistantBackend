@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
     'rest_framework',
     'drf_yasg',
 ]
@@ -78,6 +79,7 @@ TEMPLATES = [
     },
 ]
 
+ASGI_APPLICATION = 'pa.routing.application'
 WSGI_APPLICATION = 'pa.wsgi.application'
 
 # Database

@@ -5,7 +5,7 @@ services:
     build:
       context: ./pa
       dockerfile: Dockerfile.prod
-    command: gunicorn pa.wsgi:application --bind 0.0.0.0:8000
+    command: daphne -b 0.0.0.0 -p 8000 pa.asgi:application
     volumes:
       - static_volume:/home/app/pa/static
     expose:
