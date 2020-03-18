@@ -105,7 +105,8 @@ class Index(TimeStampMixin):
         if self.Source.SLICK_CHARTS_SP500 == self.data_source_url:
             req = urllib.request.Request(self.data_source_url,
                                          headers={'User-Agent': 'Magic Browser'})
-            page = urllib.request.urlopen(req).read().decode('utf-8')
+            with urllib.request.urlopen(req) as response:
+                page = response.read().decode('utf-8')
 
             trs = BeautifulSoup(page, 'html.parser') \
                 .find('table', class_='table table-hover table-borderless table-sm') \
