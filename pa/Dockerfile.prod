@@ -2,31 +2,39 @@
 # BUILDER #
 ###########
 
-FROM python:3.8.1-alpine3.11 as builder
+FROM ubuntu:20.04 as builder
 
 WORKDIR /usr/src/app
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
+RUN apt-get update
+
 # psycopg2
-RUN apk update && apk add --no-cache postgresql-dev gcc python3-dev musl-dev libffi-dev openssl-dev
+RUN apt-get install -yqq libpq-dev gcc python3-dev musl-dev
+
+# cryptography
+RUN apt-get install -yqq libffi-dev libssl-dev
+
+# python
+RUN apt-get install -yqq python3 python3-pip
 
 # install dependencies
-RUN pip install --upgrade pip
+RUN pip3 install --upgrade pip
 COPY ./requirements.txt .
-RUN pip wheel --no-cache-dir --wheel-dir /usr/src/app/wheels -r requirements.txt
+RUN pip3 wheel --no-cache-dir --wheel-dir /usr/src/app/wheels -r requirements.txt
 
 #########
 # FINAL #
 #########
 
-FROM python:3.8.1-alpine3.11
+FROM ubuntu:20.04
 
 RUN mkdir -p /home/app
 
 # create the app user
-RUN addgroup -S app && adduser -S app -G app
+RUN addgroup --system app && useradd -g app app
 
 # create the appropriate directories
 ENV HOME=/home/app
@@ -37,11 +45,18 @@ RUN mkdir $APP_HOME/static
 WORKDIR $APP_HOME
 
 # install dependencies
-RUN apk update && apk add libpq
+RUN apt-get update
+
+# psycopg2
+RUN apt-get install -yqq libpq-dev
+
+# python
+RUN apt-get install -yqq python3 python3-pip
+
 COPY --from=builder /usr/src/app/wheels /wheels
 COPY --from=builder /usr/src/app/requirements.txt .
-RUN pip install --upgrade pip
-RUN pip install --no-cache /wheels/*
+RUN pip3 install --upgrade pip
+RUN pip3 install --no-cache /wheels/*
 
 # copy entrypoint-prod.sh
 COPY ./entrypoint.prod.sh $APP_HOME

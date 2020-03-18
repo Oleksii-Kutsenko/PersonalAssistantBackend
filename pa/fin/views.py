@@ -1,7 +1,7 @@
 """
 Views
 """
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
 from rest_framework import filters, viewsets
 from rest_framework.generics import get_object_or_404
@@ -37,44 +37,22 @@ class IndexViewSet(viewsets.ModelViewSet):
 
 class AdjustedIndex(APIView):
     """
-    API endpoint that allows calculating index for the money amount
+    API endpoint that allows executing adjust method of the index
     """
-    tickers = []
+    money = None
 
     def get(self, request, index_id):
         """
         Calculate index adjusted by the amount of money
         """
-        # check if money parameter exists
-        money = Decimal(request.GET.get('money', 0))
-        if not money:
-            raise BadRequest(detail="Money parameter is missing")
+        try:
+            self.money = Decimal(request.GET.get('money'))
+        except InvalidOperation:
+            raise BadRequest(detail="Money parameter is missing or invalid")
 
-        # check if index exists
         index = get_object_or_404(queryset=Index.objects.all(), pk=index_id)
-        # create a list of ticker dicts
-        for ticker in index.tickers.all().order_by('weight'):
-            self.tickers.append({'name': ticker.name,
-                                 'price': ticker.price,
-                                 'weight': ticker.weight,
-                                 'visible': True})
 
-        # hide tickers which price is too high, and recalculate other tickers weights
-        for ticker in self.tickers:
-            if ticker['weight'] * money < ticker['price']:
-                ticker['visible'] = False
-                coefficient = 1 / sum(ticker['weight'] for ticker in self.visible_tickers)
-                for visible_ticker in self.visible_tickers:
-                    visible_ticker['weight'] *= coefficient
-
-        return Response(self.visible_tickers)
-
-    @property
-    def visible_tickers(self):
-        """
-        Returns visible tickers
-        """
-        return [ticker for ticker in self.tickers if ticker['visible']]
+        return Response(index.adjust(self.money))
 
 
 class GoalViewSet(viewsets.ModelViewSet):

@@ -1,17 +1,27 @@
-FROM python:3.8.1-alpine3.11
+FROM ubuntu:20.04
 
 WORKDIR /usr/src/app
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
+RUN apt-get update
+
 # psycopg2
-RUN apk update
-RUN apk add --no-cache postgresql-dev gcc python3-dev musl-dev
+RUN apt-get install -yqq libpq-dev gcc python3-dev musl-dev
+
+# cryptography
+RUN apt-get install -yqq libffi-dev libssl-dev
+
+# python
+RUN apt-get install -yqq python3 python3-pip
+
+# delete cache
+RUN apt-get autoremove -yqq && apt-get clean -yqq
 
 COPY . /usr/src/app
 
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN pip3 install --upgrade pip
+RUN pip3 install -r requirements.txt
 
 ENTRYPOINT ["/usr/src/app/entrypoint.sh"]

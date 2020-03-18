@@ -7,7 +7,6 @@ import urllib.request
 from bs4 import BeautifulSoup
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from django.db.models import Min
 from django.utils.translation import gettext_lazy as _
 
 
@@ -61,12 +60,37 @@ class Index(TimeStampMixin):
 
     data_source_url = models.URLField(choices=Source.choices, unique=True)
 
-    @property
-    def tickers_last_updated(self):
+    def adjust(self, money):
         """
-        Returns datetime when tickers were last updated
+        Calculate index adjusted by the amount of money
         """
-        return self.tickers.aggregate(Min('updated')).get('updated__min')
+        tickers = []
+        visible_tickers = []
+
+        # create a list of ticker dicts
+        for ticker in self.tickers.all().order_by('weight'):
+            tickers.append({'name': ticker.name,
+                            'price': ticker.price,
+                            'weight': ticker.weight,
+                            'visible': True})
+
+        # adjust sum of weights to 1
+        coefficient = 1 / sum(ticker['weight'] for ticker in tickers)
+        tickers = [{'name': ticker['name'],
+                    'price': ticker['price'],
+                    'weight': ticker['weight'] * coefficient,
+                    'visible': ticker['visible']} for ticker in tickers]
+
+        # hide tickers which price is too high, and recalculate other tickers weights
+        for ticker in tickers:
+            if ticker['weight'] * money < ticker['price']:
+                ticker['visible'] = False
+                visible_tickers = [ticker for ticker in tickers if ticker['visible']]
+                coefficient = 1 / sum(ticker['weight'] for ticker in visible_tickers)
+                for visible_ticker in visible_tickers:
+                    visible_ticker['weight'] *= coefficient
+
+        return visible_tickers
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         super(Index, self).save(force_insert=False, force_update=False, using=None,
