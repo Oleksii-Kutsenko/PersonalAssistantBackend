@@ -3,12 +3,13 @@ Tests
 """
 import factory
 from django.urls import reverse
+from factory.fuzzy import FuzzyChoice
 from faker import Factory
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.test import APITestCase, APIRequestFactory
 
-from fin.models import Goal
+from fin.models import Goal, Index
 from fin.serializers import GoalSerializer
 
 faker = Factory.create()
@@ -26,7 +27,14 @@ class GoalFactory(factory.DjangoModelFactory):
     level = faker.pyint()
 
 
-class GoalsTest(APITestCase):
+class IndexFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Index
+
+    data_source_url = FuzzyChoice(Index.Source)
+
+
+class GoalsTests(APITestCase):
     """
     Tests for the goals API
     """
@@ -163,3 +171,33 @@ class GoalsTest(APITestCase):
         url = reverse('goal-detail', kwargs={'pk': -1})
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class AdjustedIndexTests(APITestCase):
+    """
+    Tests for index-adjusted endpoint
+    """
+
+    def setUp(self) -> None:
+        self.index = IndexFactory()
+
+    def test_when_received_right_msg(self):
+        """
+        Expects correct data when money parameter can be converted to Decimal
+        """
+        url = reverse('index-adjusted', kwargs={'index_id': self.index.id})
+        money = 1000
+
+        response = self.client.get(url, {'money': money})
+
+        self.assertEqual(response.data, self.index.adjust(money))
+
+    def test_when_received_wrong_parameter(self):
+        """
+        Expects bad request when the money parameter cannot be converted to decimal
+        """
+        url = reverse('index-adjusted', kwargs={'index_id': self.index.id})
+        money = '1000q'
+
+        response = self.client.get(url, {'money': money})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
