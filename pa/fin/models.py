@@ -203,7 +203,7 @@ class Ticker(TimeStampMixin):
     price = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
     sector = models.CharField(max_length=50, default=DEFAULT_VALUE)
     symbol = models.CharField(max_length=100)
-    weight = models.DecimalField(max_digits=12, decimal_places=10,
+    weight = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES,
                                  validators=[MinValueValidator(0.000001),
                                              MaxValueValidator(1.000001)])
 
