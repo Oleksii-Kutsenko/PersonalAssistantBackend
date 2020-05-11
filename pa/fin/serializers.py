@@ -26,7 +26,7 @@ class TickerSerializer(serializers.ModelSerializer):
     class Meta:
         """Meta"""
         model = Ticker
-        fields = ['name', 'weight', 'price', 'industry', 'sector', 'country']
+        fields = ['company', 'symbol', 'weight', 'price', 'industry', 'sector', 'country']
 
 
 class AdjustedTickerSerializer(TickerSerializer):
@@ -41,7 +41,8 @@ class AdjustedTickerSerializer(TickerSerializer):
 
     class Meta:
         model = Ticker
-        fields = ['name', 'weight', 'price', 'country', 'sector', 'industry', 'amount', 'cost']
+        fields = ['company', 'symbol', 'weight', 'price', 'country', 'sector', 'industry', 'amount',
+                  'cost']
 
 
 class IndexSerializer(serializers.HyperlinkedModelSerializer):
