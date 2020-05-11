@@ -21,7 +21,7 @@ class AdjustedIndexConsumerTestCase(TestCase):
 
     def setUp(self) -> None:
         self.communicator = None
-        self.index = Index.objects.create(data_source_url=Index.Source.SLICK_CHARTS_SP500)
+        self.index = Index.objects.create(data_source_url=Index.Source.SP500)
 
     async def set_communicator(self, index_id):
         """

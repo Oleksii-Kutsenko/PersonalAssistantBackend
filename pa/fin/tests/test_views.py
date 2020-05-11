@@ -10,7 +10,7 @@ from rest_framework.request import Request
 from rest_framework.test import APITestCase, APIRequestFactory
 
 from fin.models import Goal, Index
-from fin.serializers import GoalSerializer
+from fin.serializers import GoalSerializer, AdjustedTickerSerializer
 
 faker = Factory.create()
 
@@ -190,7 +190,15 @@ class AdjustedIndexTests(APITestCase):
 
         response = self.client.get(url, {'money': money})
 
-        self.assertEqual(response.data, self.index.adjust(money))
+        options = {
+            'skip_industries': [],
+            'skip_countries': [],
+            'skip_sectors': [],
+            'skip_tickers': []
+        }
+        adjusted_index, summary_cost = self.index.adjust(money, options)
+        serialized_index = AdjustedTickerSerializer(adjusted_index, many=True)
+        self.assertEqual(response.data.get('tickers'), serialized_index.data)
 
     def test_when_received_wrong_parameter(self):
         """
