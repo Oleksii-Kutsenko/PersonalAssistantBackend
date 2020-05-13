@@ -1,10 +1,12 @@
 """
 Models
 """
+import csv
 import urllib.request
 from decimal import Decimal
-from threading import Thread
+from io import StringIO
 
+import requests
 from bs4 import BeautifulSoup
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
@@ -66,6 +68,8 @@ class Index(TimeStampMixin):
         """
         SP500 = 'https://www.slickcharts.com/sp500', _("S&P 500")
         NASDAQ100 = 'https://www.slickcharts.com/nasdaq100', _("NASDAQ 100")
+        IHI = 'https://www.ishares.com/us/products/239516/' \
+              'ishares-us-medical-devices-etf/1467271812596.ajax', _('IHI')
 
     data_source_url = models.URLField(choices=Source.choices, unique=True)
 
@@ -78,7 +82,7 @@ class Index(TimeStampMixin):
             .exclude(country__in=options['skip_countries']) \
             .exclude(sector__in=options['skip_sectors']) \
             .exclude(industry__in=options['skip_industries']) \
-            .exclude(name__in=options['skip_tickers']) \
+            .exclude(symbol__in=options['skip_tickers']) \
             .order_by('-weight')
 
         # adjust sum of weights to 100%
@@ -129,8 +133,8 @@ class Index(TimeStampMixin):
         Update tickers prices and their weights
         :return: None
         """
+        browser_headers = {'User-Agent': 'Magic Browser'}
         if self.data_source_url in (self.Source.SP500, self.Source.NASDAQ100):
-            browser_headers = {'User-Agent': 'Magic Browser'}
             req = urllib.request.Request(self.data_source_url, headers=browser_headers)
             with urllib.request.urlopen(req) as response:
                 page = response.read().decode('utf-8')
@@ -147,9 +151,29 @@ class Index(TimeStampMixin):
             for node in tickers_rows:
                 if node.name == 'tr':
                     tds = node.find_all('td')
-                    ticker = Ticker(name=str(tds[2].text),
+                    ticker = Ticker(company=str(tds[1].text),
+                                    symbol=str(tds[2].text),
                                     weight=Decimal(tds[3].text),
                                     price=Decimal(tds[4].text.replace(',', '')),
+                                    index=self)
+                    ticker.save()
+
+        elif self.data_source_url == self.Source.IHI:
+            ISHARES_IHI_PARAMS = {'fileType': 'csv', 'fileName': 'IHI_holdings', 'dataType': 'fund'}
+            ISHARES_EQUITY_NAME = 'Equity'
+            response = requests.get(self.data_source_url, params=ISHARES_IHI_PARAMS)
+
+            tickers_data_start_word = 'Ticker'
+            tickers_data_start_index = response.text.find(tickers_data_start_word)
+            tickers_data = StringIO(response.text[tickers_data_start_index:])
+
+            reader = csv.reader(tickers_data, delimiter=',')
+            for row in reader:
+                if len(row) > 2 and row[2] == ISHARES_EQUITY_NAME:
+                    ticker = Ticker(symbol=row[0],
+                                    company=row[1],
+                                    weight=row[3],
+                                    price=row[4],
                                     index=self)
                     ticker.save()
 
@@ -159,7 +183,7 @@ class Index(TimeStampMixin):
 
 def update_tickers_industries(index_id):
     for ticker in Index.objects.get(pk=index_id).tickers.all():
-        yf_ticker = YFinanceTicker(ticker.name.replace('.', '-'))
+        yf_ticker = YFinanceTicker(ticker.symbol.replace('.', '-'))
         ticker.country = yf_ticker.info.get('country', 'Unknown')
         ticker.industry = yf_ticker.info.get('industry', 'Unknown')
         ticker.sector = yf_ticker.info.get('sector', 'Unknown')
@@ -172,18 +196,19 @@ class Ticker(TimeStampMixin):
     """
     DEFAULT_VALUE = 'Unknown'
 
+    company = models.CharField(max_length=50, default=DEFAULT_VALUE)
     country = models.CharField(max_length=50, default=DEFAULT_VALUE)
     index = models.ForeignKey(Index, related_name='tickers', on_delete=models.CASCADE)
     industry = models.CharField(max_length=50, default=DEFAULT_VALUE)
-    name = models.CharField(max_length=100)
     price = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
     sector = models.CharField(max_length=50, default=DEFAULT_VALUE)
-    weight = models.DecimalField(max_digits=12, decimal_places=10,
+    symbol = models.CharField(max_length=100)
+    weight = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES,
                                  validators=[MinValueValidator(0.000001),
                                              MaxValueValidator(1.000001)])
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.symbol}"
 
 
 class Goal(TimeStampMixin):
