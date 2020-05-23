@@ -26,7 +26,23 @@ class TickerSerializer(serializers.ModelSerializer):
     class Meta:
         """Meta"""
         model = Ticker
-        fields = ['name', 'weight', 'price']
+        fields = ['company', 'symbol', 'weight', 'price', 'industry', 'sector', 'country']
+
+
+class AdjustedTickerSerializer(TickerSerializer):
+    amount = serializers.SerializerMethodField()
+    cost = serializers.SerializerMethodField()
+
+    def get_amount(self, obj):
+        return obj.amount
+
+    def get_cost(self, obj):
+        return obj.cost
+
+    class Meta:
+        model = Ticker
+        fields = ['company', 'symbol', 'weight', 'price', 'country', 'sector', 'industry', 'amount',
+                  'cost']
 
 
 class IndexSerializer(serializers.HyperlinkedModelSerializer):
@@ -34,13 +50,15 @@ class IndexSerializer(serializers.HyperlinkedModelSerializer):
     Serialization class for the Index model
     """
     id = serializers.IntegerField(read_only=True)
-    tickers = TickerSerializer(many=True, read_only=True)
-    tickers_last_updated = serializers.DateTimeField(read_only=True)
+    tickers = serializers.SerializerMethodField()
 
     class Meta:
         """Meta"""
         model = Index
         fields = '__all__'
+
+    def get_tickers(self, instance):
+        return TickerSerializer(instance.tickers.order_by('-weight').all(), many=True).data
 
 
 class GoalSerializer(serializers.HyperlinkedModelSerializer):
