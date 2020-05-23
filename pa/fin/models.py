@@ -9,7 +9,7 @@ from io import StringIO
 import requests
 from bs4 import BeautifulSoup
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Sum, F, DecimalField, IntegerField, CharField, DateTimeField
 from django.db.models.functions import Cast
 from django.utils.translation import gettext_lazy as _
@@ -70,9 +70,11 @@ class Index(TimeStampMixin):
         NASDAQ100 = 'https://www.slickcharts.com/nasdaq100', _("NASDAQ 100")
         IHI = 'https://www.ishares.com/us/products/239516/' \
               'ishares-us-medical-devices-etf/1467271812596.ajax', _('IHI')
+        RUSSEL3000 = 'https://www.ishares.com/us/products/239714/ishares-russell-3000-etf/1467271812596.ajax'
 
     data_source_url = models.URLField(choices=Source.choices, unique=True)
 
+    @transaction.atomic
     def adjust(self, money, options):
         """
         Calculate index adjusted by the amount of money
@@ -114,15 +116,15 @@ class Index(TimeStampMixin):
         tickers_query = tickers_query.annotate(amount=amount(), cost=cost)
         summary_cost = tickers_query.aggregate(Sum('cost')).get('cost__sum')
 
-        # exclude not working on annotate field: "exclude(amount_neq=0)"
-        result_query = [ticker for ticker in tickers_query if ticker.amount != 0]
-
-        tickers_weight = sum([ticker.weight for ticker in result_query])
+        # adjust sum of weights to 100%
+        tickers_query = tickers_query.filter(amount__gt=0)
+        tickers_weight = tickers_query.aggregate(Sum('weight')).get('weight__sum')
         coefficient = hundred_percent / tickers_weight
-        for ticker in result_query:
+
+        for ticker in tickers_query:
             ticker.weight *= coefficient
 
-        return result_query, summary_cost
+        return tickers_query, summary_cost
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         super().save(force_insert=False, force_update=False, using=None, update_fields=None)
@@ -159,9 +161,9 @@ class Index(TimeStampMixin):
                     ticker.save()
 
         elif self.data_source_url == self.Source.IHI:
-            ISHARES_IHI_PARAMS = {'fileType': 'csv', 'fileName': 'IHI_holdings', 'dataType': 'fund'}
-            ISHARES_EQUITY_NAME = 'Equity'
-            response = requests.get(self.data_source_url, params=ISHARES_IHI_PARAMS)
+            IHI_PARAMS = {'fileType': 'csv', 'fileName': 'IHI_holdings', 'dataType': 'fund'}
+            EQUITY_NAME = 'Equity'
+            response = requests.get(self.data_source_url, params=IHI_PARAMS)
 
             tickers_data_start_word = 'Ticker'
             tickers_data_start_index = response.text.find(tickers_data_start_word)
@@ -169,13 +171,43 @@ class Index(TimeStampMixin):
 
             reader = csv.reader(tickers_data, delimiter=',')
             for row in reader:
-                if len(row) > 2 and row[2] == ISHARES_EQUITY_NAME:
+                if len(row) > 2 and row[2] == EQUITY_NAME:
                     ticker = Ticker(symbol=row[0],
                                     company=row[1],
                                     weight=row[3],
                                     price=row[4],
                                     index=self)
                     ticker.save()
+
+        elif self.data_source_url == self.Source.RUSSEL3000:
+            RUSSEL_PARAMS = {'fileType': 'csv', 'fileName': 'IWV_holdings', 'dataType': 'fund'}
+            EQUITY_NAME = 'Equity'
+            response = requests.get(self.data_source_url, params=RUSSEL_PARAMS)
+
+            tickers_data_start_word = 'Ticker'
+            tickers_data_start_index = response.text.find(tickers_data_start_word)
+            tickers_data = StringIO(response.text[tickers_data_start_index:])
+
+            self.tickers.all().delete()
+
+            total_market_cap = Decimal(0)
+            reader = csv.reader(tickers_data, delimiter=',')
+            for row in reader:
+                if len(row) > 2 and row[2] == EQUITY_NAME:
+                    price_without_separators = Decimal(row[4].replace(',', ''))
+                    market_cap_without_separators = Decimal(row[6].replace(',', ''))
+                    ticker = Ticker(symbol=row[0],
+                                    company=row[1],
+                                    weight=row[3],
+                                    price=price_without_separators,
+                                    market_cap=market_cap_without_separators,
+                                    index=self)
+                    total_market_cap += market_cap_without_separators
+                    ticker.save()
+
+            for ticker in self.tickers.all():
+                ticker.weight = ticker.market_cap / total_market_cap
+                ticker.save()
 
     def __str__(self):
         return str(dict(self.Source.choices)[self.data_source_url])
@@ -200,10 +232,12 @@ class Ticker(TimeStampMixin):
     country = models.CharField(max_length=50, default=DEFAULT_VALUE)
     index = models.ForeignKey(Index, related_name='tickers', on_delete=models.CASCADE)
     industry = models.CharField(max_length=50, default=DEFAULT_VALUE)
+    market_cap = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES,
+                                     null=True)
     price = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
     sector = models.CharField(max_length=50, default=DEFAULT_VALUE)
     symbol = models.CharField(max_length=100)
-    weight = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES,
+    weight = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=10,
                                  validators=[MinValueValidator(0.000001),
                                              MaxValueValidator(1.000001)])
 

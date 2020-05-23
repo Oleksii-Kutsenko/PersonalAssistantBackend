@@ -1,3 +1,7 @@
+"""
+Getting holders is wrapped into try-except block because sometimes this data is not available and it
+isn't processing in any way
+"""
 import logging
 
 import numpy as _np
