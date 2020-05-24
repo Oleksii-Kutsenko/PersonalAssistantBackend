@@ -27,7 +27,7 @@ class Ticker(TimeStampMixin):
     market_cap = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES, null=True)
     price = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
     sector = models.CharField(max_length=50, default=DEFAULT_VALUE)
-    symbol = models.CharField(max_length=100)
+    symbol = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return f"{self.symbol}"
@@ -108,6 +108,7 @@ class Index(TimeStampMixin):
         super().save(force_insert=False, force_update=False, using=None, update_fields=None)
         self.update()
 
+    @transaction.atomic
     def update(self):
         """
         Update tickers prices and their weights
@@ -127,18 +128,17 @@ class Index(TimeStampMixin):
 
             tickers_rows = tickers_table.find('tbody')
 
-            self.tickers.all().delete()
-
             for node in tickers_rows:
                 if node.name == 'tr':
                     tds = node.find_all('td')
 
+                    symbol = str(tds[2].text)
                     ticker_info = {
                         'company_name': str(tds[1].text),
-                        'symbol': str(tds[2].text),
                         'price': Decimal(tds[4].text.replace(',', ''))
                     }
-                    ticker = Ticker(**ticker_info)
+
+                    ticker, _ = Ticker.objects.update_or_create(symbol=symbol, defaults=ticker_info)
                     ticker.save()
 
                     ticker_weight = Decimal(tds[3].text)
@@ -170,13 +170,14 @@ class Index(TimeStampMixin):
                     price_without_separators = Decimal(row[4].replace(',', ''))
                     if price_without_separators != Decimal(0):
                         market_cap_without_separators = Decimal(row[6].replace(',', ''))
+
+                        symbol = row[0]
                         ticker_info = {
-                            'symbol': row[0],
                             'company_name': row[1],
                             'price': price_without_separators,
                             'market_cap': market_cap_without_separators
                         }
-                        ticker = Ticker(**ticker_info)
+                        ticker, _ = Ticker.objects.update_or_create(symbol=symbol, defaults=ticker_info)
                         ticker.save()
 
                         ticker_weight = Decimal(row[3])
@@ -184,9 +185,9 @@ class Index(TimeStampMixin):
                         ticker_index_relation.save()
                         total_market_cap += market_cap_without_separators
 
-            for ticker in self.tickers.all():
-                ticker.weight = ticker.market_cap / total_market_cap
-                ticker.save()
+            for ticker_index_weight in TickerIndexWeight.objects.filter(index=self):
+                ticker_index_weight.weight = ticker_index_weight.ticker.market_cap / total_market_cap
+                ticker_index_weight.save()
 
     def __str__(self):
         return str(dict(self.Source.choices)[self.data_source_url])
