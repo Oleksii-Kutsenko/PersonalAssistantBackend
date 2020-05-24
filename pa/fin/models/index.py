@@ -78,7 +78,8 @@ class Index(TimeStampMixin):
         cost = Cast(F('amount') * F('ticker__price'), decimal_field)
 
         adjusted_money_amount = Decimal(money)
-        step = Decimal(100)
+        # experimentally established value
+        step = Decimal(money) * Decimal(4)
 
         def amount():
             return Cast(F('weight') / 100 * adjusted_money_amount / F('ticker__price'), integer_field)
