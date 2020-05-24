@@ -11,9 +11,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .exceptions import BadRequest
-from .models import Account, Index, Goal, update_tickers_industries
-from .serializers import AccountSerializer, IndexSerializer, GoalSerializer, \
-    AdjustedTickerSerializer
+from .models.index import Index
+from .models.models import Account, Goal
+from .serializers.index import IndexSerializer, AdjustedTickerSerializer
+from .serializers.serializers import AccountSerializer, GoalSerializer
+from .utils.index_helpers import update_tickers_industries
 
 
 class AccountViewSet(viewsets.ModelViewSet):
@@ -39,6 +41,11 @@ class IndexViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
+        Thread(target=update_tickers_industries, args=(response.data.get('id'),)).start()
+        return response
+
+    def update(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
         Thread(target=update_tickers_industries, args=(response.data.get('id'),)).start()
         return response
 

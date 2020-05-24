@@ -10,7 +10,7 @@ from channels.generic.websocket import JsonWebsocketConsumer
 from django.core.exceptions import ObjectDoesNotExist
 
 from fin.exceptions import FormatError, InvalidData, WebSocketException, InvalidMessageType
-from fin.models import Index
+from fin.models.index import Index
 
 
 class WebSocketMessageType(Enum):
