@@ -10,5 +10,4 @@ class TimeStampMixin(models.Model):
     updated = DateTimeField(auto_now=True)
 
     class Meta:
-        """Meta"""
         abstract = True

@@ -9,7 +9,6 @@ class TickerSerializer(serializers.ModelSerializer):
     """
 
     class Meta:
-        """Meta"""
         model = Ticker
         fields = ['company_name', 'symbol', 'price', 'industry', 'sector', 'country']
 

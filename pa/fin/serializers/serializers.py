@@ -13,7 +13,6 @@ class AccountSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.IntegerField(read_only=True)
 
     class Meta:
-        """Meta"""
         model = Account
         fields = '__all__'
 
