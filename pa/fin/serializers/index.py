@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from fin.models.index import Ticker, TickerIndexWeight, Index
+from fin.serializers.utils import FlattenMixin
 
 
 class TickerSerializer(serializers.ModelSerializer):
@@ -11,14 +12,6 @@ class TickerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticker
         fields = ['company_name', 'symbol', 'price', 'industry', 'sector', 'country']
-
-
-class TickerIndexWeightSerializer(serializers.ModelSerializer):
-    ticker = TickerSerializer()
-
-    class Meta:
-        model = TickerIndexWeight
-        fields = ('ticker', 'weight')
 
 
 class IndexSerializer(serializers.ModelSerializer):
@@ -36,10 +29,9 @@ class IndexSerializer(serializers.ModelSerializer):
         fields = ('id', 'data_source_url', 'name')
 
 
-class AdjustedTickerSerializer(TickerSerializer):
+class AdjustedTickerSerializer(FlattenMixin, serializers.ModelSerializer):
     amount = serializers.SerializerMethodField()
     cost = serializers.SerializerMethodField()
-    ticker = TickerSerializer()
 
     def get_amount(self, obj):
         return obj.amount
@@ -49,4 +41,5 @@ class AdjustedTickerSerializer(TickerSerializer):
 
     class Meta:
         model = TickerIndexWeight
-        fields = ['ticker', 'amount', 'cost']
+        exclude = ('id', 'created', 'index', 'ticker', 'updated')
+        flatten = [('ticker', TickerSerializer)]

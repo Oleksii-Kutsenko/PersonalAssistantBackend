@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models, transaction
 from django.db.models import DecimalField, Sum, F
-from django.db.models.functions import Cast
+from django.db.models.functions import Cast, Coalesce
 from django.utils.translation import gettext_lazy as _
 
 from fin.models.models import MAX_DIGITS, DECIMAL_PLACES
@@ -37,6 +37,7 @@ class Index(TimeStampMixin):
     """
     Index model
     """
+    REASONABLE_LOT_PRICE = Decimal(202)
 
     class Source(models.TextChoices):
         """
@@ -81,18 +82,22 @@ class Index(TimeStampMixin):
         # experimentally established value
         step = Decimal(money) * Decimal(4)
 
-        def amount():
-            return Cast(F('weight') / 100 * adjusted_money_amount / F('ticker__price'), integer_field)
+        def amount(money_amount):
+            return Cast(F('weight') / 100 * money_amount / F('ticker__price'), integer_field)
 
         summary_cost = 0
         while summary_cost < money:
             adjusted_money_amount += step
-            tickers_query = tickers_query.annotate(amount=amount(), cost=cost)
+            tickers_query = tickers_query.annotate(amount=amount(adjusted_money_amount), cost=cost)
 
-            summary_cost = tickers_query.aggregate(Sum('cost')).get('cost__sum')
+            summary_cost = tickers_query \
+                .filter(cost__gte=self.REASONABLE_LOT_PRICE) \
+                .aggregate(summary_cost=Coalesce(Sum('cost'), 0)).get('summary_cost')
 
         adjusted_money_amount -= step
-        tickers_query = tickers_query.annotate(amount=amount(), cost=cost)
+        tickers_query = tickers_query \
+            .annotate(amount=amount(adjusted_money_amount), cost=cost) \
+            .filter(cost__gte=self.REASONABLE_LOT_PRICE)
         summary_cost = tickers_query.aggregate(Sum('cost')).get('cost__sum')
 
         # adjust sum of weights to 100%
