@@ -41,5 +41,5 @@ class AdjustedTickerSerializer(FlattenMixin, serializers.ModelSerializer):
 
     class Meta:
         model = TickerIndexWeight
-        exclude = ('id', 'created', 'index', 'ticker', 'updated')
+        fields = ('amount', 'cost', 'weight')
         flatten = [('ticker', TickerSerializer)]
