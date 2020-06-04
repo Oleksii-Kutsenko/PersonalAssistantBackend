@@ -1,21 +1,32 @@
 """
 Views
 """
+import json
+import logging
+import traceback
 from decimal import Decimal, InvalidOperation
+from json import JSONDecodeError
 from threading import Thread
 
 from rest_framework import filters, viewsets
 from rest_framework.generics import get_object_or_404
 from rest_framework.metadata import SimpleMetadata
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .exceptions import BadRequest
-from .models.index import Index
-from .models.models import Account, Goal
+from users.models import User
+from .exceptions import BadRequest, TraderNetAPIUnavailable
+from .models.index import Index, Ticker
+from .models.models import Goal
+from .models.portfolio import Portfolio, PortfolioTickers, Account
 from .serializers.index import IndexSerializer, AdjustedTickerSerializer
-from .serializers.serializers import AccountSerializer, GoalSerializer
+from .serializers.portfolio import PortfolioSerializer, AccountSerializer
+from .serializers.serializers import GoalSerializer
+from .utils.PublicApiClient import PublicApiClient
 from .utils.index_helpers import update_tickers_industries
+
+logger = logging.getLogger(__name__)
 
 
 class AccountViewSet(viewsets.ModelViewSet):
@@ -105,3 +116,57 @@ class GoalViewSet(viewsets.ModelViewSet):
     serializer_class = GoalSerializer
     filter_backends = [filters.OrderingFilter]
     ordering_fields = '__all__'
+
+
+class PortfolioAPI(APIView):
+    """
+    API endpoint that allows to view portfolio
+    """
+    permission_classes = (AllowAny,)
+
+    def get(self, request):
+        user = request.user
+        portfolio_models = Portfolio.objects.filter(user=user.id)
+        return Response(data=PortfolioSerializer(portfolio_models, many=True).data)
+
+    def post(self, request):
+        user = User.objects.get(pk=1)
+        pub_ = request.GET.get('pub_')
+        sec_ = request.GET.get('sec_')
+        cmd_ = 'getPositionJson'
+
+        tradernet_api = PublicApiClient(pub_, sec_, PublicApiClient().V2)
+
+        response = tradernet_api.sendRequest(cmd_).content.decode('utf-8')
+        try:
+            json_portfolio = json.loads(response)['result']['ps']
+        except JSONDecodeError as _:
+            logger.error('TraderNet API is not responding')
+            logger.error(str(response))
+            logger.error(traceback.format_exc())
+            raise TraderNetAPIUnavailable()
+
+        portfolio_accounts = json_portfolio['acc']
+        portfolio_tickers = json_portfolio['pos']
+
+        portfolio_model = Portfolio(user=user)
+        portfolio_model.save()
+
+        for account in portfolio_accounts:
+            account_model = Account(name=account.get('curr'),
+                                    currency=account.get('curr'),
+                                    value=account.get('s'),
+                                    portfolio=portfolio_model)
+            account_model.save()
+
+        for ticker in portfolio_tickers:
+            ticker_symbol = ticker.get('i').split('.')[0]
+            ticker_info = {'company_name': ticker.get('name'),
+                           'price': ticker.get('mkt_price')}
+            ticker_model = Ticker.objects.get_or_create(symbol=ticker_symbol, defaults=ticker_info)[0]
+            ticker_model.save()
+            portfolio_tickers = PortfolioTickers(portfolio=portfolio_model, ticker=ticker_model,
+                                                 amount=ticker.get('q'))
+            portfolio_tickers.save()
+
+        return Response(data=PortfolioSerializer(portfolio_model).data)

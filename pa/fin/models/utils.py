@@ -11,3 +11,7 @@ class TimeStampMixin(models.Model):
 
     class Meta:
         abstract = True
+
+
+MAX_DIGITS = 19
+DECIMAL_PLACES = 2

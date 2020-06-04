@@ -39,3 +39,12 @@ class InvalidData(WebSocketException):
 
 class InvalidMessageType(WebSocketException):
     pass
+
+
+class ServiceUnavailable(APIException):
+    status_code = 503
+    default_detail = 'Service temporarily unavailable, try again later.'
+
+
+class TraderNetAPIUnavailable(ServiceUnavailable):
+    default_detail = 'TraderNet API is not responding'

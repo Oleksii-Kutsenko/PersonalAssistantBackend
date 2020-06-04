@@ -6,29 +6,9 @@ from decimal import Decimal
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models import DecimalField, IntegerField, CharField
-from django.utils.translation import gettext_lazy as _
 
-from fin.models.utils import TimeStampMixin
-
-MAX_DIGITS = 19
-DECIMAL_PLACES = 2
-
-
-class Account(TimeStampMixin):
-    """
-    The model that represents an account
-    """
-
-    class Currency(models.TextChoices):
-        """
-        Available currencies for account
-        """
-        UAH = 'UAH', _("Ukrainian Hryvnia")
-        USD = 'USD', _("United States Dollar")
-        EUR = 'EUR', _("Euro")
-
-    name = CharField(max_length=100)
-    currency = CharField(max_length=3, choices=Currency.choices)
+from fin.models.portfolio import Account
+from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES
 
 
 class Record(TimeStampMixin):

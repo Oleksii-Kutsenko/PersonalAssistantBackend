@@ -11,8 +11,7 @@ from django.db.models import DecimalField, Sum, F
 from django.db.models.functions import Cast, Coalesce
 from django.utils.translation import gettext_lazy as _
 
-from fin.models.models import MAX_DIGITS, DECIMAL_PLACES
-from fin.models.utils import TimeStampMixin
+from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES
 
 
 class Ticker(TimeStampMixin):

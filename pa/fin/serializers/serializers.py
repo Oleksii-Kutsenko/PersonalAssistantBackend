@@ -3,18 +3,7 @@ Serializers
 """
 from rest_framework import serializers
 
-from fin.models.models import Account, Goal
-
-
-class AccountSerializer(serializers.HyperlinkedModelSerializer):
-    """
-    Serialization class for the Account model
-    """
-    id = serializers.IntegerField(read_only=True)
-
-    class Meta:
-        model = Account
-        fields = '__all__'
+from fin.models.models import Goal
 
 
 class GoalSerializer(serializers.HyperlinkedModelSerializer):
