@@ -26,9 +26,7 @@ schema_view = get_schema_view(
 urlpatterns = [
     url(r'^api/', include(router.urls)),
     url(r'^api/indices/(?P<index_id>[1-9][0-9]*)/adjusted/$', views.AdjustedIndex.as_view(), name='index-adjusted'),
-    # TODO: post with params, get with id ))))
     url(r'^api/portfolio/$', views.PortfolioAPI.as_view(), name='portfolio'),
-    url(r'^api/portfolio/(?P<portfolio_id>[1-9][0-9]*)/$', views.PortfolioAPI.as_view(), name='portfolio'),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 ]
