@@ -8,6 +8,7 @@ from users.models import User
 
 
 class Portfolio(TimeStampMixin):
+    name = CharField(max_length=100)
     tickers = ManyToManyField(Ticker, through='PortfolioTickers')
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
 

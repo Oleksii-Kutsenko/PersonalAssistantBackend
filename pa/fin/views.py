@@ -8,14 +8,12 @@ from decimal import Decimal, InvalidOperation
 from json import JSONDecodeError
 from threading import Thread
 
-from rest_framework import filters, viewsets
+from rest_framework import filters, viewsets, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.metadata import SimpleMetadata
-from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from users.models import User
 from .exceptions import BadRequest, TraderNetAPIUnavailable
 from .models.index import Index, Ticker
 from .models.models import Goal
@@ -23,8 +21,9 @@ from .models.portfolio import Portfolio, PortfolioTickers, Account
 from .serializers.index import IndexSerializer, AdjustedTickerSerializer
 from .serializers.portfolio import PortfolioSerializer, AccountSerializer
 from .serializers.serializers import GoalSerializer
-from .utils.PublicApiClient import PublicApiClient
 from .utils.index_helpers import update_tickers_industries
+from .utils.tradernet.PublicApiClient import PublicApiClient
+from .utils.tradernet.error_codes import BAD_SIGN
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +32,23 @@ class AccountViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows accounts to be viewed or edited
     """
+
+    class AccountMetadata(SimpleMetadata):
+        def determine_metadata(self, request, view):
+            base_metadata = super().determine_metadata(request, view)
+            query = Portfolio.objects.filter(user=request.user).all()
+            base_metadata['actions']['POST']['portfolio'] = {
+                'type': 'choice',
+                'required': True,
+                'read_only': False,
+                'label': 'Portfolio',
+                'choices': [
+                    {'value': portfolio.id, 'displayed_name': portfolio.name} for portfolio in query
+                ]
+            }
+            return base_metadata
+
+    metadata_class = AccountMetadata
     queryset = Account.objects.all().order_by('updated')
     serializer_class = AccountSerializer
     filter_backends = [filters.OrderingFilter]
@@ -118,38 +134,69 @@ class GoalViewSet(viewsets.ModelViewSet):
     ordering_fields = '__all__'
 
 
-class PortfolioAPI(APIView):
+class PortfolioViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows to view portfolio
     """
-    permission_classes = (AllowAny,)
 
-    def get(self, request):
+    class PortfolioMetadata(SimpleMetadata):
+        def determine_metadata(self, request, view):
+            base_metadata = super().determine_metadata(request, view)
+            base_metadata['actions']['POST']['query_params'] = {
+                'pub_': {
+                    'type': 'string',
+                    'required': True,
+                    'read_only': False,
+                    'label': 'Public Key'
+                },
+                'sec_': {
+                    'type': 'string',
+                    'required': True,
+                    'read_only': False,
+                    'label': 'Secret Key'
+                },
+            }
+            return base_metadata
+
+    serializer_class = PortfolioSerializer
+    metadata_class = PortfolioMetadata
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = '__all__'
+
+    def get_queryset(self):
+        queryset = Portfolio.objects.filter(user=self.request.user).all()
+        return queryset
+
+    def create(self, request, *args, **kwargs):
         user = request.user
-        portfolio_models = Portfolio.objects.filter(user=user.id)
-        return Response(data=PortfolioSerializer(portfolio_models, many=True).data)
-
-    def post(self, request):
-        user = User.objects.get(pk=1)
         pub_ = request.GET.get('pub_')
         sec_ = request.GET.get('sec_')
+        name = json.loads(request.body.decode('utf-8')).get('name')
         cmd_ = 'getPositionJson'
+
+        if pub_ is None and sec_ is None:
+            raise BadRequest(detail='Missing pub_ or sec_ query params')
 
         tradernet_api = PublicApiClient(pub_, sec_, PublicApiClient().V2)
 
-        response = tradernet_api.sendRequest(cmd_).content.decode('utf-8')
+        raw_response = tradernet_api.sendRequest(cmd_).content.decode('utf-8')
         try:
-            json_portfolio = json.loads(response)['result']['ps']
+            json_response = json.loads(raw_response)
         except JSONDecodeError as _:
             logger.error('TraderNet API is not responding')
-            logger.error(str(response))
+            logger.error(str(raw_response))
             logger.error(traceback.format_exc())
             raise TraderNetAPIUnavailable()
+
+        if json_response.get('code') == BAD_SIGN:
+            raise BadRequest(detail=json_response['errMsg'])
+
+        json_portfolio = json_response['result']['ps']
 
         portfolio_accounts = json_portfolio['acc']
         portfolio_tickers = json_portfolio['pos']
 
-        portfolio_model = Portfolio(user=user)
+        portfolio_model = Portfolio(user=user, name=name)
         portfolio_model.save()
 
         for account in portfolio_accounts:
@@ -169,4 +216,4 @@ class PortfolioAPI(APIView):
                                                  amount=ticker.get('q'))
             portfolio_tickers.save()
 
-        return Response(data=PortfolioSerializer(portfolio_model).data)
+        return Response(data=PortfolioSerializer(portfolio_model).data, status=status.HTTP_201_CREATED)
