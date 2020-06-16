@@ -29,20 +29,30 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(' ')
 # Application definition
 
 INSTALLED_APPS = [
-    'corsheaders',
+    # Django Apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.sites',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Third-Party Apps
+    'allauth',
+    'allauth.account',
     'channels',
+    'corsheaders',
     'rest_framework',
+    'rest_framework.authtoken',
+    'rest_auth',
+    'rest_auth.registration',
     'drf_yasg',
 ]
 
 PROJECT_APPS = [
     'fin',
+    'users',
 ]
 
 INSTALLED_APPS = INSTALLED_APPS + PROJECT_APPS
@@ -132,7 +142,22 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
+# django-rest-auth
+ACCOUNT_AUTHENTICATION_METHOD = 'username'
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+AUTH_USER_MODEL = 'users.User'
+SITE_ID = 1
+
 REST_FRAMEWORK = {
+    # auth
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication'
+    ],
+    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated'],
+    # viewsets ordering and pagination
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 15
