@@ -15,7 +15,7 @@ class Portfolio(TimeStampMixin):
 
 class PortfolioTickers(TimeStampMixin):
     portfolio = ForeignKey(Portfolio, on_delete=CASCADE, related_name='portfolio')
-    ticker = ForeignKey(Ticker, on_delete=CASCADE, related_name='ticker')
+    ticker = ForeignKey(Ticker, on_delete=CASCADE, related_name='portfolio_ticker')
     amount = IntegerField()
 
 
