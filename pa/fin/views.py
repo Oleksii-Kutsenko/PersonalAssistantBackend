@@ -8,6 +8,7 @@ from decimal import Decimal, InvalidOperation
 from json import JSONDecodeError
 from threading import Thread
 
+from django.db import transaction
 from rest_framework import filters, viewsets, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.metadata import SimpleMetadata
@@ -28,27 +29,11 @@ from .utils.tradernet.error_codes import BAD_SIGN
 logger = logging.getLogger(__name__)
 
 
-class AccountViewSet(viewsets.ModelViewSet):
+class AccountViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint that allows accounts to be viewed or edited
     """
 
-    class AccountMetadata(SimpleMetadata):
-        def determine_metadata(self, request, view):
-            base_metadata = super().determine_metadata(request, view)
-            query = Portfolio.objects.filter(user=request.user).all()
-            base_metadata['actions']['POST']['portfolio'] = {
-                'type': 'choice',
-                'required': True,
-                'read_only': False,
-                'label': 'Portfolio',
-                'choices': [
-                    {'value': portfolio.id, 'displayed_name': portfolio.name} for portfolio in query
-                ]
-            }
-            return base_metadata
-
-    metadata_class = AccountMetadata
     queryset = Account.objects.all().order_by('updated')
     serializer_class = AccountSerializer
     filter_backends = [filters.OrderingFilter]
@@ -167,6 +152,7 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         queryset = Portfolio.objects.filter(user=self.request.user).all()
         return queryset
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
         user = request.user
         pub_ = request.GET.get('pub_')

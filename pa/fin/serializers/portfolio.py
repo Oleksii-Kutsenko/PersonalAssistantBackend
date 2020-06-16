@@ -13,7 +13,7 @@ class AccountSerializer(serializers.ModelSerializer):
     """
     Serialization class for the Account model
     """
-    id = serializers.IntegerField(read_only=True)
+    id = serializers.IntegerField()
 
     class Meta:
         model = Account
