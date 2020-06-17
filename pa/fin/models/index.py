@@ -28,6 +28,15 @@ class Ticker(TimeStampMixin):
     sector = models.CharField(max_length=50, default=DEFAULT_VALUE)
     symbol = models.CharField(max_length=100, unique=True)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['company_name',]),
+            models.Index(fields=['country',]),
+            models.Index(fields=['industry',]),
+            models.Index(fields=['sector',]),
+            models.Index(fields=['symbol',]),
+        ]
+
     def __str__(self):
         return f"{self.symbol}"
 
@@ -50,6 +59,11 @@ class Index(TimeStampMixin):
 
     data_source_url = models.URLField(choices=Source.choices, unique=True)
     tickers = models.ManyToManyField(Ticker, through='TickerIndexWeight')
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['data_source_url',]),
+        ]
 
     @transaction.atomic
     def adjust(self, money, options):
@@ -203,3 +217,10 @@ class TickerIndexWeight(TimeStampMixin):
     ticker = models.ForeignKey(Ticker, on_delete=models.CASCADE, related_name='ticker')
     weight = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=10, validators=[MinValueValidator(0.000001),
                                                                                        MaxValueValidator(1.000001)])
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['index',]),
+            models.Index(fields=['ticker',]),
+            models.Index(fields=['weight',]),
+        ]

@@ -12,11 +12,23 @@ class Portfolio(TimeStampMixin):
     tickers = ManyToManyField(Ticker, through='PortfolioTickers')
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['name', ]),
+            models.Index(fields=['user', ]),
+        ]
+
 
 class PortfolioTickers(TimeStampMixin):
     portfolio = ForeignKey(Portfolio, on_delete=CASCADE, related_name='portfolio')
     ticker = ForeignKey(Ticker, on_delete=CASCADE, related_name='portfolio_ticker')
     amount = IntegerField()
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['portfolio', ]),
+            models.Index(fields=['ticker', ]),
+        ]
 
 
 class Account(TimeStampMixin):
@@ -36,3 +48,9 @@ class Account(TimeStampMixin):
     currency = CharField(max_length=3, choices=Currency.choices)
     portfolio = ForeignKey(Portfolio, related_name='accounts', on_delete=models.CASCADE, null=False)
     value = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES, default=0)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['name', ]),
+            models.Index(fields=['currency', ]),
+        ]
