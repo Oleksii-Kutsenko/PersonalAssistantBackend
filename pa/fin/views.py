@@ -53,12 +53,12 @@ class IndexViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
-        Thread(target=update_tickers_industries, args=(response.data.get('id'),)).start()
+        Thread(target=update_tickers_industries).start()
         return response
 
     def update(self, request, *args, **kwargs):
         response = super().update(request, *args, **kwargs)
-        Thread(target=update_tickers_industries, args=(response.data.get('id'),)).start()
+        Thread(target=update_tickers_industries).start()
         return response
 
 
@@ -201,5 +201,7 @@ class PortfolioViewSet(viewsets.ModelViewSet):
             portfolio_tickers = PortfolioTickers(portfolio=portfolio_model, ticker=ticker_model,
                                                  amount=ticker.get('q'))
             portfolio_tickers.save()
+
+        Thread(target=update_tickers_industries).start()
 
         return Response(data=PortfolioSerializer(portfolio_model).data, status=status.HTTP_201_CREATED)
