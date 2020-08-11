@@ -89,7 +89,7 @@ TEMPLATES = [
     },
 ]
 
-ASGI_APPLICATION = 'pa.routing.application'
+# ASGI_APPLICATION = 'pa.routing.application'
 WSGI_APPLICATION = 'pa.wsgi.application'
 
 # Database

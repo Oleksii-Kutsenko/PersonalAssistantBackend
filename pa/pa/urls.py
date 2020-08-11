@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, re_path, include
 
+# pylint: disable=invalid-name
 urlpatterns = [
     re_path(r'fin/', include('fin.urls')),
     re_path(r'users/', include('users.urls')),

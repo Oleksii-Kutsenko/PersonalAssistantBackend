@@ -30,11 +30,11 @@ class Ticker(TimeStampMixin):
 
     class Meta:
         indexes = [
-            models.Index(fields=['company_name',]),
-            models.Index(fields=['country',]),
-            models.Index(fields=['industry',]),
-            models.Index(fields=['sector',]),
-            models.Index(fields=['symbol',]),
+            models.Index(fields=['company_name', ]),
+            models.Index(fields=['country', ]),
+            models.Index(fields=['industry', ]),
+            models.Index(fields=['sector', ]),
+            models.Index(fields=['symbol', ]),
         ]
 
     def __str__(self):
@@ -62,11 +62,11 @@ class Index(TimeStampMixin):
 
     class Meta:
         indexes = [
-            models.Index(fields=['data_source_url',]),
+            models.Index(fields=['data_source_url', ]),
         ]
 
     @transaction.atomic
-    def adjust(self, money, options):
+    def adjust(self, money, options, step=None):
         """
         Calculate index adjusted by the amount of money
         """
@@ -93,7 +93,7 @@ class Index(TimeStampMixin):
 
         adjusted_money_amount = Decimal(money)
         # experimentally established value
-        step = Decimal(money) * Decimal(4)
+        step = step or Decimal(money) * Decimal(4)
 
         def amount(money_amount):
             return Cast(F('weight') / 100 * money_amount / F('ticker__price'), integer_field)
@@ -220,7 +220,7 @@ class TickerIndexWeight(TimeStampMixin):
 
     class Meta:
         indexes = [
-            models.Index(fields=['index',]),
-            models.Index(fields=['ticker',]),
-            models.Index(fields=['weight',]),
+            models.Index(fields=['index', ]),
+            models.Index(fields=['ticker', ]),
+            models.Index(fields=['weight', ]),
         ]

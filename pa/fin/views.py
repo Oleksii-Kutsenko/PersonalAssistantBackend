@@ -10,6 +10,7 @@ from threading import Thread
 
 from django.db import transaction
 from rest_framework import filters, viewsets, status
+from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.metadata import SimpleMetadata
 from rest_framework.response import Response
@@ -27,6 +28,36 @@ from .utils.tradernet.PublicApiClient import PublicApiClient
 from .utils.tradernet.error_codes import BAD_SIGN
 
 logger = logging.getLogger(__name__)
+
+
+class AdjustMixin:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.money = Decimal(0)
+        self.options = None
+
+    def initial(self, request, *args, **kwargs):
+        super().initial(request, *args, **kwargs)
+        money = request.GET.get('money')
+
+        if money is None:
+            raise BadRequest(detail='Money parameter is missing')
+
+        try:
+            money = Decimal(money)
+            if money < 1:
+                raise BadRequest(detail="Money parameter is invalid")
+        except InvalidOperation:
+            raise BadRequest(detail="Money parameter is invalid")
+        self.money = money
+
+        options = {
+            'skip_countries': request.GET.getlist('skip-country[]', []),
+            'skip_sectors': request.GET.getlist('skip-sector[]', []),
+            'skip_industries': request.GET.getlist('skip-industry[]', []),
+            'skip_tickers': request.GET.getlist('skip-ticker[]', []),
+        }
+        self.options = options
 
 
 class AccountViewSet(viewsets.ReadOnlyModelViewSet):
@@ -62,7 +93,7 @@ class IndexViewSet(viewsets.ModelViewSet):
         return response
 
 
-class AdjustedIndex(APIView):
+class AdjustedIndexView(AdjustMixin, APIView):
     """
     API endpoint that allows executing adjust method of the index
     """
@@ -84,27 +115,10 @@ class AdjustedIndex(APIView):
         """
         Calculate index adjusted by the amount of money
         """
-        money = request.GET.get('money')
-
-        if money is None:
-            raise BadRequest(detail='Money parameter is missing')
-
-        try:
-            money = Decimal(money)
-            if money < 1:
-                raise BadRequest(detail="Money parameter is invalid")
-        except InvalidOperation:
-            raise BadRequest(detail="Money parameter is invalid")
 
         index = get_object_or_404(queryset=Index.objects.all(), pk=index_id)
 
-        options = {
-            'skip_countries': request.GET.getlist('skip-country[]', []),
-            'skip_sectors': request.GET.getlist('skip-sector[]', []),
-            'skip_industries': request.GET.getlist('skip-industry[]', []),
-            'skip_tickers': request.GET.getlist('skip-ticker[]', []),
-        }
-        adjusted_index, summary_cost = index.adjust(money, options)
+        adjusted_index, summary_cost = index.adjust(self.money, self.options)
         serialized_index = AdjustedTickerSerializer(adjusted_index, many=True)
         return Response(data={'tickers': serialized_index.data, 'summary_cost': summary_cost})
 
@@ -119,7 +133,7 @@ class GoalViewSet(viewsets.ModelViewSet):
     ordering_fields = '__all__'
 
 
-class PortfolioViewSet(viewsets.ModelViewSet):
+class PortfolioViewSet(AdjustMixin, viewsets.ModelViewSet):
     """
     API endpoint that allows to view portfolio
     """
@@ -151,6 +165,16 @@ class PortfolioViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Portfolio.objects.filter(user=self.request.user).all()
         return queryset
+
+    @action(detail=True, url_path='adjust/indices/(?P<index_id>[^/.]+)')
+    def adjust(self, request, *args, **kwargs):
+        index_id = kwargs.get('index_id')
+        portfolio_id = kwargs.get('pk')
+
+        portfolio = Portfolio.objects.get(pk=portfolio_id)
+        adjusted_portfolio, summary_cost = portfolio.adjust(index_id, self.money, self.options)
+        serialized_index = AdjustedTickerSerializer(adjusted_portfolio, many=True)
+        return Response(data={'tickers': serialized_index.data, 'summary_cost': summary_cost})
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
