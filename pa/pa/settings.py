@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     # Third-Party Apps
     'allauth',
     'allauth.account',
-    'channels',
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
@@ -89,7 +88,6 @@ TEMPLATES = [
     },
 ]
 
-# ASGI_APPLICATION = 'pa.routing.application'
 WSGI_APPLICATION = 'pa.wsgi.application'
 
 # Database
