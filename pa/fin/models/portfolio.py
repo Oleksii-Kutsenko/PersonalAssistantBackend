@@ -1,8 +1,9 @@
 from django.db import models
-from django.db.models import ForeignKey, CASCADE, ManyToManyField, IntegerField, CharField, DecimalField
+from django.db.models import ForeignKey, CASCADE, ManyToManyField, IntegerField, CharField, DecimalField, F, Sum
+from django.db.models.functions import Cast
 from django.utils.translation import gettext_lazy as _
 
-from fin.models.index import Ticker
+from fin.models.index import Ticker, Index
 from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES
 from users.models import User
 
@@ -17,6 +18,21 @@ class Portfolio(TimeStampMixin):
             models.Index(fields=['name', ]),
             models.Index(fields=['user', ]),
         ]
+
+    def adjust(self, index_id, money, options):
+        decimal_field = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
+        cost = Cast(F('amount') * F('ticker__price'), decimal_field)
+        index = Index.objects.get(pk=index_id)
+
+        proper_portfolio_tickers = PortfolioTickers.objects \
+            .filter(portfolio=self) \
+            .filter(ticker__symbol__in=index.tickers.values_list('symbol', flat=True))
+
+        proper_portfolio_tickers_sum = proper_portfolio_tickers.annotate(cost=cost).aggregate(Sum('cost'))
+        proper_portfolio_tickers_sum = proper_portfolio_tickers_sum.get('cost__sum') or 0
+
+        adjusted_index_query, summary_cost = index.adjust(proper_portfolio_tickers_sum + money, options, step=money)
+        return adjusted_index_query, summary_cost
 
 
 class PortfolioTickers(TimeStampMixin):

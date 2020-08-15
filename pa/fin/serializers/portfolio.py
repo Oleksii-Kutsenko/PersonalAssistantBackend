@@ -73,7 +73,7 @@ class PortfolioSerializer(serializers.ModelSerializer):
 
     def get_total_accounts(self, obj):
         accounts_sum = Account.objects.filter(portfolio=obj).aggregate(Sum('value')).get('value__sum')
-        return accounts_sum
+        return accounts_sum or 0
 
     def get_total_tickers(self, obj):
         decimal_field = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)

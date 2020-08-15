@@ -1,5 +1,10 @@
+"""
+Users app models
+"""
 from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    pass
+    """
+    Custom user for PA project
+    """

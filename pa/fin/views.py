@@ -10,6 +10,7 @@ from threading import Thread
 
 from django.db import transaction
 from rest_framework import filters, viewsets, status
+from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.metadata import SimpleMetadata
 from rest_framework.response import Response
@@ -27,6 +28,37 @@ from .utils.tradernet.PublicApiClient import PublicApiClient
 from .utils.tradernet.error_codes import BAD_SIGN
 
 logger = logging.getLogger(__name__)
+
+
+class AdjustMixin:
+    """
+    Extracts required params for adjusting functionality from request
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.money = None
+        self.options = {}
+
+    def initial(self, request, *args, **kwargs):
+        """
+        Overriding the DRF View method that executes inside every View/Viewset
+        """
+        super().initial(request, *args, **kwargs)
+        money = request.GET.get('money')
+
+        try:
+            money = Decimal(money)
+        except (InvalidOperation, TypeError):
+            pass
+        self.money = money
+
+        options = {
+            'skip_countries': request.GET.getlist('skip-country[]', []),
+            'skip_sectors': request.GET.getlist('skip-sector[]', []),
+            'skip_industries': request.GET.getlist('skip-industry[]', []),
+            'skip_tickers': request.GET.getlist('skip-ticker[]', []),
+        }
+        self.options.update(options)
 
 
 class AccountViewSet(viewsets.ReadOnlyModelViewSet):
@@ -62,12 +94,15 @@ class IndexViewSet(viewsets.ModelViewSet):
         return response
 
 
-class AdjustedIndex(APIView):
+class AdjustedIndexView(AdjustMixin, APIView):
     """
     API endpoint that allows executing adjust method of the index
     """
 
     class AdjustedIndexMetadata(SimpleMetadata):
+        """
+        Metadata that helps frontend create filter form
+        """
         def determine_metadata(self, request, view):
             base_metadata = super().determine_metadata(request, view)
             index = get_object_or_404(Index.objects.all(), pk=view.kwargs.get('index_id'))
@@ -84,27 +119,11 @@ class AdjustedIndex(APIView):
         """
         Calculate index adjusted by the amount of money
         """
-        money = request.GET.get('money')
-
-        if money is None:
-            raise BadRequest(detail='Money parameter is missing')
-
-        try:
-            money = Decimal(money)
-            if money < 1:
-                raise BadRequest(detail="Money parameter is invalid")
-        except InvalidOperation:
+        if self.money is None:
             raise BadRequest(detail="Money parameter is invalid")
-
         index = get_object_or_404(queryset=Index.objects.all(), pk=index_id)
 
-        options = {
-            'skip_countries': request.GET.getlist('skip-country[]', []),
-            'skip_sectors': request.GET.getlist('skip-sector[]', []),
-            'skip_industries': request.GET.getlist('skip-industry[]', []),
-            'skip_tickers': request.GET.getlist('skip-ticker[]', []),
-        }
-        adjusted_index, summary_cost = index.adjust(money, options)
+        adjusted_index, summary_cost = index.adjust(self.money, self.options)
         serialized_index = AdjustedTickerSerializer(adjusted_index, many=True)
         return Response(data={'tickers': serialized_index.data, 'summary_cost': summary_cost})
 
@@ -119,12 +138,15 @@ class GoalViewSet(viewsets.ModelViewSet):
     ordering_fields = '__all__'
 
 
-class PortfolioViewSet(viewsets.ModelViewSet):
+class PortfolioViewSet(AdjustMixin, viewsets.ModelViewSet):
     """
     API endpoint that allows to view portfolio
     """
 
     class PortfolioMetadata(SimpleMetadata):
+        """
+        Metadata that helps frontend to generate creation form
+        """
         def determine_metadata(self, request, view):
             base_metadata = super().determine_metadata(request, view)
             base_metadata['actions']['POST']['query_params'] = {
@@ -152,9 +174,23 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         queryset = Portfolio.objects.filter(user=self.request.user).all()
         return queryset
 
+    @action(detail=True, url_path='adjust/indices/(?P<index_id>[^/.]+)')
+    def adjust(self, request, *args, **kwargs):
+        """
+        Returns tickers that should be inside portfolio to make portfolio more similar to index
+        """
+        if self.money is None:
+            raise BadRequest(detail="Money parameter is invalid")
+        index_id = kwargs.get('index_id')
+        portfolio_id = kwargs.get('pk')
+
+        portfolio = Portfolio.objects.get(pk=portfolio_id)
+        adjusted_portfolio, summary_cost = portfolio.adjust(index_id, self.money, self.options)
+        serialized_index = AdjustedTickerSerializer(adjusted_portfolio, many=True)
+        return Response(data={'tickers': serialized_index.data, 'summary_cost': summary_cost})
+
     @transaction.atomic
     def create(self, request, *args, **kwargs):
-        user = request.user
         pub_ = request.GET.get('pub_')
         sec_ = request.GET.get('sec_')
         name = json.loads(request.body.decode('utf-8')).get('name')
@@ -182,7 +218,7 @@ class PortfolioViewSet(viewsets.ModelViewSet):
         portfolio_accounts = json_portfolio['acc']
         portfolio_tickers = json_portfolio['pos']
 
-        portfolio_model = Portfolio(user=user, name=name)
+        portfolio_model = Portfolio(user=request.user, name=name)
         portfolio_model.save()
 
         for account in portfolio_accounts:
@@ -196,12 +232,15 @@ class PortfolioViewSet(viewsets.ModelViewSet):
             ticker_symbol = ticker.get('i').split('.')[0]
             ticker_info = {'company_name': ticker.get('name'),
                            'price': ticker.get('mkt_price')}
-            ticker_model = Ticker.objects.get_or_create(symbol=ticker_symbol, defaults=ticker_info)[0]
+            ticker_model, _ = Ticker.objects.get_or_create(symbol=ticker_symbol,
+                                                           defaults=ticker_info)
             ticker_model.save()
-            portfolio_tickers = PortfolioTickers(portfolio=portfolio_model, ticker=ticker_model,
+            portfolio_tickers = PortfolioTickers(portfolio=portfolio_model,
+                                                 ticker=ticker_model,
                                                  amount=ticker.get('q'))
             portfolio_tickers.save()
 
         Thread(target=update_tickers_industries).start()
 
-        return Response(data=PortfolioSerializer(portfolio_model).data, status=status.HTTP_201_CREATED)
+        return Response(data=PortfolioSerializer(portfolio_model).data,
+                        status=status.HTTP_201_CREATED)

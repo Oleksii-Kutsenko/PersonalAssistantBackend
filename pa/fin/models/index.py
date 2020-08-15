@@ -1,3 +1,6 @@
+"""
+Classes that helps operate with indexes and tickers
+"""
 import csv
 import urllib.request
 from decimal import Decimal
@@ -16,25 +19,30 @@ from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES
 
 class Ticker(TimeStampMixin):
     """
-    Ticker model
+    Class that represents stock exchange ticker
     """
     DEFAULT_VALUE = 'Unknown'
 
     company_name = models.CharField(max_length=50, default=DEFAULT_VALUE)
     country = models.CharField(max_length=50, default=DEFAULT_VALUE)
     industry = models.CharField(max_length=50, default=DEFAULT_VALUE)
-    market_cap = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES, null=True)
+    market_cap = models.DecimalField(max_digits=MAX_DIGITS,
+                                     decimal_places=DECIMAL_PLACES,
+                                     null=True)
     price = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
     sector = models.CharField(max_length=50, default=DEFAULT_VALUE)
     symbol = models.CharField(max_length=100, unique=True)
 
     class Meta:
+        """
+        Ticker indexes
+        """
         indexes = [
-            models.Index(fields=['company_name',]),
-            models.Index(fields=['country',]),
-            models.Index(fields=['industry',]),
-            models.Index(fields=['sector',]),
-            models.Index(fields=['symbol',]),
+            models.Index(fields=['company_name', ]),
+            models.Index(fields=['country', ]),
+            models.Index(fields=['industry', ]),
+            models.Index(fields=['sector', ]),
+            models.Index(fields=['symbol', ]),
         ]
 
     def __str__(self):
@@ -53,20 +61,24 @@ class Index(TimeStampMixin):
         """
         SP500 = 'https://www.slickcharts.com/sp500', _("S&P 500")
         NASDAQ100 = 'https://www.slickcharts.com/nasdaq100', _("NASDAQ 100")
-        IHI = 'https://www.ishares.com/us/products/239516/ishares-us-medical-devices-etf/1467271812596.ajax', _('IHI')
-        RUSSEL3000 = 'https://www.ishares.com/us/products/239714/ishares-russell-3000-etf/1467271812596.ajax', \
-                     _('RUSSEL3000')
+        IHI = 'https://www.ishares.com/us/products/239516/ishares-us-medical-devices-etf' \
+              '/1467271812596.ajax', _('IHI')
+        RUSSEL3000 = 'https://www.ishares.com/us/products/239714/ishares-russell-3000-etf' \
+                     '/1467271812596.ajax', _('RUSSEL3000')
 
     data_source_url = models.URLField(choices=Source.choices, unique=True)
     tickers = models.ManyToManyField(Ticker, through='TickerIndexWeight')
 
     class Meta:
+        """
+        Index model indexes
+        """
         indexes = [
-            models.Index(fields=['data_source_url',]),
+            models.Index(fields=['data_source_url', ]),
         ]
 
     @transaction.atomic
-    def adjust(self, money, options):
+    def adjust(self, money, options, step=None):
         """
         Calculate index adjusted by the amount of money
         """
@@ -93,7 +105,7 @@ class Index(TimeStampMixin):
 
         adjusted_money_amount = Decimal(money)
         # experimentally established value
-        step = Decimal(money) * Decimal(4)
+        step = step or Decimal(money) * Decimal(4)
 
         def amount(money_amount):
             return Cast(F('weight') / 100 * money_amount / F('ticker__price'), integer_field)
@@ -112,6 +124,9 @@ class Index(TimeStampMixin):
             .annotate(amount=amount(adjusted_money_amount), cost=cost) \
             .filter(cost__gte=self.REASONABLE_LOT_PRICE)
         summary_cost = tickers_query.aggregate(Sum('cost')).get('cost__sum')
+
+        if len(tickers_query) == 0:
+            return tickers_query, 0
 
         # adjust sum of weights to 100%
         tickers_query = tickers_query.filter(amount__gt=0)
@@ -161,19 +176,21 @@ class Index(TimeStampMixin):
                     ticker.save()
 
                     ticker_weight = Decimal(tds[3].text)
-                    ticker_index_relation = TickerIndexWeight(index=self, ticker=ticker, weight=ticker_weight)
+                    ticker_index_relation = TickerIndexWeight(index=self,
+                                                              ticker=ticker,
+                                                              weight=ticker_weight)
                     ticker_index_relation.save()
 
         elif self.data_source_url in (self.Source.IHI, self.Source.RUSSEL3000):
-            IHI_PARAMS = {'fileType': 'csv', 'fileName': 'IHI_holdings', 'dataType': 'fund'}
-            RUSSEL_PARAMS = {'fileType': 'csv', 'fileName': 'IWV_holdings', 'dataType': 'fund'}
+            ihi_params = {'fileType': 'csv', 'fileName': 'IHI_holdings', 'dataType': 'fund'}
+            russel_params = {'fileType': 'csv', 'fileName': 'IWV_holdings', 'dataType': 'fund'}
 
             if self.data_source_url == self.Source.IHI:
-                params = IHI_PARAMS
+                params = ihi_params
             else:
-                params = RUSSEL_PARAMS
+                params = russel_params
 
-            EQUITY_NAME = 'Equity'
+            equity_name = 'Equity'
             response = requests.get(self.data_source_url, params=params)
 
             tickers_data_start_word = 'Ticker'
@@ -185,10 +202,10 @@ class Index(TimeStampMixin):
             total_market_cap = Decimal(0)
             reader = csv.reader(tickers_data, delimiter=',')
             for row in reader:
-                if len(row) > 2 and row[2] == EQUITY_NAME:
-                    price_without_separators = Decimal(row[4].replace(',', ''))
+                if len(row) > 2 and row[3] == equity_name:
+                    price_without_separators = Decimal(row[11].replace(',', ''))
                     if price_without_separators != Decimal(0):
-                        market_cap_without_separators = Decimal(row[6].replace(',', ''))
+                        market_cap_without_separators = Decimal(row[4].replace(',', ''))
 
                         symbol = row[0]
                         ticker_info = {
@@ -196,16 +213,20 @@ class Index(TimeStampMixin):
                             'price': price_without_separators,
                             'market_cap': market_cap_without_separators
                         }
-                        ticker, _ = Ticker.objects.update_or_create(symbol=symbol, defaults=ticker_info)
+                        ticker, _ = Ticker.objects.update_or_create(symbol=symbol,
+                                                                    defaults=ticker_info)
                         ticker.save()
 
-                        ticker_weight = Decimal(row[3])
-                        ticker_index_relation = TickerIndexWeight(index=self, ticker=ticker, weight=ticker_weight)
+                        ticker_weight = Decimal(row[5])
+                        ticker_index_relation = TickerIndexWeight(index=self,
+                                                                  ticker=ticker,
+                                                                  weight=ticker_weight)
                         ticker_index_relation.save()
                         total_market_cap += market_cap_without_separators
 
             for ticker_index_weight in TickerIndexWeight.objects.filter(index=self):
-                ticker_index_weight.weight = ticker_index_weight.ticker.market_cap / total_market_cap
+                market_cap = ticker_index_weight.ticker.market_cap
+                ticker_index_weight.weight = market_cap / total_market_cap * 100
                 ticker_index_weight.save()
 
     def __str__(self):
@@ -213,14 +234,21 @@ class Index(TimeStampMixin):
 
 
 class TickerIndexWeight(TimeStampMixin):
+    """
+    M2M table between Index and Ticker models
+    """
     index = models.ForeignKey(Index, on_delete=models.CASCADE, related_name='index')
     ticker = models.ForeignKey(Ticker, on_delete=models.CASCADE, related_name='ticker')
-    weight = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=10, validators=[MinValueValidator(0.000001),
-                                                                                       MaxValueValidator(1.000001)])
+    weight = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=10,
+                                 validators=[MinValueValidator(0.000001),
+                                             MaxValueValidator(1.000001)])
 
     class Meta:
+        """
+        Model indexes
+        """
         indexes = [
-            models.Index(fields=['index',]),
-            models.Index(fields=['ticker',]),
-            models.Index(fields=['weight',]),
+            models.Index(fields=['index', ]),
+            models.Index(fields=['ticker', ]),
+            models.Index(fields=['weight', ]),
         ]
