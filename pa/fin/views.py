@@ -37,7 +37,7 @@ class AdjustMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.money = None
-        self.options = None
+        self.options = {}
 
     def initial(self, request, *args, **kwargs):
         """
@@ -58,7 +58,7 @@ class AdjustMixin:
             'skip_industries': request.GET.getlist('skip-industry[]', []),
             'skip_tickers': request.GET.getlist('skip-ticker[]', []),
         }
-        self.options = options
+        self.options.update(options)
 
 
 class AccountViewSet(viewsets.ReadOnlyModelViewSet):
