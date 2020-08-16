@@ -1,3 +1,6 @@
+"""
+Helpers for models
+"""
 from django.db import models
 from django.db.models import DateTimeField
 
@@ -10,6 +13,9 @@ class TimeStampMixin(models.Model):
     updated = DateTimeField(auto_now=True)
 
     class Meta:
+        """
+        Model meta class
+        """
         abstract = True
 
 

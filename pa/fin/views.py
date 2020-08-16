@@ -16,16 +16,18 @@ from rest_framework.metadata import SimpleMetadata
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from fin.models.ticker.update_tickers_statements import update_tickers_statements
 from .exceptions import BadRequest, TraderNetAPIUnavailable
-from .models.index import Index, Ticker
+from .external_api.tradernet.PublicApiClient import PublicApiClient
+from .external_api.tradernet.error_codes import BAD_SIGN
+from .models.index import Index
 from .models.models import Goal
 from .models.portfolio import Portfolio, PortfolioTickers, Account
-from .serializers.index import IndexSerializer, AdjustedTickerSerializer
+from .models.ticker import Ticker
+from .serializers.index import IndexSerializer
+from .serializers.ticker import AdjustedTickerSerializer
 from .serializers.portfolio import PortfolioSerializer, AccountSerializer
 from .serializers.serializers import GoalSerializer
-from .utils.index_helpers import update_tickers_industries
-from .utils.tradernet.PublicApiClient import PublicApiClient
-from .utils.tradernet.error_codes import BAD_SIGN
 
 logger = logging.getLogger(__name__)
 
@@ -85,12 +87,12 @@ class IndexViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
-        Thread(target=update_tickers_industries).start()
+        Thread(target=update_tickers_statements).start()
         return response
 
     def update(self, request, *args, **kwargs):
         response = super().update(request, *args, **kwargs)
-        Thread(target=update_tickers_industries).start()
+        Thread(target=update_tickers_statements).start()
         return response
 
 
@@ -240,7 +242,7 @@ class PortfolioViewSet(AdjustMixin, viewsets.ModelViewSet):
                                                  amount=ticker.get('q'))
             portfolio_tickers.save()
 
-        Thread(target=update_tickers_industries).start()
+        Thread(target=update_tickers_statements).start()
 
         return Response(data=PortfolioSerializer(portfolio_model).data,
                         status=status.HTTP_201_CREATED)

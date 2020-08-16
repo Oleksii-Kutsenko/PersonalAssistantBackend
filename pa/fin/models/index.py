@@ -14,39 +14,8 @@ from django.db.models import DecimalField, Sum, F
 from django.db.models.functions import Cast, Coalesce
 from django.utils.translation import gettext_lazy as _
 
+from fin.models.ticker import Ticker
 from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES
-
-
-class Ticker(TimeStampMixin):
-    """
-    Class that represents stock exchange ticker
-    """
-    DEFAULT_VALUE = 'Unknown'
-
-    company_name = models.CharField(max_length=50, default=DEFAULT_VALUE)
-    country = models.CharField(max_length=50, default=DEFAULT_VALUE)
-    industry = models.CharField(max_length=50, default=DEFAULT_VALUE)
-    market_cap = models.DecimalField(max_digits=MAX_DIGITS,
-                                     decimal_places=DECIMAL_PLACES,
-                                     null=True)
-    price = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
-    sector = models.CharField(max_length=50, default=DEFAULT_VALUE)
-    symbol = models.CharField(max_length=100, unique=True)
-
-    class Meta:
-        """
-        Ticker indexes
-        """
-        indexes = [
-            models.Index(fields=['company_name', ]),
-            models.Index(fields=['country', ]),
-            models.Index(fields=['industry', ]),
-            models.Index(fields=['sector', ]),
-            models.Index(fields=['symbol', ]),
-        ]
-
-    def __str__(self):
-        return f"{self.symbol}"
 
 
 class Index(TimeStampMixin):
