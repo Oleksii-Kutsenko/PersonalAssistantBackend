@@ -1,40 +1,17 @@
-"""
-Tests
-"""
 import factory
 from django.urls import reverse
-from factory.fuzzy import FuzzyChoice
-from faker import Factory
 from rest_framework import status
 from rest_framework.request import Request
-from rest_framework.test import APITestCase, APIRequestFactory
+from rest_framework.test import APIRequestFactory
 
-from fin.models import Goal, Index
-from fin.serializers import GoalSerializer, AdjustedTickerSerializer
-
-faker = Factory.create()
-
-
-class GoalFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = Goal
-
-    name = faker.pystr(min_chars=None, max_chars=50)
-    coefficient = faker.pyfloat(left_digits=None, right_digits=2, positive=True,
-                                min_value=0, max_value=1)
-    target_money_amount = faker.pyint(min_value=101)
-    current_money_amount = faker.pyint(max_value=100)
-    level = faker.pyint()
+from fin.models.models import Goal
+from fin.serializers.serializers import GoalSerializer
+from fin.tests.base import BaseTestCase
+from fin.tests.test_index import faker
+from users.models import User
 
 
-class IndexFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = Index
-
-    data_source_url = FuzzyChoice(Index.Source)
-
-
-class GoalsTests(APITestCase):
+class GoalsTests(BaseTestCase):
     """
     Tests for the goals API
     """
@@ -43,6 +20,8 @@ class GoalsTests(APITestCase):
         """
         Creating goal objects
         """
+        self.user = User.objects.create(username='test_user', email='test_user@gmail.com')
+        self.login(self.user)
         self.test_objects = []
         for _ in range(0, 3):
             self.test_objects.append(GoalFactory())
@@ -173,39 +152,13 @@ class GoalsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
-class AdjustedIndexTests(APITestCase):
-    """
-    Tests for index-adjusted endpoint
-    """
+class GoalFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Goal
 
-    def setUp(self) -> None:
-        self.index = IndexFactory()
-
-    def test_when_received_right_msg(self):
-        """
-        Expects correct data when money parameter can be converted to Decimal
-        """
-        url = reverse('index-adjusted', kwargs={'index_id': self.index.id})
-        money = 1000
-
-        response = self.client.get(url, {'money': money})
-
-        options = {
-            'skip_industries': [],
-            'skip_countries': [],
-            'skip_sectors': [],
-            'skip_tickers': []
-        }
-        adjusted_index, summary_cost = self.index.adjust(money, options)
-        serialized_index = AdjustedTickerSerializer(adjusted_index, many=True)
-        self.assertEqual(response.data.get('tickers'), serialized_index.data)
-
-    def test_when_received_wrong_parameter(self):
-        """
-        Expects bad request when the money parameter cannot be converted to decimal
-        """
-        url = reverse('index-adjusted', kwargs={'index_id': self.index.id})
-        money = '1000q'
-
-        response = self.client.get(url, {'money': money})
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    name = faker.pystr(min_chars=None, max_chars=50)
+    coefficient = faker.pyfloat(left_digits=None, right_digits=2, positive=True,
+                                min_value=0, max_value=1)
+    target_money_amount = faker.pyint(min_value=101)
+    current_money_amount = faker.pyint(max_value=100)
+    level = faker.pyint()

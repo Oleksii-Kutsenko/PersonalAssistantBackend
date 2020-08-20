@@ -119,7 +119,7 @@ class PortfolioSerializer(serializers.ModelSerializer):
         cost = Cast(F('amount') * F('ticker__price'), decimal_field)
         query = PortfolioTickers.objects.filter(portfolio=obj).annotate(cost=cost)
         tickers_sum = query.aggregate(Sum('cost')).get('cost__sum')
-        return tickers_sum
+        return tickers_sum or 0
 
     class Meta:
         """

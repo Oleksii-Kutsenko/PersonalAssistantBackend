@@ -35,6 +35,7 @@ class AdjustMixin:
     """
     Extracts required params for adjusting functionality from request
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.money = None
@@ -46,12 +47,10 @@ class AdjustMixin:
         """
         super().initial(request, *args, **kwargs)
         money = request.GET.get('money')
-
         try:
-            money = Decimal(money)
+            self.money = Decimal(money)
         except (InvalidOperation, TypeError):
-            pass
-        self.money = money
+            self.money = None
 
         options = {
             'skip_countries': request.GET.getlist('skip-country[]', []),
@@ -104,6 +103,7 @@ class AdjustedIndexView(AdjustMixin, APIView):
         """
         Metadata that helps frontend create filter form
         """
+
         def determine_metadata(self, request, view):
             base_metadata = super().determine_metadata(request, view)
             index = get_object_or_404(Index.objects.all(), pk=view.kwargs.get('index_id'))
@@ -148,6 +148,7 @@ class PortfolioViewSet(AdjustMixin, viewsets.ModelViewSet):
         """
         Metadata that helps frontend to generate creation form
         """
+
         def determine_metadata(self, request, view):
             base_metadata = super().determine_metadata(request, view)
             base_metadata['actions']['POST']['query_params'] = {

@@ -13,9 +13,13 @@ def parse_time_series_monthly(ticker, ticker_time_series):
     tickers_statements = []
     for price_date, price_info in ticker_time_series['Monthly Adjusted Time Series'].items():
         date_obj = datetime.strptime(price_date, '%Y-%m-%d')
+
+        price = price_info.get('5. adjusted close')
+        price = price if price != 'None' else 0
+
         tickers_statements += [TickerStatement(name=Statements.price.value,
                                                fiscal_date_ending=date_obj,
-                                               value=price_info.get('5. adjusted close'),
+                                               value=price,
                                                ticker=ticker)]
     return tickers_statements
 
