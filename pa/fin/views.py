@@ -6,7 +6,6 @@ import logging
 import traceback
 from decimal import Decimal, InvalidOperation
 from json import JSONDecodeError
-from threading import Thread
 
 from django.db import transaction
 from rest_framework import filters, viewsets, status
@@ -16,7 +15,6 @@ from rest_framework.metadata import SimpleMetadata
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from fin.models.ticker.update_tickers_statements import update_tickers_statements
 from .exceptions import BadRequest, TraderNetAPIUnavailable
 from .external_api.tradernet.PublicApiClient import PublicApiClient
 from .external_api.tradernet.error_codes import BAD_SIGN
@@ -25,9 +23,10 @@ from .models.models import Goal
 from .models.portfolio import Portfolio, PortfolioTickers, Account
 from .models.ticker import Ticker
 from .serializers.index import IndexSerializer
-from .serializers.ticker import AdjustedTickerSerializer
 from .serializers.portfolio import PortfolioSerializer, AccountSerializer
 from .serializers.serializers import GoalSerializer
+from .serializers.ticker import AdjustedTickerSerializer
+from .tasks import update_tickers_statements_task
 
 logger = logging.getLogger(__name__)
 
@@ -87,12 +86,12 @@ class IndexViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
-        Thread(target=update_tickers_statements).start()
+        update_tickers_statements_task.delay()
         return response
 
     def update(self, request, *args, **kwargs):
         response = super().update(request, *args, **kwargs)
-        Thread(target=update_tickers_statements).start()
+        update_tickers_statements_task.delay()
         return response
 
 
@@ -242,7 +241,7 @@ class PortfolioViewSet(AdjustMixin, viewsets.ModelViewSet):
                                                  amount=ticker.get('q'))
             portfolio_tickers.save()
 
-        Thread(target=update_tickers_statements).start()
+        update_tickers_statements_task.delay()
 
         return Response(data=PortfolioSerializer(portfolio_model).data,
                         status=status.HTTP_201_CREATED)

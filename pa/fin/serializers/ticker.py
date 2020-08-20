@@ -19,7 +19,7 @@ class TickerSerializer(serializers.ModelSerializer):
         """
         model = Ticker
         fields = ['company_name', 'symbol', 'price', 'industry', 'sector', 'country',
-                  'ticker_multipliers']
+                  'ticker_statements']
         depth = 1
 
 

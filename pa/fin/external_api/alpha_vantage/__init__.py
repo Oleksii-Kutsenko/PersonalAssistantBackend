@@ -33,18 +33,29 @@ class AlphaVantage:
                     'https://www.alphavantage.co/premium/ if you would like to target a higher ' \
                     'API call frequency.'
 
-    def __init__(self, function, symbol):
-        apikey = os.environ.get('ALPHAVANTAGE_API_KEY')
-        query = urlencode(dict(function=function, symbol=symbol, apikey=apikey))
+    def __init__(self):
+        self.apikey = os.environ.get('ALPHAVANTAGE_API_KEY')
+        self.await_seconds = 0
+        self.step = 60
+
+    def call(self, function, symbol):
+        """
+        Construct URL based on parameters and make a request
+        """
+        query = urlencode(dict(function=function, symbol=symbol, apikey=self.apikey))
         url = urlunsplit((self.SCHEME, self.NETLOC, self.PATH, query, ''))
 
         response = requests.get(url)
         json_response = json.loads(response.text)
-        await_seconds = 0
-        step = 60
         while json_response.get('Note') and json_response.get('Note') == self.await_message:
-            await_seconds += step
-            time.sleep(await_seconds)
+            self.wait()
             response = requests.get(url)
             json_response = json.loads(response.text)
-        self.data = json_response
+        return json_response
+
+    def wait(self):
+        """
+        Snooze API requests for await_seconds
+        """
+        self.await_seconds += self.step
+        time.sleep(self.await_seconds)
