@@ -1,0 +1,17 @@
+[
+  {
+    "model": "fin.ticker",
+    "pk": 1,
+    "fields": {
+      "created": "2020-08-16T16:04:53.025Z",
+      "updated": "2020-08-16T16:04:56.979Z",
+      "company_name": "Apple Inc",
+      "country": "USA",
+      "industry": "Consumer Electronics",
+      "market_cap": null,
+      "price": "459.25",
+      "sector": "Technology",
+      "symbol": "AAPL"
+    }
+  }
+]

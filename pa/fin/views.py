@@ -6,7 +6,6 @@ import logging
 import traceback
 from decimal import Decimal, InvalidOperation
 from json import JSONDecodeError
-from threading import Thread
 
 from django.db import transaction
 from rest_framework import filters, viewsets, status
@@ -17,15 +16,17 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .exceptions import BadRequest, TraderNetAPIUnavailable
-from .models.index import Index, Ticker
+from .external_api.tradernet.PublicApiClient import PublicApiClient
+from .external_api.tradernet.error_codes import BAD_SIGN
+from .models.index import Index
 from .models.models import Goal
 from .models.portfolio import Portfolio, PortfolioTickers, Account
-from .serializers.index import IndexSerializer, AdjustedTickerSerializer
+from .models.ticker import Ticker
+from .serializers.index import IndexSerializer
 from .serializers.portfolio import PortfolioSerializer, AccountSerializer
 from .serializers.serializers import GoalSerializer
-from .utils.index_helpers import update_tickers_industries
-from .utils.tradernet.PublicApiClient import PublicApiClient
-from .utils.tradernet.error_codes import BAD_SIGN
+from .serializers.ticker import AdjustedTickerSerializer
+from .tasks import update_tickers_statements_task
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +35,7 @@ class AdjustMixin:
     """
     Extracts required params for adjusting functionality from request
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.money = None
@@ -45,12 +47,10 @@ class AdjustMixin:
         """
         super().initial(request, *args, **kwargs)
         money = request.GET.get('money')
-
         try:
-            money = Decimal(money)
+            self.money = Decimal(money)
         except (InvalidOperation, TypeError):
-            pass
-        self.money = money
+            self.money = None
 
         options = {
             'skip_countries': request.GET.getlist('skip-country[]', []),
@@ -85,12 +85,12 @@ class IndexViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
-        Thread(target=update_tickers_industries).start()
+        update_tickers_statements_task.delay()
         return response
 
     def update(self, request, *args, **kwargs):
         response = super().update(request, *args, **kwargs)
-        Thread(target=update_tickers_industries).start()
+        update_tickers_statements_task.delay()
         return response
 
 
@@ -103,6 +103,7 @@ class AdjustedIndexView(AdjustMixin, APIView):
         """
         Metadata that helps frontend create filter form
         """
+
         def determine_metadata(self, request, view):
             base_metadata = super().determine_metadata(request, view)
             index = get_object_or_404(Index.objects.all(), pk=view.kwargs.get('index_id'))
@@ -147,6 +148,7 @@ class PortfolioViewSet(AdjustMixin, viewsets.ModelViewSet):
         """
         Metadata that helps frontend to generate creation form
         """
+
         def determine_metadata(self, request, view):
             base_metadata = super().determine_metadata(request, view)
             base_metadata['actions']['POST']['query_params'] = {
@@ -240,7 +242,7 @@ class PortfolioViewSet(AdjustMixin, viewsets.ModelViewSet):
                                                  amount=ticker.get('q'))
             portfolio_tickers.save()
 
-        Thread(target=update_tickers_industries).start()
+        update_tickers_statements_task.delay()
 
         return Response(data=PortfolioSerializer(portfolio_model).data,
                         status=status.HTTP_201_CREATED)

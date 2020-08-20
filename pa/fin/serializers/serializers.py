@@ -21,10 +21,15 @@ class GoalSerializer(serializers.HyperlinkedModelSerializer):
         data = super().validate(attrs)
 
         if data['current_money_amount'] > data['target_money_amount']:
-            raise serializers.ValidationError({'current_money_amount': self.error_messages['current_money_amount']})
+            raise serializers.ValidationError(
+                {'current_money_amount': self.error_messages['current_money_amount']}
+            )
 
         return data
 
     class Meta:
+        """
+        Serializer meta class
+        """
         model = Goal
         fields = '__all__'

@@ -11,3 +11,6 @@ venv/*
 .pytest_cache
 htmlcov
 *.pem
+# celery-beat
+celerybeat.pid
+celerybeat-schedule.db
