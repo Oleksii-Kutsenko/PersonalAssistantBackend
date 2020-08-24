@@ -25,4 +25,4 @@ class IndexSerializer(serializers.ModelSerializer):
         Serializer meta class
         """
         model = Index
-        fields = ('id', 'data_source_url', 'name')
+        fields = ('id', 'data_source_url', 'name', 'tickers')
