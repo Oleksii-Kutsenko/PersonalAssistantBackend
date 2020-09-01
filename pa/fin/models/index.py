@@ -105,7 +105,7 @@ class Index(TimeStampMixin):
 
         adjusted_money_amount = Decimal(money)
         # experimentally established value
-        step = step or Decimal(money) * Decimal(4)
+        step = step or Decimal(money)
 
         def amount(money_amount):
             return Cast(F('weight') / 100 * money_amount / F('ticker__price'), integer_field)

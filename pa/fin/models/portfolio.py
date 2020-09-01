@@ -1,3 +1,9 @@
+
+"""
+Portfolio model and related models
+"""
+from decimal import Decimal
+
 from django.db import models
 from django.db.models import ForeignKey, CASCADE, ManyToManyField, IntegerField, CharField, DecimalField, F, Sum
 from django.db.models.functions import Cast
@@ -6,6 +12,18 @@ from django.utils.translation import gettext_lazy as _
 from fin.models.index import Ticker, Index
 from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES
 from users.models import User
+
+
+def find_closest_sum(queryset, money):
+    result = []
+    for ticker_weight in queryset:
+        amount = money // ticker_weight.ticker.price
+        if amount:
+            ticker_weight.amount = amount
+            ticker_weight.cost = ticker_weight.ticker.price * ticker_weight.amount
+            money -= ticker_weight.cost
+            result.append(ticker_weight)
+    return result
 
 
 class Portfolio(TimeStampMixin):
@@ -31,8 +49,24 @@ class Portfolio(TimeStampMixin):
         proper_portfolio_tickers_sum = proper_portfolio_tickers.annotate(cost=cost).aggregate(Sum('cost'))
         proper_portfolio_tickers_sum = proper_portfolio_tickers_sum.get('cost__sum') or 0
 
-        adjusted_index_query, summary_cost = index.adjust(proper_portfolio_tickers_sum + money, options, step=money)
-        return adjusted_index_query, summary_cost
+        adjusted_index_query, _ = index.adjust(proper_portfolio_tickers_sum + money,
+                                               options, money)
+
+        for ticker_index_weight in adjusted_index_query:
+            matched_portfolio_ticker = proper_portfolio_tickers \
+                .filter(ticker__symbol=ticker_index_weight.ticker.symbol).first()
+            if matched_portfolio_ticker:
+                if ticker_index_weight.amount - matched_portfolio_ticker.amount > 0 and \
+                        ticker_index_weight.ticker.price * ticker_index_weight.amount >= Decimal(202):
+                    ticker_index_weight.amount -= matched_portfolio_ticker.amount
+                else:
+                    adjusted_index_query = adjusted_index_query \
+                        .exclude(ticker=matched_portfolio_ticker.ticker)
+        summary_cost = adjusted_index_query.aggregate(Sum('cost')).get('cost__sum') or 0
+
+        if summary_cost > money:
+            adjusted_index_query = find_closest_sum(adjusted_index_query, money)
+        return adjusted_index_query
 
 
 class PortfolioTickers(TimeStampMixin):

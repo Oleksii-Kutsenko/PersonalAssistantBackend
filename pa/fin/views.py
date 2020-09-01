@@ -34,6 +34,7 @@ class AdjustMixin:
     """
     Extracts required params for adjusting functionality from request
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.money = None
@@ -103,6 +104,7 @@ class AdjustedIndexView(AdjustMixin, APIView):
         """
         Metadata that helps frontend create filter form
         """
+
         def determine_metadata(self, request, view):
             base_metadata = super().determine_metadata(request, view)
             index = get_object_or_404(Index.objects.all(), pk=view.kwargs.get('index_id'))
@@ -147,6 +149,7 @@ class PortfolioViewSet(AdjustMixin, viewsets.ModelViewSet):
         """
         Metadata that helps frontend to generate creation form
         """
+
         def determine_metadata(self, request, view):
             base_metadata = super().determine_metadata(request, view)
             base_metadata['actions']['POST']['query_params'] = {
@@ -185,9 +188,9 @@ class PortfolioViewSet(AdjustMixin, viewsets.ModelViewSet):
         portfolio_id = kwargs.get('pk')
 
         portfolio = Portfolio.objects.get(pk=portfolio_id)
-        adjusted_portfolio, summary_cost = portfolio.adjust(index_id, self.money, self.options)
+        adjusted_portfolio = portfolio.adjust(index_id, self.money, self.adjust_options)
         serialized_index = AdjustedTickerSerializer(adjusted_portfolio, many=True)
-        return Response(data={'tickers': serialized_index.data, 'summary_cost': summary_cost})
+        return Response(data={'tickers': serialized_index.data})
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
