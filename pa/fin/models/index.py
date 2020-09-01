@@ -17,12 +17,13 @@ from django.utils.translation import gettext_lazy as _
 from fin.models.ticker import Ticker
 from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES
 
+REASONABLE_LOT_PRICE = Decimal(202)
+
 
 class Index(TimeStampMixin):
     """
     Index model
     """
-    REASONABLE_LOT_PRICE = Decimal(202)
 
     class Source(models.TextChoices):
         """
@@ -85,13 +86,13 @@ class Index(TimeStampMixin):
             tickers_query = tickers_query.annotate(amount=amount(adjusted_money_amount), cost=cost)
 
             summary_cost = tickers_query \
-                .filter(cost__gte=self.REASONABLE_LOT_PRICE) \
+                .filter(cost__gte=REASONABLE_LOT_PRICE) \
                 .aggregate(summary_cost=Coalesce(Sum('cost'), 0)).get('summary_cost')
 
         adjusted_money_amount -= step
         tickers_query = tickers_query \
             .annotate(amount=amount(adjusted_money_amount), cost=cost) \
-            .filter(cost__gte=self.REASONABLE_LOT_PRICE)
+            .filter(cost__gte=REASONABLE_LOT_PRICE)
         summary_cost = tickers_query.aggregate(Sum('cost')).get('cost__sum')
 
         if len(tickers_query) == 0:
