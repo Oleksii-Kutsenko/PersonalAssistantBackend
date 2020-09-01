@@ -39,7 +39,7 @@ class AdjustMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.money = None
-        self.options = {}
+        self.adjust_options = {}
 
     def initial(self, request, *args, **kwargs):
         """
@@ -58,7 +58,7 @@ class AdjustMixin:
             'skip_industries': request.GET.getlist('skip-industry[]', []),
             'skip_tickers': request.GET.getlist('skip-ticker[]', []),
         }
-        self.options.update(options)
+        self.adjust_options.update(options)
 
 
 class AccountViewSet(viewsets.ReadOnlyModelViewSet):
@@ -124,7 +124,7 @@ class AdjustedIndexView(AdjustMixin, APIView):
             raise BadRequest(detail="Money parameter is invalid")
         index = get_object_or_404(queryset=Index.objects.all(), pk=index_id)
 
-        adjusted_index, summary_cost = index.adjust(self.money, self.options)
+        adjusted_index, summary_cost = index.adjust(self.money, self.adjust_options)
         serialized_index = AdjustedTickerSerializer(adjusted_index, many=True)
         return Response(data={'tickers': serialized_index.data, 'summary_cost': summary_cost})
 

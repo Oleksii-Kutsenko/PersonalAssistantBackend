@@ -68,8 +68,7 @@ class Portfolio(TimeStampMixin):
                 .filter(ticker__symbol=ticker_index_weight.ticker.symbol).first()
             if matched_portfolio_ticker:
                 if ticker_index_weight.amount - matched_portfolio_ticker.amount > 0 and \
-                        ticker_index_weight.ticker.price * ticker_index_weight.amount >= Decimal(
-                    202):
+                        ticker_index_weight.ticker.price * ticker_index_weight.amount >= Decimal(202):
                     ticker_index_weight.amount -= matched_portfolio_ticker.amount
                 else:
                     adjusted_index_query = adjusted_index_query \
