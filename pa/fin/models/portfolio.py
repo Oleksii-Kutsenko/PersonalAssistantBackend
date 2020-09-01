@@ -15,18 +15,6 @@ from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES
 from users.models import User
 
 
-def find_closest_sum(queryset, money):
-    result = []
-    for ticker_weight in queryset:
-        amount = money // ticker_weight.ticker.price
-        if amount:
-            ticker_weight.amount = amount
-            ticker_weight.cost = ticker_weight.ticker.price * ticker_weight.amount
-            money -= ticker_weight.cost
-            result.append(ticker_weight)
-    return result
-
-
 class Portfolio(TimeStampMixin):
     """
     Class that represents the portfolio
@@ -60,24 +48,30 @@ class Portfolio(TimeStampMixin):
             .annotate(cost=cost).aggregate(Sum('cost'))
         proper_portfolio_tickers_sum = proper_portfolio_tickers_sum.get('cost__sum') or 0
 
-        adjusted_index_query, _ = index.adjust(proper_portfolio_tickers_sum + money,
-                                               options, money)
-
-        for ticker_index_weight in adjusted_index_query:
+        adjusted_index, _ = index.adjust(proper_portfolio_tickers_sum + money,
+                                         options, money)
+        for adjusted_ticker in adjusted_index:
             matched_portfolio_ticker = proper_portfolio_tickers \
-                .filter(ticker__symbol=ticker_index_weight.ticker.symbol).first()
+                .filter(ticker__symbol=adjusted_ticker.ticker.symbol).first()
             if matched_portfolio_ticker:
-                if ticker_index_weight.amount - matched_portfolio_ticker.amount > 0 and \
-                        ticker_index_weight.ticker.price * ticker_index_weight.amount >= Decimal(202):
-                    ticker_index_weight.amount -= matched_portfolio_ticker.amount
+                amount_diff = adjusted_ticker.amount - matched_portfolio_ticker.amount
+                if amount_diff > 0 and adjusted_ticker.ticker.price * amount_diff >= Decimal(202):
+                    adjusted_ticker.amount -= matched_portfolio_ticker.amount
                 else:
-                    adjusted_index_query = adjusted_index_query \
-                        .exclude(ticker=matched_portfolio_ticker.ticker)
-        summary_cost = adjusted_index_query.aggregate(Sum('cost')).get('cost__sum') or 0
+                    adjusted_index = adjusted_index.exclude(ticker=matched_portfolio_ticker.ticker)
 
-        if summary_cost > money:
-            adjusted_index_query = find_closest_sum(adjusted_index_query, money)
-        return adjusted_index_query
+        result = []
+        for ticker_weight in adjusted_index:
+            amount = money // ticker_weight.ticker.price
+            if amount:
+                if amount > ticker_weight.amount:
+                    pass
+                else:
+                    ticker_weight.amount = amount
+                    ticker_weight.cost = ticker_weight.ticker.price * ticker_weight.amount
+                money -= ticker_weight.cost
+                result.append(ticker_weight)
+        return result
 
 
 class PortfolioTickers(TimeStampMixin):
