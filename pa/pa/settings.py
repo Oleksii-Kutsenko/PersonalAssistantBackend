@@ -69,9 +69,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-CORS_ORIGIN_WHITELIST = [
-    os.environ.get('WHITELIST_ORIGIN')
-]
+CORS_ORIGIN_WHITELIST = os.environ.get('WHITELIST_ORIGIN').split(' ')
+
 
 ROOT_URLCONF = 'pa.urls'
 

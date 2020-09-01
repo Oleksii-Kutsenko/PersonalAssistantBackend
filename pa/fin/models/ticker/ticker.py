@@ -13,7 +13,7 @@ class Ticker(TimeStampMixin):
     """
     DEFAULT_VALUE = 'Unknown'
 
-    company_name = models.CharField(max_length=50, default=DEFAULT_VALUE)
+    company_name = models.CharField(max_length=100, default=DEFAULT_VALUE)
     country = models.CharField(max_length=50, default=DEFAULT_VALUE)
     industry = models.CharField(max_length=50, default=DEFAULT_VALUE)
     market_cap = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES,
