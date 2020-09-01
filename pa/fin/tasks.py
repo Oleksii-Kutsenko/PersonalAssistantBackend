@@ -16,23 +16,11 @@ from pa.celery import redis_lock
 logger = logging.getLogger(__name__)
 
 
-def update_tickers_statements():
+def update_tickers_statements(tickers_query):
     """
     The function gets tickers with the unknown sector, industry or country, or with outdated
     financial statements and trying to fetch this information from Alpha Vantage API
     """
-    quarter_ago = date.today() - timedelta(30 * 3)
-    tickers_query = Ticker.objects \
-        .filter(Q(sector=Ticker.DEFAULT_VALUE) |
-                Q(industry=Ticker.DEFAULT_VALUE) |
-                Q(country=Ticker.DEFAULT_VALUE) |
-                Q(ticker_statements__name=Statements.net_income.value,
-                  ticker_statements__fiscal_date_ending__lte=quarter_ago) |
-                Q(ticker_statements__name=Statements.total_assets.value,
-                  ticker_statements__fiscal_date_ending__lte=quarter_ago) |
-                Q(ticker_statements__name=Statements.price.value,
-                  ticker_statements__fiscal_date_ending__lte=quarter_ago)) \
-        .order_by('-ticker_statements__fiscal_date_ending')
 
     av_api = AlphaVantage()
     for ticker in tickers_query:
@@ -56,6 +44,10 @@ def update_tickers_statements():
         tickers_statements += parse_time_series_monthly(ticker, ticker_time_series_monthly)
 
         TickerStatement.objects.bulk_create(tickers_statements)
+        ticker_price = ticker.ticker_statements \
+            .filter(name='price') \
+            .order_by('-fiscal_date_ending').first()
+        ticker.price = ticker_price.value or ticker.price
         ticker.save()
 
 
@@ -66,7 +58,19 @@ def update_tickers_statements_task():
     """
     with redis_lock('update_tickers_statements_task') as acquired:
         if acquired:
-            update_tickers_statements()
+            quarter_ago = date.today() - timedelta(30 * 3)
+            tickers_query = Ticker.objects \
+                .filter(Q(sector=Ticker.DEFAULT_VALUE) |
+                        Q(industry=Ticker.DEFAULT_VALUE) |
+                        Q(country=Ticker.DEFAULT_VALUE) |
+                        Q(ticker_statements__name=Statements.net_income.value,
+                          ticker_statements__fiscal_date_ending__lte=quarter_ago) |
+                        Q(ticker_statements__name=Statements.total_assets.value,
+                          ticker_statements__fiscal_date_ending__lte=quarter_ago) |
+                        Q(ticker_statements__name=Statements.price.value,
+                          ticker_statements__fiscal_date_ending__lte=quarter_ago)) \
+                .order_by('-ticker_statements__fiscal_date_ending')
+            update_tickers_statements(tickers_query)
             return True
         logger.info('Update tickers statements task is already running')
         return False

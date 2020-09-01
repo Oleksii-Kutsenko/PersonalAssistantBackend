@@ -3,5 +3,6 @@ omit =
     */tests/*
     */migrations/*
     */apps.py
-    manage.py
-    pa/wsgi.py
+    */wsgi.py
+    */manage.py
+    */PublicApiClient.py

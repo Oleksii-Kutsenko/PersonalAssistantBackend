@@ -15,7 +15,7 @@ class AVParsersTests(BaseTestCase):
     Tests for parsers Alpha Vantage responses
     """
 
-    fixtures = ['pa/fin/tests/fixtures/ticker.json']
+    fixtures = ['fin/tests/fixtures/ticker.json']
 
     def setUp(self) -> None:
         self.user = User.objects.create(username='test_user', email='test_user@gmail.com')
