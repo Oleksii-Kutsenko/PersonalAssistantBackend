@@ -1,7 +1,6 @@
 """
 Portfolio model and related models
 """
-from decimal import Decimal
 
 from django.db import models
 from django.db.models import ForeignKey, CASCADE, ManyToManyField, IntegerField, CharField, \
@@ -57,7 +56,7 @@ class Portfolio(TimeStampMixin):
             amount = money // ticker_weight.ticker.price
             if amount == 0 or amount * ticker_weight.ticker.price < REASONABLE_LOT_PRICE:
                 continue
-            elif amount < ticker_weight.amount:
+            if amount < ticker_weight.amount:
                 ticker_weight.amount = amount
                 ticker_weight.cost = ticker_weight.ticker.price * ticker_weight.amount
             money -= ticker_weight.cost
