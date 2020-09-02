@@ -5,7 +5,7 @@ services:
     build: ./pa
     command: celery -A pa worker -l info
     env_file:
-      .env.dev
+      .env/.env.dev
     volumes:
       - ./pa:/usr/src/app/
     depends_on:
@@ -15,7 +15,7 @@ services:
     build: ./pa
     command: celery -A pa beat -l info
     env_file:
-      .env.dev
+      .env/.env.dev
     volumes:
       - ./pa:/usr/src/app/
     depends_on:
@@ -28,7 +28,7 @@ services:
     ports:
       - 8000:8000
     env_file:
-      - .env.dev
+      - .env/.env.dev
     depends_on:
       - db
       - redis
@@ -37,7 +37,7 @@ services:
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
     env_file:
-      .env.dev
+      .env/.env.dev
     ports:
       - 5432:5432
   flower:
