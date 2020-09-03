@@ -99,27 +99,21 @@ class PortfolioSerializer(serializers.ModelSerializer):
 
     def get_total(self, obj):
         """
-        Total sum of the portfolio tickers and accounts
+        Return total property
         """
-        return self.get_total_tickers(obj) + self.get_total_accounts(obj)
+        return obj.total
 
     def get_total_accounts(self, obj):
         """
-        Total sum of the portfolio accounts cost
+        Return total accounts property
         """
-        accounts_sum = Account.objects.filter(portfolio=obj) \
-            .aggregate(Sum('value')).get('value__sum')
-        return accounts_sum or 0
+        return obj.total_accounts
 
     def get_total_tickers(self, obj):
         """
-        Total sum of the portfolio tickers cost
+        Return total tickers property
         """
-        decimal_field = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
-        cost = Cast(F('amount') * F('ticker__price'), decimal_field)
-        query = PortfolioTickers.objects.filter(portfolio=obj).annotate(cost=cost)
-        tickers_sum = query.aggregate(Sum('cost')).get('cost__sum')
-        return tickers_sum or 0
+        return obj.total_tickers
 
     class Meta:
         """

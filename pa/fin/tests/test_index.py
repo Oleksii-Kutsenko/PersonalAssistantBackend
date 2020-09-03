@@ -4,28 +4,27 @@ Tests
 import factory
 from django.urls import reverse
 from factory.fuzzy import FuzzyChoice
-from faker import Factory
 from rest_framework import status
 
 from fin.models.index import Index
+from fin.models.index.parsers import Source
 from fin.serializers.ticker import AdjustedTickerSerializer
 from fin.tests.base import BaseTestCase
 from users.models import User
-
-faker = Factory.create()
 
 
 class IndexFactory(factory.DjangoModelFactory):
     """
     Creates Index object
     """
+
     class Meta:
         """
         Factory meta class
         """
         model = Index
 
-    data_source_url = FuzzyChoice(Index.Source)
+    data_source_url = FuzzyChoice(Source)
 
 
 class AdjustedIndexTests(BaseTestCase):

@@ -1,0 +1,1144 @@
+[
+  {
+    "model": "fin.index",
+    "pk": 1,
+    "fields": {
+      "created": "2020-08-16T16:04:52.613Z",
+      "updated": "2020-09-02T20:21:06.166Z",
+      "data_source_url": "https://www.slickcharts.com/nasdaq100"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5031,
+    "fields": {
+      "created": "2020-09-02T20:21:06.581Z",
+      "updated": "2020-09-02T20:21:06.581Z",
+      "index": 1,
+      "ticker": 1,
+      "weight": "14.2820000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5032,
+    "fields": {
+      "created": "2020-09-02T20:21:06.581Z",
+      "updated": "2020-09-02T20:21:06.581Z",
+      "index": 1,
+      "ticker": 3,
+      "weight": "10.9880000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5033,
+    "fields": {
+      "created": "2020-09-02T20:21:06.581Z",
+      "updated": "2020-09-02T20:21:06.581Z",
+      "index": 1,
+      "ticker": 2,
+      "weight": "10.9180000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5034,
+    "fields": {
+      "created": "2020-09-02T20:21:06.581Z",
+      "updated": "2020-09-02T20:21:06.581Z",
+      "index": 1,
+      "ticker": 4,
+      "weight": "4.5010000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5035,
+    "fields": {
+      "created": "2020-09-02T20:21:06.581Z",
+      "updated": "2020-09-02T20:21:06.581Z",
+      "index": 1,
+      "ticker": 7,
+      "weight": "3.7610000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5036,
+    "fields": {
+      "created": "2020-09-02T20:21:06.581Z",
+      "updated": "2020-09-02T20:21:06.581Z",
+      "index": 1,
+      "ticker": 5,
+      "weight": "3.5810000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5037,
+    "fields": {
+      "created": "2020-09-02T20:21:06.581Z",
+      "updated": "2020-09-02T20:21:06.581Z",
+      "index": 1,
+      "ticker": 6,
+      "weight": "3.5070000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5038,
+    "fields": {
+      "created": "2020-09-02T20:21:06.581Z",
+      "updated": "2020-09-02T20:21:06.581Z",
+      "index": 1,
+      "ticker": 8,
+      "weight": "2.6790000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5039,
+    "fields": {
+      "created": "2020-09-02T20:21:06.581Z",
+      "updated": "2020-09-02T20:21:06.581Z",
+      "index": 1,
+      "ticker": 10,
+      "weight": "2.0140000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5040,
+    "fields": {
+      "created": "2020-09-02T20:21:06.581Z",
+      "updated": "2020-09-02T20:21:06.581Z",
+      "index": 1,
+      "ticker": 9,
+      "weight": "1.9520000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5041,
+    "fields": {
+      "created": "2020-09-02T20:21:06.581Z",
+      "updated": "2020-09-02T20:21:06.581Z",
+      "index": 1,
+      "ticker": 11,
+      "weight": "1.8970000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5042,
+    "fields": {
+      "created": "2020-09-02T20:21:06.581Z",
+      "updated": "2020-09-02T20:21:06.581Z",
+      "index": 1,
+      "ticker": 12,
+      "weight": "1.7570000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5043,
+    "fields": {
+      "created": "2020-09-02T20:21:06.581Z",
+      "updated": "2020-09-02T20:21:06.581Z",
+      "index": 1,
+      "ticker": 13,
+      "weight": "1.6620000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5044,
+    "fields": {
+      "created": "2020-09-02T20:21:06.581Z",
+      "updated": "2020-09-02T20:21:06.581Z",
+      "index": 1,
+      "ticker": 14,
+      "weight": "1.5820000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5045,
+    "fields": {
+      "created": "2020-09-02T20:21:06.581Z",
+      "updated": "2020-09-02T20:21:06.581Z",
+      "index": 1,
+      "ticker": 15,
+      "weight": "1.4520000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5046,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 16,
+      "weight": "1.2500000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5047,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 18,
+      "weight": "1.2130000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5048,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 17,
+      "weight": "1.1740000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5049,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 19,
+      "weight": "1.1300000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5050,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 20,
+      "weight": "1.0910000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5051,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 21,
+      "weight": "1.0620000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5052,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 22,
+      "weight": "1.0350000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5053,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 23,
+      "weight": "0.8660000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5054,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 24,
+      "weight": "0.8040000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5055,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 28,
+      "weight": "0.7330000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5056,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 27,
+      "weight": "0.6940000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5057,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 25,
+      "weight": "0.6820000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5058,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 26,
+      "weight": "0.6790000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5059,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 29,
+      "weight": "0.6370000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5060,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 36,
+      "weight": "0.5940000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5061,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 30,
+      "weight": "0.5890000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5062,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 31,
+      "weight": "0.5430000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5063,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 33,
+      "weight": "0.5240000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5064,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 34,
+      "weight": "0.5090000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5065,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 35,
+      "weight": "0.4870000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5066,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 38,
+      "weight": "0.4770000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5067,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 37,
+      "weight": "0.4730000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5068,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 32,
+      "weight": "0.4600000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5069,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 48,
+      "weight": "0.4440000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5070,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 40,
+      "weight": "0.4390000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5071,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 41,
+      "weight": "0.4280000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5072,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 42,
+      "weight": "0.4120000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5073,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 39,
+      "weight": "0.3980000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5074,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 43,
+      "weight": "0.3820000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5075,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 46,
+      "weight": "0.3800000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5076,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 44,
+      "weight": "0.3600000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5077,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 47,
+      "weight": "0.3510000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5078,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 45,
+      "weight": "0.3490000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5079,
+    "fields": {
+      "created": "2020-09-02T20:21:06.582Z",
+      "updated": "2020-09-02T20:21:06.582Z",
+      "index": 1,
+      "ticker": 65,
+      "weight": "0.3400000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5080,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 55,
+      "weight": "0.3330000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5081,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 49,
+      "weight": "0.3280000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5082,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 51,
+      "weight": "0.3200000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5083,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 50,
+      "weight": "0.3130000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5084,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 52,
+      "weight": "0.2970000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5085,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 56,
+      "weight": "0.2940000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5086,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 59,
+      "weight": "0.2940000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5087,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 53,
+      "weight": "0.2930000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5088,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 58,
+      "weight": "0.2860000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5089,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 69,
+      "weight": "0.2840000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5090,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 61,
+      "weight": "0.2820000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5091,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 57,
+      "weight": "0.2810000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5092,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 64,
+      "weight": "0.2790000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5093,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 71,
+      "weight": "0.2720000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5094,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 66,
+      "weight": "0.2720000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5095,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 54,
+      "weight": "0.2720000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5096,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 63,
+      "weight": "0.2700000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5097,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 60,
+      "weight": "0.2640000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5098,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 62,
+      "weight": "0.2590000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5099,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 70,
+      "weight": "0.2520000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5100,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 68,
+      "weight": "0.2470000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5101,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 67,
+      "weight": "0.2420000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5102,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 76,
+      "weight": "0.2360000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5103,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 72,
+      "weight": "0.2340000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5104,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 73,
+      "weight": "0.2280000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5105,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 77,
+      "weight": "0.2230000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5106,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 74,
+      "weight": "0.2230000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5107,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 80,
+      "weight": "0.2190000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5108,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 78,
+      "weight": "0.2090000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5109,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 79,
+      "weight": "0.2060000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5110,
+    "fields": {
+      "created": "2020-09-02T20:21:06.583Z",
+      "updated": "2020-09-02T20:21:06.583Z",
+      "index": 1,
+      "ticker": 75,
+      "weight": "0.2050000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5111,
+    "fields": {
+      "created": "2020-09-02T20:21:06.584Z",
+      "updated": "2020-09-02T20:21:06.584Z",
+      "index": 1,
+      "ticker": 86,
+      "weight": "0.2050000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5112,
+    "fields": {
+      "created": "2020-09-02T20:21:06.584Z",
+      "updated": "2020-09-02T20:21:06.584Z",
+      "index": 1,
+      "ticker": 83,
+      "weight": "0.2020000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5113,
+    "fields": {
+      "created": "2020-09-02T20:21:06.584Z",
+      "updated": "2020-09-02T20:21:06.584Z",
+      "index": 1,
+      "ticker": 3631,
+      "weight": "0.1990000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5114,
+    "fields": {
+      "created": "2020-09-02T20:21:06.584Z",
+      "updated": "2020-09-02T20:21:06.584Z",
+      "index": 1,
+      "ticker": 84,
+      "weight": "0.1980000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5115,
+    "fields": {
+      "created": "2020-09-02T20:21:06.584Z",
+      "updated": "2020-09-02T20:21:06.584Z",
+      "index": 1,
+      "ticker": 81,
+      "weight": "0.1970000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5116,
+    "fields": {
+      "created": "2020-09-02T20:21:06.584Z",
+      "updated": "2020-09-02T20:21:06.584Z",
+      "index": 1,
+      "ticker": 82,
+      "weight": "0.1900000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5117,
+    "fields": {
+      "created": "2020-09-02T20:21:06.584Z",
+      "updated": "2020-09-02T20:21:06.584Z",
+      "index": 1,
+      "ticker": 85,
+      "weight": "0.1860000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5118,
+    "fields": {
+      "created": "2020-09-02T20:21:06.584Z",
+      "updated": "2020-09-02T20:21:06.584Z",
+      "index": 1,
+      "ticker": 87,
+      "weight": "0.1820000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5119,
+    "fields": {
+      "created": "2020-09-02T20:21:06.584Z",
+      "updated": "2020-09-02T20:21:06.584Z",
+      "index": 1,
+      "ticker": 89,
+      "weight": "0.1710000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5120,
+    "fields": {
+      "created": "2020-09-02T20:21:06.584Z",
+      "updated": "2020-09-02T20:21:06.584Z",
+      "index": 1,
+      "ticker": 90,
+      "weight": "0.1590000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5121,
+    "fields": {
+      "created": "2020-09-02T20:21:06.584Z",
+      "updated": "2020-09-02T20:21:06.584Z",
+      "index": 1,
+      "ticker": 91,
+      "weight": "0.1490000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5122,
+    "fields": {
+      "created": "2020-09-02T20:21:06.584Z",
+      "updated": "2020-09-02T20:21:06.584Z",
+      "index": 1,
+      "ticker": 92,
+      "weight": "0.1470000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5123,
+    "fields": {
+      "created": "2020-09-02T20:21:06.584Z",
+      "updated": "2020-09-02T20:21:06.584Z",
+      "index": 1,
+      "ticker": 93,
+      "weight": "0.1460000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5124,
+    "fields": {
+      "created": "2020-09-02T20:21:06.584Z",
+      "updated": "2020-09-02T20:21:06.584Z",
+      "index": 1,
+      "ticker": 94,
+      "weight": "0.1320000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5125,
+    "fields": {
+      "created": "2020-09-02T20:21:06.584Z",
+      "updated": "2020-09-02T20:21:06.584Z",
+      "index": 1,
+      "ticker": 95,
+      "weight": "0.1290000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5126,
+    "fields": {
+      "created": "2020-09-02T20:21:06.584Z",
+      "updated": "2020-09-02T20:21:06.584Z",
+      "index": 1,
+      "ticker": 88,
+      "weight": "0.1150000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5127,
+    "fields": {
+      "created": "2020-09-02T20:21:06.584Z",
+      "updated": "2020-09-02T20:21:06.584Z",
+      "index": 1,
+      "ticker": 97,
+      "weight": "0.1080000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5128,
+    "fields": {
+      "created": "2020-09-02T20:21:06.584Z",
+      "updated": "2020-09-02T20:21:06.584Z",
+      "index": 1,
+      "ticker": 96,
+      "weight": "0.1060000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5129,
+    "fields": {
+      "created": "2020-09-02T20:21:06.584Z",
+      "updated": "2020-09-02T20:21:06.584Z",
+      "index": 1,
+      "ticker": 98,
+      "weight": "0.0940000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5130,
+    "fields": {
+      "created": "2020-09-02T20:21:06.584Z",
+      "updated": "2020-09-02T20:21:06.584Z",
+      "index": 1,
+      "ticker": 101,
+      "weight": "0.0780000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5131,
+    "fields": {
+      "created": "2020-09-02T20:21:06.584Z",
+      "updated": "2020-09-02T20:21:06.584Z",
+      "index": 1,
+      "ticker": 100,
+      "weight": "0.0770000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5132,
+    "fields": {
+      "created": "2020-09-02T20:21:06.584Z",
+      "updated": "2020-09-02T20:21:06.584Z",
+      "index": 1,
+      "ticker": 102,
+      "weight": "0.0590000000"
+    }
+  },
+  {
+    "model": "fin.tickerindexweight",
+    "pk": 5133,
+    "fields": {
+      "created": "2020-09-02T20:21:06.584Z",
+      "updated": "2020-09-02T20:21:06.584Z",
+      "index": 1,
+      "ticker": 103,
+      "weight": "0.0350000000"
+    }
+  }
+]

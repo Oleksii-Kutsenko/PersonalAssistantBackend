@@ -13,6 +13,7 @@ class OutdatedTickersManager(models.Manager):
     """
     Returns outdated Tickers
     """
+    use_in_migrations = True
 
     def get_queryset(self):
         """
@@ -40,6 +41,7 @@ class Ticker(TimeStampMixin):
     """
     DEFAULT_VALUE = 'Unknown'
 
+    objects = models.Manager()
     outdated_tickers = OutdatedTickersManager()
 
     company_name = models.CharField(max_length=100, default=DEFAULT_VALUE)

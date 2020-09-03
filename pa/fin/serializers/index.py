@@ -8,19 +8,8 @@ from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
 from fin.models.index import Index
-from fin.models.index import Ticker, TickerIndexWeight
+from fin.models.index.parsers import Source
 from fin.models.utils import MAX_DIGITS, DECIMAL_PLACES
-from fin.serializers.utils import FlattenMixin
-
-
-class TickerSerializer(serializers.ModelSerializer):
-    """
-    Serialization class for the Ticker model
-    """
-
-    class Meta:
-        model = Ticker
-        fields = ['company_name', 'symbol', 'price', 'industry', 'sector', 'country']
 
 
 # pylint: disable=no-self-use
@@ -48,7 +37,7 @@ class IndexSerializer(serializers.ModelSerializer):
         """
         Get the human-readable name of the index
         """
-        return dict(Index.Source.choices)[obj.data_source_url]
+        return dict(Source.choices)[obj.data_source_url]
 
     def get_sectors_breakdown(self, obj):
         """
@@ -66,20 +55,5 @@ class IndexSerializer(serializers.ModelSerializer):
         Serializer meta class
         """
         model = Index
+
         fields = ('id', 'data_source_url', 'industries_breakdown', 'name', 'sectors_breakdown')
-
-
-class AdjustedTickerSerializer(FlattenMixin, serializers.ModelSerializer):
-    amount = serializers.SerializerMethodField()
-    cost = serializers.SerializerMethodField()
-
-    def get_amount(self, obj):
-        return obj.amount
-
-    def get_cost(self, obj):
-        return obj.cost
-
-    class Meta:
-        model = TickerIndexWeight
-        fields = ('amount', 'cost', 'weight')
-        flatten = [('ticker', TickerSerializer)]
