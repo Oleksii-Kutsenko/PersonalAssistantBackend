@@ -1,17 +1,14 @@
 """
 Root module for file celery application
 """
-import logging
 import os
-from contextlib import contextmanager
 
 import redis
 from celery import Celery
 
-logger = logging.getLogger(__name__)
-
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pa.settings')
 
+# pylint: disable=invalid-name
 app = Celery('pa', include=['fin.tasks'])
 app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()

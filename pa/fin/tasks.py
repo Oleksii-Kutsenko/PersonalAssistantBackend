@@ -1,7 +1,6 @@
 """
 The function that fetch information about ticker statements
 """
-import logging
 
 from redis.exceptions import LockError
 
@@ -11,8 +10,6 @@ from fin.external_api.alpha_vantage.parsers import parse_time_series_monthly, pa
 from fin.models.ticker import Ticker, TickerStatement
 from pa import celery_app
 from pa.celery import redis_client as r
-
-logger = logging.getLogger(__name__)
 
 
 def update_tickers_statements(tickers_query):
@@ -60,7 +57,6 @@ def update_tickers_statements_task():
         if lock.acquire(blocking=False):
             update_tickers_statements(Ticker.outdated_tickers.all())
             return True
-        else:
-            return 'Locked'
+        return 'Locked'
     except LockError:
         return 'Locked'
