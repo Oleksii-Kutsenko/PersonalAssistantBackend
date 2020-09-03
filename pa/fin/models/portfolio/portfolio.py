@@ -69,7 +69,7 @@ class Portfolio(TimeStampMixin):
                 continue
             if amount < ticker['amount']:
                 ticker['amount'] = amount
-                ticker['cost'] = Decimal(ticker['price']) * Decimal(ticker['amount'])
+            ticker['cost'] = Decimal(ticker['price']) * Decimal(ticker['amount'])
             money -= ticker['cost']
             result.append(ticker)
         return result
