@@ -1,10 +1,37 @@
 """
 Ticker and hard related models
 """
+from datetime import date, timedelta
+
 from django.db import models
-from django.db.models import DecimalField
+from django.db.models import DecimalField, Q
 
 from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES
+
+
+class OutdatedTickersManager(models.Manager):
+    """
+    Returns outdated Tickers
+    """
+
+    def get_queryset(self):
+        """
+        Returns queryset which contains Ticker models without information about sector, industry,
+         country or outdated ticker statements
+        """
+        queryset = super().get_queryset()
+        quarter_ago = date.today() - timedelta(30 * 3)
+        return queryset \
+            .filter(Q(sector=Ticker.DEFAULT_VALUE) |
+                    Q(industry=Ticker.DEFAULT_VALUE) |
+                    Q(country=Ticker.DEFAULT_VALUE) |
+                    Q(ticker_statements__name=Statements.net_income.value,
+                      ticker_statements__fiscal_date_ending__lte=quarter_ago) |
+                    Q(ticker_statements__name=Statements.total_assets.value,
+                      ticker_statements__fiscal_date_ending__lte=quarter_ago) |
+                    Q(ticker_statements__name=Statements.price.value,
+                      ticker_statements__fiscal_date_ending__lte=quarter_ago)) \
+            .order_by('-ticker_statements__fiscal_date_ending')
 
 
 class Ticker(TimeStampMixin):
@@ -13,7 +40,9 @@ class Ticker(TimeStampMixin):
     """
     DEFAULT_VALUE = 'Unknown'
 
-    company_name = models.CharField(max_length=50, default=DEFAULT_VALUE)
+    outdated_tickers = OutdatedTickersManager()
+
+    company_name = models.CharField(max_length=100, default=DEFAULT_VALUE)
     country = models.CharField(max_length=50, default=DEFAULT_VALUE)
     industry = models.CharField(max_length=50, default=DEFAULT_VALUE)
     market_cap = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES,

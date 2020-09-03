@@ -187,9 +187,9 @@ class PortfolioViewSet(AdjustMixin, viewsets.ModelViewSet):
         portfolio_id = kwargs.get('pk')
 
         portfolio = Portfolio.objects.get(pk=portfolio_id)
-        adjusted_portfolio, summary_cost = portfolio.adjust(index_id, self.money, self.adjust_options)
+        adjusted_portfolio = portfolio.adjust(index_id, self.money, self.adjust_options)
         serialized_index = AdjustedTickerSerializer(adjusted_portfolio, many=True)
-        return Response(data={'tickers': serialized_index.data, 'summary_cost': summary_cost})
+        return Response(data={'tickers': serialized_index.data})
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):

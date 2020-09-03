@@ -14,6 +14,7 @@ class AVParsersTests(BaseTestCase):
     """
     Tests for parsers Alpha Vantage responses
     """
+
     fixtures = ['fin/tests/fixtures/ticker.json']
 
     def setUp(self) -> None:
