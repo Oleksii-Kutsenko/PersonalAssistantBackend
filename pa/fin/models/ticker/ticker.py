@@ -1,10 +1,29 @@
 """
 Ticker and hard related models
 """
+from datetime import date, timedelta
+
 from django.db import models
-from django.db.models import DecimalField
+from django.db.models import DecimalField, Q
 
 from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES
+
+
+class OutdatedTickersManager(models.Manager):
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        quarter_ago = date.today() - timedelta(30 * 3)
+        return qs.filter(Q(sector=Ticker.DEFAULT_VALUE) |
+                         Q(industry=Ticker.DEFAULT_VALUE) |
+                         Q(country=Ticker.DEFAULT_VALUE) |
+                         Q(ticker_statements__name=Statements.net_income.value,
+                           ticker_statements__fiscal_date_ending__lte=quarter_ago) |
+                         Q(ticker_statements__name=Statements.total_assets.value,
+                           ticker_statements__fiscal_date_ending__lte=quarter_ago) |
+                         Q(ticker_statements__name=Statements.price.value,
+                           ticker_statements__fiscal_date_ending__lte=quarter_ago)) \
+            .order_by('-ticker_statements__fiscal_date_ending')
 
 
 class Ticker(TimeStampMixin):
@@ -12,6 +31,8 @@ class Ticker(TimeStampMixin):
     Ticker model
     """
     DEFAULT_VALUE = 'Unknown'
+
+    outdated_tickers = OutdatedTickersManager()
 
     company_name = models.CharField(max_length=100, default=DEFAULT_VALUE)
     country = models.CharField(max_length=50, default=DEFAULT_VALUE)
