@@ -34,6 +34,8 @@ class Index(TimeStampMixin):
               '/1467271812596.ajax', _('IHI')
         RUSSEL3000 = 'https://www.ishares.com/us/products/239714/ishares-russell-3000-etf' \
                      '/1467271812596.ajax', _('RUSSEL3000')
+        SOXX = 'https://www.ishares.com/us/products/239705/ishares-phlx-semiconductor-etf' \
+               '/1467271812596.ajax', _('SOXX')
 
     data_source_url = models.URLField(choices=Source.choices, unique=True)
     tickers = models.ManyToManyField(Ticker, through='TickerIndexWeight')
