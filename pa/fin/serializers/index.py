@@ -24,7 +24,7 @@ class IndexSerializer(serializers.ModelSerializer):
         """
         Get the human-readable name of the index
         """
-        return dict(Index.Source.choices).get(obj.data_source_url, 'Unknown')
+        return dict(Source.choices).get(obj.data_source_url, 'Unknown')
 
     class Meta:
         """
@@ -48,12 +48,6 @@ class DetailIndexSerializer(IndexSerializer):
         query = obj.tickers.values('industry') \
             .annotate(percentage=Cast(Count('industry') / count * float(100), decimal_field))
         return query
-
-    def get_name(self, obj):
-        """
-        Get the human-readable name of the index
-        """
-        return dict(Source.choices)[obj.data_source_url]
 
     def get_sectors_breakdown(self, obj):
         """
