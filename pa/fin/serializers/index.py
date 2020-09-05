@@ -18,8 +18,24 @@ class IndexSerializer(serializers.ModelSerializer):
     Serialization class for the relation between indexes and tickers
     """
     id = serializers.IntegerField(read_only=True)
-    industries_breakdown = SerializerMethodField(read_only=True)
     name = serializers.SerializerMethodField()
+
+    def get_name(self, obj):
+        """
+        Get the human-readable name of the index
+        """
+        return dict(Index.Source.choices).get(obj.data_source_url, 'Unknown')
+
+    class Meta:
+        """
+        Serializer meta class
+        """
+        model = Index
+        fields = ('id', 'data_source_url', 'name',)
+
+
+class DetailIndexSerializer(IndexSerializer):
+    industries_breakdown = SerializerMethodField(read_only=True)
     sectors_breakdown = SerializerMethodField(read_only=True)
 
     def get_industries_breakdown(self, obj):
@@ -52,8 +68,8 @@ class IndexSerializer(serializers.ModelSerializer):
 
     class Meta:
         """
-        Serializer meta class
+        Meta
         """
-        model = Index
 
-        fields = ('id', 'data_source_url', 'industries_breakdown', 'name', 'sectors_breakdown')
+        model = IndexSerializer.Meta.model
+        fields = IndexSerializer.Meta.fields + ('industries_breakdown', 'sectors_breakdown')
