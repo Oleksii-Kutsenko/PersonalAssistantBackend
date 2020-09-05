@@ -19,7 +19,6 @@ from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES
 
 REASONABLE_LOT_PRICE = Decimal(202)
 
-
 class Index(TimeStampMixin):
     """
     Index model

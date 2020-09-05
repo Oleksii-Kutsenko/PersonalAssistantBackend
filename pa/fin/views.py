@@ -22,7 +22,7 @@ from .models.index import Index
 from .models.models import Goal
 from .models.portfolio import Portfolio, PortfolioTickers, Account
 from .models.ticker import Ticker
-from .serializers.index import IndexSerializer
+from .serializers.index import IndexSerializer, DetailIndexSerializer
 from .serializers.portfolio import PortfolioSerializer, AccountSerializer
 from .serializers.serializers import GoalSerializer
 from .serializers.ticker import AdjustedTickerSerializer
@@ -79,9 +79,13 @@ class IndexViewSet(viewsets.ModelViewSet):
     Send PUT request with the same data_source_url for reloading index data
     """
     queryset = Index.objects.all().order_by('updated')
-    serializer_class = IndexSerializer
     filter_backends = [filters.OrderingFilter]
     ordering_fields = '__all__'
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return DetailIndexSerializer
+        return IndexSerializer
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
