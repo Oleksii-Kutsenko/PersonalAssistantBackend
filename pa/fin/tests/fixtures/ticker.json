@@ -1,17 +1,1547 @@
 [
-  {
+{
+    "model": "fin.ticker",
+    "pk": 3631,
+    "fields": {
+        "created": "2020-09-02T20:18:07.811Z",
+        "updated": "2020-09-02T20:21:06.533Z",
+        "company_name": "Pinduoduo Inc ADR",
+        "country": "Unknown",
+        "industry": "Unknown",
+        "market_cap": null,
+        "price": "89.95",
+        "sector": "Unknown",
+        "symbol": "PDD"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 103,
+    "fields": {
+        "created": "2020-08-16T16:04:53.395Z",
+        "updated": "2020-09-02T20:21:06.580Z",
+        "company_name": "Liberty Global PLC",
+        "country": "USA",
+        "industry": "Entertainment",
+        "market_cap": null,
+        "price": "23.61",
+        "sector": "Communication Services",
+        "symbol": "LBTYA"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 102,
+    "fields": {
+        "created": "2020-08-16T16:04:53.392Z",
+        "updated": "2020-09-02T20:21:06.578Z",
+        "company_name": "Fox Corp",
+        "country": "USA",
+        "industry": "Broadcasting",
+        "market_cap": "1291171.00",
+        "price": "28.16",
+        "sector": "Communication Services",
+        "symbol": "FOX"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 101,
+    "fields": {
+        "created": "2020-08-16T16:04:53.388Z",
+        "updated": "2020-09-02T20:21:06.574Z",
+        "company_name": "Fox Corp",
+        "country": "USA",
+        "industry": "Broadcasting",
+        "market_cap": "2789816.82",
+        "price": "28.07",
+        "sector": "Communication Services",
+        "symbol": "FOXA"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 100,
+    "fields": {
+        "created": "2020-08-16T16:04:53.384Z",
+        "updated": "2020-09-02T20:21:06.576Z",
+        "company_name": "Liberty Global PLC",
+        "country": "USA",
+        "industry": "Entertainment",
+        "market_cap": null,
+        "price": "22.71",
+        "sector": "Communication Services",
+        "symbol": "LBTYK"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 98,
+    "fields": {
+        "created": "2020-08-16T16:04:53.377Z",
+        "updated": "2020-09-02T20:21:06.572Z",
+        "company_name": "Western Digital Corp",
+        "country": "USA",
+        "industry": "Computer Hardware",
+        "market_cap": "3346996.72",
+        "price": "38.72",
+        "sector": "Technology",
+        "symbol": "WDC"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 97,
+    "fields": {
+        "created": "2020-08-16T16:04:53.373Z",
+        "updated": "2020-09-02T20:21:06.564Z",
+        "company_name": "Expedia Group Inc",
+        "country": "USA",
+        "industry": "Travel Services",
+        "market_cap": "3826279.60",
+        "price": "101.60",
+        "sector": "Consumer Cyclical",
+        "symbol": "EXPE"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 96,
+    "fields": {
+        "created": "2020-08-16T16:04:53.370Z",
+        "updated": "2020-09-02T20:21:06.567Z",
+        "company_name": "Ulta Beauty Inc",
+        "country": "USA",
+        "industry": "Specialty Retail",
+        "market_cap": "3743205.96",
+        "price": "236.00",
+        "sector": "Consumer Cyclical",
+        "symbol": "ULTA"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 95,
+    "fields": {
+        "created": "2020-08-16T16:04:53.366Z",
+        "updated": "2020-09-02T20:21:06.557Z",
+        "company_name": "Trip.com Group Ltd ADR",
+        "country": "USA",
+        "industry": "Travel Services",
+        "market_cap": null,
+        "price": "30.60",
+        "sector": "Consumer Cyclical",
+        "symbol": "TCOM"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 94,
+    "fields": {
+        "created": "2020-08-16T16:04:53.362Z",
+        "updated": "2020-09-02T20:21:06.555Z",
+        "company_name": "CDW Corp/DE",
+        "country": "USA",
+        "industry": "Information Technology Services",
+        "market_cap": "4692381.20",
+        "price": "112.56",
+        "sector": "Technology",
+        "symbol": "CDW"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 93,
+    "fields": {
+        "created": "2020-08-16T16:04:53.359Z",
+        "updated": "2020-09-02T20:21:06.553Z",
+        "company_name": "Citrix Systems Inc",
+        "country": "USA",
+        "industry": "SoftwareApplication",
+        "market_cap": "5211228.00",
+        "price": "147.41",
+        "sector": "Technology",
+        "symbol": "CTXS"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 92,
+    "fields": {
+        "created": "2020-08-16T16:04:53.355Z",
+        "updated": "2020-09-02T20:21:06.551Z",
+        "company_name": "Check Point Software Technologies Ltd",
+        "country": "USA",
+        "industry": "SoftwareInfrastructure",
+        "market_cap": null,
+        "price": "129.95",
+        "sector": "Technology",
+        "symbol": "CHKP"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 91,
+    "fields": {
+        "created": "2020-08-16T16:04:53.350Z",
+        "updated": "2020-09-02T20:47:26.927Z",
+        "company_name": "Maxim Integrated Products Inc",
+        "country": "USA",
+        "industry": "Semiconductors",
+        "market_cap": "77643585.50",
+        "price": "69.34",
+        "sector": "Technology",
+        "symbol": "MXIM"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 90,
+    "fields": {
+        "created": "2020-08-16T16:04:53.347Z",
+        "updated": "2020-09-02T20:21:06.548Z",
+        "company_name": "Take-Two Interactive Software Inc",
+        "country": "USA",
+        "industry": "Electronic Gaming & Multimedia",
+        "market_cap": "5671011.13",
+        "price": "172.85",
+        "sector": "Communication Services",
+        "symbol": "TTWO"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 89,
+    "fields": {
+        "created": "2020-08-16T16:04:53.344Z",
+        "updated": "2020-09-02T20:21:06.546Z",
+        "company_name": "Incyte Corp",
+        "country": "USA",
+        "industry": "Biotechnology",
+        "market_cap": "5099805.50",
+        "price": "95.44",
+        "sector": "Healthcare",
+        "symbol": "INCY"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 88,
+    "fields": {
+        "created": "2020-08-16T16:04:53.340Z",
+        "updated": "2020-09-02T20:21:06.561Z",
+        "company_name": "BioMarin Pharmaceutical Inc",
+        "country": "USA",
+        "industry": "Biotechnology",
+        "market_cap": "4124821.86",
+        "price": "78.50",
+        "sector": "Healthcare",
+        "symbol": "BMRN"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 87,
+    "fields": {
+        "created": "2020-08-16T16:04:53.337Z",
+        "updated": "2020-09-02T20:21:06.544Z",
+        "company_name": "Cerner Corp",
+        "country": "USA",
+        "industry": "Health Information Services",
+        "market_cap": "6498527.64",
+        "price": "75.10",
+        "sector": "Healthcare",
+        "symbol": "CERN"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 86,
+    "fields": {
+        "created": "2020-08-16T16:04:53.333Z",
+        "updated": "2020-09-02T20:21:06.529Z",
+        "company_name": "Alexion Pharmaceuticals Inc",
+        "country": "USA",
+        "industry": "Biotechnology",
+        "market_cap": "7164221.06",
+        "price": "113.82",
+        "sector": "Healthcare",
+        "symbol": "ALXN"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 85,
+    "fields": {
+        "created": "2020-08-16T16:04:53.330Z",
+        "updated": "2020-09-02T20:21:06.542Z",
+        "company_name": "Dollar Tree Inc",
+        "country": "USA",
+        "industry": "Discount Stores",
+        "market_cap": "6651871.92",
+        "price": "94.53",
+        "sector": "Consumer Defensive",
+        "symbol": "DLTR"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 84,
+    "fields": {
+        "created": "2020-08-16T16:04:53.326Z",
+        "updated": "2020-09-02T20:21:06.536Z",
+        "company_name": "Copart Inc",
+        "country": "USA",
+        "industry": "Specialty Business Services",
+        "market_cap": "6066330.48",
+        "price": "104.80",
+        "sector": "Industrials",
+        "symbol": "CPRT"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 83,
+    "fields": {
+        "created": "2020-08-16T16:04:53.323Z",
+        "updated": "2020-09-02T20:21:06.531Z",
+        "company_name": "VeriSign Inc",
+        "country": "USA",
+        "industry": "SoftwareInfrastructure",
+        "market_cap": "6394596.00",
+        "price": "219.49",
+        "sector": "Technology",
+        "symbol": "VRSN"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 82,
+    "fields": {
+        "created": "2020-08-16T16:04:53.319Z",
+        "updated": "2020-09-02T20:21:06.540Z",
+        "company_name": "Align Technology Inc",
+        "country": "USA",
+        "industry": "Medical Devices",
+        "market_cap": "6749761.44",
+        "price": "305.35",
+        "sector": "Healthcare",
+        "symbol": "ALGN"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 81,
+    "fields": {
+        "created": "2020-08-16T16:04:53.315Z",
+        "updated": "2020-09-02T20:47:26.926Z",
+        "company_name": "Skyworks Solutions Inc",
+        "country": "USA",
+        "industry": "Semiconductors",
+        "market_cap": "102611487.06",
+        "price": "146.46",
+        "sector": "Technology",
+        "symbol": "SWKS"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 80,
+    "fields": {
+        "created": "2020-08-16T16:04:53.312Z",
+        "updated": "2020-09-02T20:47:26.918Z",
+        "company_name": "Microchip Technology Inc",
+        "country": "USA",
+        "industry": "Semiconductors",
+        "market_cap": "115748699.85",
+        "price": "112.35",
+        "sector": "Technology",
+        "symbol": "MCHP"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 79,
+    "fields": {
+        "created": "2020-08-16T16:04:53.308Z",
+        "updated": "2020-09-02T20:47:26.924Z",
+        "company_name": "Xilinx Inc",
+        "country": "USA",
+        "industry": "Semiconductors",
+        "market_cap": "107535305.61",
+        "price": "105.31",
+        "sector": "Technology",
+        "symbol": "XLNX"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 78,
+    "fields": {
+        "created": "2020-08-16T16:04:53.305Z",
+        "updated": "2020-09-02T20:21:06.523Z",
+        "company_name": "Sirius XM Holdings Inc",
+        "country": "USA",
+        "industry": "Broadcasting",
+        "market_cap": "2014355.07",
+        "price": "5.91",
+        "sector": "Communication Services",
+        "symbol": "SIRI"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 77,
+    "fields": {
+        "created": "2020-08-16T16:04:53.300Z",
+        "updated": "2020-09-02T20:21:06.517Z",
+        "company_name": "Paychex Inc",
+        "country": "USA",
+        "industry": "Staffing & Employment Services",
+        "market_cap": "7222132.68",
+        "price": "78.01",
+        "sector": "Industrials",
+        "symbol": "PAYX"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 76,
+    "fields": {
+        "created": "2020-08-16T16:04:53.297Z",
+        "updated": "2020-09-02T20:21:06.511Z",
+        "company_name": "ANSYS Inc",
+        "country": "USA",
+        "industry": "SoftwareApplication",
+        "market_cap": "8459655.54",
+        "price": "349.27",
+        "sector": "Technology",
+        "symbol": "ANSS"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 75,
+    "fields": {
+        "created": "2020-08-16T16:04:53.294Z",
+        "updated": "2020-09-02T20:21:06.527Z",
+        "company_name": "Moderna Inc",
+        "country": "USA",
+        "industry": "Biotechnology",
+        "market_cap": "5074852.23",
+        "price": "64.64",
+        "sector": "Healthcare",
+        "symbol": "MRNA"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 74,
+    "fields": {
+        "created": "2020-08-16T16:04:53.291Z",
+        "updated": "2020-09-02T20:21:06.519Z",
+        "company_name": "Seattle Genetics Inc",
+        "country": "USA",
+        "industry": "Biotechnology",
+        "market_cap": "5607452.76",
+        "price": "156.07",
+        "sector": "Healthcare",
+        "symbol": "SGEN"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 73,
+    "fields": {
+        "created": "2020-08-16T16:04:53.288Z",
+        "updated": "2020-09-02T20:21:06.515Z",
+        "company_name": "Fastenal Co",
+        "country": "USA",
+        "industry": "Industrial Distribution",
+        "market_cap": "8144619.98",
+        "price": "49.67",
+        "sector": "Industrials",
+        "symbol": "FAST"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 72,
+    "fields": {
+        "created": "2020-08-16T16:04:53.284Z",
+        "updated": "2020-09-03T12:11:43.975Z",
+        "company_name": "ASML Holding NV",
+        "country": "USA",
+        "industry": "Semiconductor Equipment & Materials",
+        "market_cap": "124889385.50",
+        "price": "398.49",
+        "sector": "Technology",
+        "symbol": "ASML"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 71,
+    "fields": {
+        "created": "2020-08-16T16:04:53.280Z",
+        "updated": "2020-09-02T20:21:06.492Z",
+        "company_name": "Synopsys Inc",
+        "country": "USA",
+        "industry": "SoftwareInfrastructure",
+        "market_cap": "9666162.70",
+        "price": "229.36",
+        "sector": "Technology",
+        "symbol": "SNPS"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 70,
+    "fields": {
+        "created": "2020-08-16T16:04:53.274Z",
+        "updated": "2020-09-02T20:21:06.505Z",
+        "company_name": "Cadence Design Systems Inc",
+        "country": "USA",
+        "industry": "SoftwareApplication",
+        "market_cap": "8904409.35",
+        "price": "116.52",
+        "sector": "Technology",
+        "symbol": "CDNS"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 69,
+    "fields": {
+        "created": "2020-08-16T16:04:53.269Z",
+        "updated": "2020-09-02T20:21:06.483Z",
+        "company_name": "Splunk Inc",
+        "country": "USA",
+        "industry": "SoftwareInfrastructure",
+        "market_cap": "10188536.49",
+        "price": "221.00",
+        "sector": "Technology",
+        "symbol": "SPLK"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 68,
+    "fields": {
+        "created": "2020-08-16T16:04:53.265Z",
+        "updated": "2020-09-02T20:21:06.507Z",
+        "company_name": "Verisk Analytics Inc",
+        "country": "USA",
+        "industry": "Consulting Services",
+        "market_cap": "8616687.20",
+        "price": "191.92",
+        "sector": "Industrials",
+        "symbol": "VRSK"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 67,
+    "fields": {
+        "created": "2020-08-16T16:04:53.261Z",
+        "updated": "2020-09-02T20:21:06.509Z",
+        "company_name": "PACCAR Inc",
+        "country": "USA",
+        "industry": "Farm & Heavy Construction Machinery",
+        "market_cap": "8528375.68",
+        "price": "87.03",
+        "sector": "Industrials",
+        "symbol": "PCAR"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 66,
+    "fields": {
+        "created": "2020-08-16T16:04:53.258Z",
+        "updated": "2020-09-02T20:21:06.494Z",
+        "company_name": "Marriott International Inc/MD",
+        "country": "USA",
+        "industry": "Lodging",
+        "market_cap": "8053942.42",
+        "price": "104.24",
+        "sector": "Consumer Cyclical",
+        "symbol": "MAR"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 65,
+    "fields": {
+        "created": "2020-08-16T16:04:53.255Z",
+        "updated": "2020-09-02T20:21:06.461Z",
+        "company_name": "Workday Inc",
+        "country": "USA",
+        "industry": "SoftwareApplication",
+        "market_cap": "11973514.50",
+        "price": "233.45",
+        "sector": "Technology",
+        "symbol": "WDAY"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 64,
+    "fields": {
+        "created": "2020-08-16T16:04:53.252Z",
+        "updated": "2020-09-02T20:21:06.490Z",
+        "company_name": "Baidu Inc ADR",
+        "country": "Unknown",
+        "industry": "Unknown",
+        "market_cap": null,
+        "price": "124.26",
+        "sector": "Unknown",
+        "symbol": "BIDU"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 63,
+    "fields": {
+        "created": "2020-08-16T16:04:53.248Z",
+        "updated": "2020-09-02T20:21:06.499Z",
+        "company_name": "IDEXX Laboratories Inc",
+        "country": "USA",
+        "industry": "Diagnostics & Research",
+        "market_cap": "9575104.10",
+        "price": "398.59",
+        "sector": "Healthcare",
+        "symbol": "IDXX"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 62,
+    "fields": {
+        "created": "2020-08-16T16:04:53.244Z",
+        "updated": "2020-09-02T20:47:26.909Z",
+        "company_name": "KLA Corp",
+        "country": "USA",
+        "industry": "Semiconductor Equipment & Materials",
+        "market_cap": "135399156.30",
+        "price": "207.95",
+        "sector": "Technology",
+        "symbol": "KLAC"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 61,
+    "fields": {
+        "created": "2020-08-16T16:04:53.241Z",
+        "updated": "2020-09-02T20:21:06.485Z",
+        "company_name": "Cintas Corp",
+        "country": "USA",
+        "industry": "Specialty Business Services",
+        "market_cap": "8563601.52",
+        "price": "335.23",
+        "sector": "Industrials",
+        "symbol": "CTAS"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 60,
+    "fields": {
+        "created": "2020-08-16T16:04:53.237Z",
+        "updated": "2020-09-02T20:21:06.501Z",
+        "company_name": "Ross Stores Inc",
+        "country": "USA",
+        "industry": "Apparel Retail",
+        "market_cap": "9266297.04",
+        "price": "91.25",
+        "sector": "Consumer Cyclical",
+        "symbol": "ROST"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 59,
+    "fields": {
+        "created": "2020-08-16T16:04:53.233Z",
+        "updated": "2020-09-02T20:21:06.477Z",
+        "company_name": "NetEase Inc ADR",
+        "country": "USA",
+        "industry": "Internet Content & Information",
+        "market_cap": null,
+        "price": "493.00",
+        "sector": "Communication Services",
+        "symbol": "NTES"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 58,
+    "fields": {
+        "created": "2020-08-16T16:04:53.229Z",
+        "updated": "2020-09-03T12:02:35.261Z",
+        "company_name": "NXP Semiconductors NV",
+        "country": "USA",
+        "industry": "Semiconductors",
+        "market_cap": "150222452.40",
+        "price": "132.10",
+        "sector": "Technology",
+        "symbol": "NXPI"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 57,
+    "fields": {
+        "created": "2020-08-16T16:04:53.224Z",
+        "updated": "2020-09-02T20:21:06.488Z",
+        "company_name": "O'Reilly Automotive Inc",
+        "country": "USA",
+        "industry": "Specialty Retail",
+        "market_cap": "9914659.59",
+        "price": "481.16",
+        "sector": "Consumer Cyclical",
+        "symbol": "ORLY"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 56,
+    "fields": {
+        "created": "2020-08-16T16:04:53.220Z",
+        "updated": "2020-09-02T20:21:06.476Z",
+        "company_name": "Cognizant Technology Solutions Corp",
+        "country": "USA",
+        "industry": "Information Technology Services",
+        "market_cap": "10525636.08",
+        "price": "68.92",
+        "sector": "Technology",
+        "symbol": "CTSH"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 55,
+    "fields": {
+        "created": "2020-08-16T16:04:53.217Z",
+        "updated": "2020-09-02T20:21:06.463Z",
+        "company_name": "DocuSign Inc",
+        "country": "USA",
+        "industry": "SoftwareApplication",
+        "market_cap": "11446144.00",
+        "price": "257.75",
+        "sector": "Technology",
+        "symbol": "DOCU"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 54,
+    "fields": {
+        "created": "2020-08-16T16:04:53.213Z",
+        "updated": "2020-09-02T20:21:06.496Z",
+        "company_name": "Walgreens Boots Alliance Inc",
+        "country": "USA",
+        "industry": "Pharmaceutical Retailers",
+        "market_cap": "8118714.76",
+        "price": "37.18",
+        "sector": "Healthcare",
+        "symbol": "WBA"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 53,
+    "fields": {
+        "created": "2020-08-16T16:04:53.209Z",
+        "updated": "2020-09-02T20:21:06.479Z",
+        "company_name": "Exelon Corp",
+        "country": "USA",
+        "industry": "UtilitiesDiversified",
+        "market_cap": "10508018.63",
+        "price": "38.00",
+        "sector": "Utilities",
+        "symbol": "EXC"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 52,
+    "fields": {
+        "created": "2020-08-16T16:04:53.206Z",
+        "updated": "2020-09-02T20:21:06.474Z",
+        "company_name": "Xcel Energy Inc",
+        "country": "USA",
+        "industry": "UtilitiesRegulated Electric",
+        "market_cap": "10632801.38",
+        "price": "71.28",
+        "sector": "Utilities",
+        "symbol": "XEL"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 51,
+    "fields": {
+        "created": "2020-08-16T16:04:53.202Z",
+        "updated": "2020-09-02T20:21:06.468Z",
+        "company_name": "DexCom Inc",
+        "country": "USA",
+        "industry": "Diagnostics & Research",
+        "market_cap": "11425661.78",
+        "price": "446.50",
+        "sector": "Healthcare",
+        "symbol": "DXCM"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 50,
+    "fields": {
+        "created": "2020-08-16T16:04:53.198Z",
+        "updated": "2020-09-02T20:21:06.472Z",
+        "company_name": "eBay Inc",
+        "country": "USA",
+        "industry": "Internet Retail",
+        "market_cap": "10652190.12",
+        "price": "55.08",
+        "sector": "Consumer Cyclical",
+        "symbol": "EBAY"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 49,
+    "fields": {
+        "created": "2020-08-16T16:04:53.195Z",
+        "updated": "2020-09-02T20:21:06.466Z",
+        "company_name": "Electronic Arts Inc",
+        "country": "USA",
+        "industry": "Electronic Gaming & Multimedia",
+        "market_cap": "11595954.21",
+        "price": "138.81",
+        "sector": "Communication Services",
+        "symbol": "EA"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 48,
+    "fields": {
+        "created": "2020-08-16T16:04:53.191Z",
+        "updated": "2020-09-02T20:21:06.442Z",
+        "company_name": "Zoom Video Communications Inc",
+        "country": "USA",
+        "industry": "Telecom Services",
+        "market_cap": "15833020.20",
+        "price": "418.60",
+        "sector": "Communication Services",
+        "symbol": "ZM"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 47,
+    "fields": {
+        "created": "2020-08-16T16:04:53.188Z",
+        "updated": "2020-09-03T12:33:04.054Z",
+        "company_name": "Analog Devices Inc",
+        "country": "USA",
+        "industry": "Semiconductors",
+        "market_cap": "126101268.16",
+        "price": "121.83",
+        "sector": "Technology",
+        "symbol": "ADI"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 46,
+    "fields": {
+        "created": "2020-08-16T16:04:53.185Z",
+        "updated": "2020-09-02T20:21:06.454Z",
+        "company_name": "Lululemon Athletica Inc",
+        "country": "Unknown",
+        "industry": "Unknown",
+        "market_cap": "12435804.01",
+        "price": "398.29",
+        "sector": "Unknown",
+        "symbol": "LULU"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 45,
+    "fields": {
+        "created": "2020-08-16T16:04:53.181Z",
+        "updated": "2020-09-02T20:21:06.459Z",
+        "company_name": "Kraft Heinz Co/The",
+        "country": "USA",
+        "industry": "Packaged Foods",
+        "market_cap": "6606476.64",
+        "price": "34.68",
+        "sector": "Consumer Defensive",
+        "symbol": "KHC"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 44,
+    "fields": {
+        "created": "2020-08-16T16:04:53.178Z",
+        "updated": "2020-09-02T20:21:06.456Z",
+        "company_name": "Monster Beverage Corp",
+        "country": "USA",
+        "industry": "BeveragesNon-Alcoholic",
+        "market_cap": "9015117.72",
+        "price": "84.86",
+        "sector": "Consumer Defensive",
+        "symbol": "MNST"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 43,
+    "fields": {
+        "created": "2020-08-16T16:04:53.173Z",
+        "updated": "2020-09-02T20:21:06.452Z",
+        "company_name": "Biogen Inc",
+        "country": "USA",
+        "industry": "Drug ManufacturersGeneral",
+        "market_cap": "13634136.00",
+        "price": "285.60",
+        "sector": "Healthcare",
+        "symbol": "BIIB"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 42,
+    "fields": {
+        "created": "2020-08-16T16:04:53.170Z",
+        "updated": "2020-09-03T12:42:08.212Z",
+        "company_name": "Micron Technology Inc",
+        "country": "USA",
+        "industry": "Semiconductors",
+        "market_cap": "114550138.56",
+        "price": "47.83",
+        "sector": "Technology",
+        "symbol": "MU"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 41,
+    "fields": {
+        "created": "2020-08-16T16:04:53.166Z",
+        "updated": "2020-09-02T20:21:06.446Z",
+        "company_name": "Illumina Inc",
+        "country": "USA",
+        "industry": "Diagnostics & Research",
+        "market_cap": "15282586.04",
+        "price": "362.00",
+        "sector": "Healthcare",
+        "symbol": "ILMN"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 40,
+    "fields": {
+        "created": "2020-08-16T16:04:53.162Z",
+        "updated": "2020-09-02T20:21:06.444Z",
+        "company_name": "Autodesk Inc",
+        "country": "USA",
+        "industry": "SoftwareApplication",
+        "market_cap": "15701458.50",
+        "price": "261.35",
+        "sector": "Technology",
+        "symbol": "ADSK"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 39,
+    "fields": {
+        "created": "2020-08-16T16:04:53.159Z",
+        "updated": "2020-09-03T12:33:00.701Z",
+        "company_name": "Lam Research Corp",
+        "country": "USA",
+        "industry": "Semiconductor Equipment & Materials",
+        "market_cap": "149245652.16",
+        "price": "362.70",
+        "sector": "Technology",
+        "symbol": "LRCX"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 38,
+    "fields": {
+        "created": "2020-08-16T16:04:53.155Z",
+        "updated": "2020-09-02T20:21:06.436Z",
+        "company_name": "CSX Corp",
+        "country": "USA",
+        "industry": "Railroads",
+        "market_cap": "16998663.66",
+        "price": "77.67",
+        "sector": "Industrials",
+        "symbol": "CSX"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 37,
+    "fields": {
+        "created": "2020-08-16T16:04:53.152Z",
+        "updated": "2020-09-02T20:21:06.438Z",
+        "company_name": "MercadoLibre Inc",
+        "country": "USA",
+        "industry": "Internet Retail",
+        "market_cap": null,
+        "price": "1177.98",
+        "sector": "Consumer Cyclical",
+        "symbol": "MELI"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 36,
+    "fields": {
+        "created": "2020-08-16T16:04:53.148Z",
+        "updated": "2020-09-02T20:21:06.423Z",
+        "company_name": "JD.com Inc ADR",
+        "country": "Unknown",
+        "industry": "Unknown",
+        "market_cap": null,
+        "price": "83.33",
+        "sector": "Unknown",
+        "symbol": "JD"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 35,
+    "fields": {
+        "created": "2020-08-16T16:04:53.145Z",
+        "updated": "2020-09-02T20:21:06.434Z",
+        "company_name": "Automatic Data Processing Inc",
+        "country": "USA",
+        "industry": "Staffing & Employment Services",
+        "market_cap": "17426307.92",
+        "price": "138.50",
+        "sector": "Industrials",
+        "symbol": "ADP"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 34,
+    "fields": {
+        "created": "2020-08-16T16:04:53.142Z",
+        "updated": "2020-09-02T20:21:06.431Z",
+        "company_name": "Regeneron Pharmaceuticals Inc",
+        "country": "USA",
+        "industry": "Biotechnology",
+        "market_cap": "17470247.33",
+        "price": "610.00",
+        "sector": "Healthcare",
+        "symbol": "REGN"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 33,
+    "fields": {
+        "created": "2020-08-16T16:04:53.138Z",
+        "updated": "2020-09-02T20:21:06.429Z",
+        "company_name": "Activision Blizzard Inc",
+        "country": "USA",
+        "industry": "Electronic Gaming & Multimedia",
+        "market_cap": "18667221.12",
+        "price": "83.45",
+        "sector": "Communication Services",
+        "symbol": "ATVI"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 32,
+    "fields": {
+        "created": "2020-08-16T16:04:53.134Z",
+        "updated": "2020-09-03T12:24:56.197Z",
+        "company_name": "Applied Materials Inc",
+        "country": "USA",
+        "industry": "Semiconductor Equipment & Materials",
+        "market_cap": "132121843.65",
+        "price": "65.08",
+        "sector": "Technology",
+        "symbol": "AMAT"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 31,
+    "fields": {
+        "created": "2020-08-16T16:04:53.130Z",
+        "updated": "2020-09-02T20:21:06.427Z",
+        "company_name": "Fiserv Inc",
+        "country": "USA",
+        "industry": "Information Technology Services",
+        "market_cap": "16200172.30",
+        "price": "103.13",
+        "sector": "Technology",
+        "symbol": "FISV"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 30,
+    "fields": {
+        "created": "2020-08-16T16:04:53.126Z",
+        "updated": "2020-09-02T20:21:06.425Z",
+        "company_name": "Vertex Pharmaceuticals Inc",
+        "country": "USA",
+        "industry": "Biotechnology",
+        "market_cap": "21119335.68",
+        "price": "280.00",
+        "sector": "Healthcare",
+        "symbol": "VRTX"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 29,
+    "fields": {
+        "created": "2020-08-16T16:04:53.123Z",
+        "updated": "2020-09-02T20:21:06.420Z",
+        "company_name": "Booking Holdings Inc",
+        "country": "USA",
+        "industry": "Travel Services",
+        "market_cap": "22764922.20",
+        "price": "1948.00",
+        "sector": "Consumer Cyclical",
+        "symbol": "BKNG"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 28,
+    "fields": {
+        "created": "2020-08-16T16:04:53.120Z",
+        "updated": "2020-09-02T20:21:06.412Z",
+        "company_name": "Intuit Inc",
+        "country": "USA",
+        "industry": "SoftwareApplication",
+        "market_cap": "25458006.12",
+        "price": "354.50",
+        "sector": "Technology",
+        "symbol": "INTU"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 27,
+    "fields": {
+        "created": "2020-08-16T16:04:53.116Z",
+        "updated": "2020-09-02T20:21:06.414Z",
+        "company_name": "Intuitive Surgical Inc",
+        "country": "USA",
+        "industry": "Medical Instruments & Supplies",
+        "market_cap": "24707507.88",
+        "price": "765.11",
+        "sector": "Healthcare",
+        "symbol": "ISRG"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 26,
+    "fields": {
+        "created": "2020-08-16T16:04:53.114Z",
+        "updated": "2020-09-02T20:21:06.418Z",
+        "company_name": "Mondelez International Inc",
+        "country": "USA",
+        "industry": "Confectioners",
+        "market_cap": "24053909.22",
+        "price": "58.95",
+        "sector": "Consumer Defensive",
+        "symbol": "MDLZ"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 25,
+    "fields": {
+        "created": "2020-08-16T16:04:53.110Z",
+        "updated": "2020-09-02T20:21:06.416Z",
+        "company_name": "Gilead Sciences Inc",
+        "country": "USA",
+        "industry": "Drug ManufacturersGeneral",
+        "market_cap": "24441447.00",
+        "price": "66.70",
+        "sector": "Healthcare",
+        "symbol": "GILD"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 24,
+    "fields": {
+        "created": "2020-08-16T16:04:53.107Z",
+        "updated": "2020-09-02T20:21:06.410Z",
+        "company_name": "Starbucks Corp",
+        "country": "USA",
+        "industry": "Restaurants",
+        "market_cap": "28888993.41",
+        "price": "88.65",
+        "sector": "Consumer Cyclical",
+        "symbol": "SBUX"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 23,
+    "fields": {
+        "created": "2020-08-16T16:04:53.103Z",
+        "updated": "2020-09-03T12:02:32.231Z",
+        "company_name": "Advanced Micro Devices Inc",
+        "country": "USA",
+        "industry": "Semiconductors",
+        "market_cap": "205489683.96",
+        "price": "90.22",
+        "sector": "Technology",
+        "symbol": "AMD"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 22,
+    "fields": {
+        "created": "2020-08-16T16:04:53.099Z",
+        "updated": "2020-09-02T20:21:06.406Z",
+        "company_name": "Charter Communications Inc",
+        "country": "USA",
+        "industry": "Entertainment",
+        "market_cap": "26949558.97",
+        "price": "617.39",
+        "sector": "Communication Services",
+        "symbol": "CHTR"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 21,
+    "fields": {
+        "created": "2020-08-16T16:04:53.095Z",
+        "updated": "2020-09-03T12:24:52.742Z",
+        "company_name": "Texas Instruments Inc",
+        "country": "USA",
+        "industry": "Semiconductors",
+        "market_cap": "292830796.80",
+        "price": "147.64",
+        "sector": "Technology",
+        "symbol": "TXN"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 20,
+    "fields": {
+        "created": "2020-08-16T16:04:53.091Z",
+        "updated": "2020-09-03T12:17:48.368Z",
+        "company_name": "QUALCOMM Inc",
+        "country": "USA",
+        "industry": "Semiconductors",
+        "market_cap": "361842860.82",
+        "price": "123.18",
+        "sector": "Technology",
+        "symbol": "QCOM"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 19,
+    "fields": {
+        "created": "2020-08-16T16:04:53.088Z",
+        "updated": "2020-09-03T11:59:28.063Z",
+        "company_name": "Broadcom Inc",
+        "country": "USA",
+        "industry": "Semiconductors",
+        "market_cap": "296085144.94",
+        "price": "375.01",
+        "sector": "Technology",
+        "symbol": "AVGO"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 18,
+    "fields": {
+        "created": "2020-08-16T16:04:53.084Z",
+        "updated": "2020-09-02T20:21:06.395Z",
+        "company_name": "Amgen Inc",
+        "country": "USA",
+        "industry": "Drug ManufacturersGeneral",
+        "market_cap": "43594852.08",
+        "price": "258.12",
+        "sector": "Healthcare",
+        "symbol": "AMGN"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 17,
+    "fields": {
+        "created": "2020-08-16T16:04:53.081Z",
+        "updated": "2020-09-02T20:21:06.397Z",
+        "company_name": "T-Mobile US Inc",
+        "country": "USA",
+        "industry": "Telecom Services",
+        "market_cap": "18695053.00",
+        "price": "119.19",
+        "sector": "Communication Services",
+        "symbol": "TMUS"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 16,
+    "fields": {
+        "created": "2020-08-16T16:04:53.078Z",
+        "updated": "2020-09-02T20:21:06.393Z",
+        "company_name": "Costco Wholesale Corp",
+        "country": "USA",
+        "industry": "Discount Stores",
+        "market_cap": "44851268.94",
+        "price": "358.82",
+        "sector": "Consumer Defensive",
+        "symbol": "COST"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 15,
+    "fields": {
+        "created": "2020-08-16T16:04:53.074Z",
+        "updated": "2020-09-02T20:21:06.391Z",
+        "company_name": "Cisco Systems Inc",
+        "country": "USA",
+        "industry": "Communication Equipment",
+        "market_cap": "52416467.76",
+        "price": "42.38",
+        "sector": "Technology",
+        "symbol": "CSCO"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 14,
+    "fields": {
+        "created": "2020-08-16T16:04:53.071Z",
+        "updated": "2020-09-02T20:21:06.389Z",
+        "company_name": "PepsiCo Inc",
+        "country": "USA",
+        "industry": "BeveragesNon-Alcoholic",
+        "market_cap": "56836067.88",
+        "price": "143.00",
+        "sector": "Consumer Defensive",
+        "symbol": "PEP"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 13,
+    "fields": {
+        "created": "2020-08-16T16:04:53.067Z",
+        "updated": "2020-09-02T20:21:06.387Z",
+        "company_name": "Comcast Corp",
+        "country": "USA",
+        "industry": "Entertainment",
+        "market_cap": "59366662.93",
+        "price": "45.04",
+        "sector": "Communication Services",
+        "symbol": "CMCSA"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 12,
+    "fields": {
+        "created": "2020-08-16T16:04:53.064Z",
+        "updated": "2020-09-03T12:06:39.990Z",
+        "company_name": "Intel Corp",
+        "country": "USA",
+        "industry": "Semiconductors",
+        "market_cap": "193591468.74",
+        "price": "52.25",
+        "sector": "Technology",
+        "symbol": "INTC"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 11,
+    "fields": {
+        "created": "2020-08-16T16:04:53.061Z",
+        "updated": "2020-09-02T20:21:06.381Z",
+        "company_name": "Netflix Inc",
+        "country": "USA",
+        "industry": "Entertainment",
+        "market_cap": "65843901.72",
+        "price": "551.67",
+        "sector": "Communication Services",
+        "symbol": "NFLX"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 10,
+    "fields": {
+        "created": "2020-08-16T16:04:53.057Z",
+        "updated": "2020-09-02T20:21:06.378Z",
+        "company_name": "Adobe Inc",
+        "country": "USA",
+        "industry": "SoftwareInfrastructure",
+        "market_cap": "72204196.38",
+        "price": "533.80",
+        "sector": "Technology",
+        "symbol": "ADBE"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 9,
+    "fields": {
+        "created": "2020-08-16T16:04:53.053Z",
+        "updated": "2020-09-02T20:21:06.380Z",
+        "company_name": "PayPal Holdings Inc",
+        "country": "USA",
+        "industry": "Credit Services",
+        "market_cap": "70091673.14",
+        "price": "210.80",
+        "sector": "Financial Services",
+        "symbol": "PYPL"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 8,
+    "fields": {
+        "created": "2020-08-16T16:04:53.049Z",
+        "updated": "2020-09-03T11:57:24.224Z",
+        "company_name": "NVIDIA Corp",
+        "country": "USA",
+        "industry": "Semiconductors",
+        "market_cap": "373518606.24",
+        "price": "573.86",
+        "sector": "Technology",
+        "symbol": "NVDA"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 7,
+    "fields": {
+        "created": "2020-08-16T16:04:53.046Z",
+        "updated": "2020-09-02T20:21:06.365Z",
+        "company_name": "Tesla Inc",
+        "country": "USA",
+        "industry": "Auto Manufacturers",
+        "market_cap": "107725322.64",
+        "price": "445.40",
+        "sector": "Consumer Cyclical",
+        "symbol": "TSLA"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 6,
+    "fields": {
+        "created": "2020-08-16T16:04:53.042Z",
+        "updated": "2020-09-02T20:21:06.370Z",
+        "company_name": "Alphabet Inc",
+        "country": "USA",
+        "industry": "Internet Content & Information",
+        "market_cap": "141580452.66",
+        "price": "1726.95",
+        "sector": "Communication Services",
+        "symbol": "GOOG"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 5,
+    "fields": {
+        "created": "2020-08-16T16:04:53.039Z",
+        "updated": "2020-09-02T20:21:06.367Z",
+        "company_name": "Alphabet Inc",
+        "country": "USA",
+        "industry": "Internet Content & Information",
+        "market_cap": "143020589.04",
+        "price": "1717.53",
+        "sector": "Communication Services",
+        "symbol": "GOOGL"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 4,
+    "fields": {
+        "created": "2020-08-16T16:04:53.037Z",
+        "updated": "2020-09-02T20:21:06.362Z",
+        "company_name": "Facebook Inc",
+        "country": "USA",
+        "industry": "Internet Content & Information",
+        "market_cap": "205844871.60",
+        "price": "303.00",
+        "sector": "Communication Services",
+        "symbol": "FB"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 3,
+    "fields": {
+        "created": "2020-08-16T16:04:53.033Z",
+        "updated": "2020-09-02T20:21:06.357Z",
+        "company_name": "Amazon.com Inc",
+        "country": "USA",
+        "industry": "Internet Retail",
+        "market_cap": "427815511.20",
+        "price": "3531.45",
+        "sector": "Consumer Cyclical",
+        "symbol": "AMZN"
+    }
+},
+{
+    "model": "fin.ticker",
+    "pk": 2,
+    "fields": {
+        "created": "2020-08-16T16:04:53.029Z",
+        "updated": "2020-09-02T20:21:06.360Z",
+        "company_name": "Microsoft Corp",
+        "country": "USA",
+        "industry": "SoftwareInfrastructure",
+        "market_cap": "493779216.01",
+        "price": "231.41",
+        "sector": "Technology",
+        "symbol": "MSFT"
+    }
+},
+{
     "model": "fin.ticker",
     "pk": 1,
     "fields": {
-      "created": "2020-08-16T16:04:53.025Z",
-      "updated": "2020-08-16T16:04:56.979Z",
-      "company_name": "Apple Inc",
-      "country": "USA",
-      "industry": "Consumer Electronics",
-      "market_cap": null,
-      "price": "459.25",
-      "sector": "Technology",
-      "symbol": "AAPL"
+        "created": "2020-08-16T16:04:53.025Z",
+        "updated": "2020-09-02T20:21:06.355Z",
+        "company_name": "Apple Inc",
+        "country": "USA",
+        "industry": "Consumer Electronics",
+        "market_cap": "617220514.88",
+        "price": "131.90",
+        "sector": "Technology",
+        "symbol": "AAPL"
     }
-  }
+}
 ]

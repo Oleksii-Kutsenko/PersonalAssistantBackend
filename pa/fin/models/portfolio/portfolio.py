@@ -1,6 +1,7 @@
 """
 Portfolio model and related models
 """
+from decimal import Decimal
 
 from django.db import models
 from django.db.models import ForeignKey, CASCADE, ManyToManyField, IntegerField, CharField, \
@@ -8,9 +9,11 @@ from django.db.models import ForeignKey, CASCADE, ManyToManyField, IntegerField,
 from django.db.models.functions import Cast
 from django.utils.translation import gettext_lazy as _
 
-from fin.models.index import Index, REASONABLE_LOT_PRICE
+from fin.models.index import Index
+from fin.models.index.index import REASONABLE_LOT_PRICE
 from fin.models.ticker import Ticker
 from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES
+from fin.serializers.ticker import AdjustedTickerSerializer
 from users.models import User
 
 
@@ -50,17 +53,25 @@ class Portfolio(TimeStampMixin):
 
         adjusted_index, _ = index.adjust(proper_portfolio_tickers_sum + money * 2, options, money)
         ticker_diff = self.portfolio_index_queries_diff(adjusted_index, proper_portfolio_tickers)
+        packed_ticker_diff = self.pack_ticker_diff(ticker_diff, money)
+        return packed_ticker_diff
 
+    @staticmethod
+    def pack_ticker_diff(ticker_diff, money):
+        """
+        Tries to pack the tickers difference so that the tickers sum is less than the money
+        parameter
+        """
         result = []
-        for ticker_weight in ticker_diff:
-            amount = money // ticker_weight.ticker.price
-            if amount == 0 or amount * ticker_weight.ticker.price < REASONABLE_LOT_PRICE:
+        for ticker in ticker_diff:
+            amount = money // Decimal(ticker['price'])
+            if amount == 0 or amount * Decimal(ticker['price']) < REASONABLE_LOT_PRICE:
                 continue
-            if amount < ticker_weight.amount:
-                ticker_weight.amount = amount
-                ticker_weight.cost = ticker_weight.ticker.price * ticker_weight.amount
-            money -= ticker_weight.cost
-            result.append(ticker_weight)
+            if amount < ticker['amount']:
+                ticker['amount'] = amount
+            ticker['cost'] = Decimal(ticker['price']) * Decimal(ticker['amount'])
+            money -= ticker['cost']
+            result.append(ticker)
         return result
 
     @staticmethod
@@ -68,6 +79,7 @@ class Portfolio(TimeStampMixin):
         """
         Return query that exclude tickers from portfolio
         """
+        result = []
         for adjusted_ticker in index_query:
             matched_portfolio_ticker = portfolio_query \
                 .filter(ticker__symbol=adjusted_ticker.ticker.symbol) \
@@ -75,12 +87,44 @@ class Portfolio(TimeStampMixin):
 
             if matched_portfolio_ticker:
                 amount_diff = adjusted_ticker.amount - matched_portfolio_ticker.amount
-                if amount_diff > 0 and \
-                        adjusted_ticker.ticker.price * amount_diff >= REASONABLE_LOT_PRICE:
+                cost = adjusted_ticker.ticker.price * amount_diff
+                if cost >= REASONABLE_LOT_PRICE:
                     adjusted_ticker.amount -= matched_portfolio_ticker.amount
-                else:
-                    index_query = index_query.exclude(ticker=matched_portfolio_ticker.ticker)
-        return index_query
+                    result.append({
+                        **AdjustedTickerSerializer(adjusted_ticker).data,
+                    })
+            else:
+                result.append({
+                    **AdjustedTickerSerializer(adjusted_ticker).data,
+                })
+        return result
+
+    @property
+    def total(self):
+        """
+        Total sum of the portfolio tickers and accounts
+        """
+        return self.total_accounts + self.total_tickers
+
+    @property
+    def total_accounts(self):
+        """
+        Total sum of the portfolio accounts cost
+        """
+        accounts_sum = Account.objects.filter(portfolio=self) \
+            .aggregate(Sum('value')).get('value__sum')
+        return accounts_sum or 0
+
+    @property
+    def total_tickers(self):
+        """
+        Total sum of the portfolio tickers cost
+        """
+        decimal_field = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
+        cost = Cast(F('amount') * F('ticker__price'), decimal_field)
+        query = PortfolioTickers.objects.filter(portfolio=self).annotate(cost=cost)
+        tickers_sum = query.aggregate(Sum('cost')).get('cost__sum')
+        return tickers_sum or 0
 
 
 class PortfolioTickers(TimeStampMixin):

@@ -35,11 +35,17 @@ class AdjustMixin:
     """
     Extracts required params for adjusting functionality from request
     """
+    default_adjust_options = {
+        'skip_countries': [],
+        'skip_sectors': [],
+        'skip_industries': [],
+        'skip_tickers': [],
+    }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.money = None
-        self.adjust_options = {}
+        self.adjust_options = self.default_adjust_options
 
     def initial(self, request, *args, **kwargs):
         """
@@ -192,8 +198,8 @@ class PortfolioViewSet(AdjustMixin, viewsets.ModelViewSet):
 
         portfolio = Portfolio.objects.get(pk=portfolio_id)
         adjusted_portfolio = portfolio.adjust(index_id, self.money, self.adjust_options)
-        serialized_index = AdjustedTickerSerializer(adjusted_portfolio, many=True)
-        return Response(data={'tickers': serialized_index.data})
+
+        return Response(data={'tickers': adjusted_portfolio})
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):

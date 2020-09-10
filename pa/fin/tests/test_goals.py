@@ -1,3 +1,6 @@
+"""
+Tests for Goal model and related functionality
+"""
 import factory
 from django.urls import reverse
 from rest_framework import status
@@ -7,7 +10,6 @@ from rest_framework.test import APIRequestFactory
 from fin.models.models import Goal
 from fin.serializers.serializers import GoalSerializer
 from fin.tests.base import BaseTestCase
-from fin.tests.test_index import faker
 from users.models import User
 
 
@@ -153,12 +155,18 @@ class GoalsTests(BaseTestCase):
 
 
 class GoalFactory(factory.DjangoModelFactory):
+    """
+    Goal Factory
+    """
     class Meta:
+        """
+        Meta
+        """
         model = Goal
 
-    name = faker.pystr(min_chars=None, max_chars=50)
-    coefficient = faker.pyfloat(left_digits=None, right_digits=2, positive=True,
+    name = factory.Faker('pystr', min_chars=None, max_chars=50)
+    coefficient = factory.Faker('pyfloat', left_digits=None, right_digits=2, positive=True,
                                 min_value=0, max_value=1)
-    target_money_amount = faker.pyint(min_value=101)
-    current_money_amount = faker.pyint(max_value=100)
-    level = faker.pyint()
+    target_money_amount = factory.Faker('pyint', min_value=101)
+    current_money_amount = factory.Faker('pyint', max_value=100)
+    level = factory.Faker('pyint')

@@ -71,7 +71,6 @@ MIDDLEWARE = [
 ]
 CORS_ORIGIN_WHITELIST = os.environ.get('WHITELIST_ORIGIN').split(' ')
 
-
 ROOT_URLCONF = 'pa.urls'
 
 TEMPLATES = [

@@ -1,5 +1,5 @@
 """
-Test for AV parsers
+Tests for AV parsers
 """
 from django.urls import reverse
 
@@ -26,7 +26,7 @@ class AVParsersTests(BaseTestCase):
         Tests that parse_time_series_monthly returns correct TickerStatements and they displays
         inside TickerSerializer
         """
-        ticker = Ticker.objects.get(pk=1)
+        ticker = Ticker.objects.get(symbol='AAPL')
 
         portfolio = Portfolio.objects.create(name='test_portfolio', user=self.user)
         portfolio.save()

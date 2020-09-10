@@ -1,0 +1,96 @@
+[
+  {
+    "model": "users.user",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$180000$uOjYpMLA6mAm$tt/EpI3xqEEg323d5+h6BMah3fI91UKxwlwngvNRr+k=",
+      "last_login": "2020-09-03T00:51:38.096Z",
+      "is_superuser": false,
+      "username": "lexk",
+      "first_name": "",
+      "last_name": "",
+      "email": "kutsenko.new@gmail.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2020-08-16T16:04:31.112Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "fin.portfolio",
+    "pk": 1,
+    "fields": {
+      "created": "2020-08-16T16:06:50.426Z",
+      "updated": "2020-08-25T12:32:32.656Z",
+      "name": "Test",
+      "user": 1
+    }
+  },
+  {
+    "model": "fin.portfoliotickers",
+    "pk": 1,
+    "fields": {
+      "created": "2020-08-20T12:21:19.558Z",
+      "updated": "2020-08-25T12:23:56.129Z",
+      "portfolio": 1,
+      "ticker": 1,
+      "amount": 1
+    }
+  },
+  {
+    "model": "fin.portfoliotickers",
+    "pk": 2,
+    "fields": {
+      "created": "2020-08-20T12:21:19.558Z",
+      "updated": "2020-08-25T12:23:56.129Z",
+      "portfolio": 1,
+      "ticker": 2,
+      "amount": 10
+    }
+  },
+  {
+    "model": "fin.portfoliotickers",
+    "pk": 3,
+    "fields": {
+      "created": "2020-08-25T12:23:56.130Z",
+      "updated": "2020-08-25T12:23:56.130Z",
+      "portfolio": 1,
+      "ticker": 4,
+      "amount": 3
+    }
+  },
+  {
+    "model": "fin.portfoliotickers",
+    "pk": 4,
+    "fields": {
+      "created": "2020-08-25T12:23:56.131Z",
+      "updated": "2020-08-25T12:23:56.132Z",
+      "portfolio": 1,
+      "ticker": 70,
+      "amount": 2
+    }
+  },
+  {
+    "model": "fin.portfoliotickers",
+    "pk": 6,
+    "fields": {
+      "created": "2020-08-25T12:24:45.373Z",
+      "updated": "2020-08-25T12:24:45.373Z",
+      "portfolio": 1,
+      "ticker": 73,
+      "amount": 4
+    }
+  },
+  {
+    "model": "fin.portfoliotickers",
+    "pk": 9,
+    "fields": {
+      "created": "2020-08-25T12:32:32.658Z",
+      "updated": "2020-08-25T12:32:32.659Z",
+      "portfolio": 1,
+      "ticker": 84,
+      "amount": 1
+    }
+  }
+]
