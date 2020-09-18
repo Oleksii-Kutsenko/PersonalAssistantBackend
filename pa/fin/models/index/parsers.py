@@ -116,9 +116,12 @@ class ISharesParser(Parser):
         for row in reader:
             if len(row) > 2 and row[3] == equity_name:
                 market_cap = Decimal(row[4].replace(',', ''))
+                price = Decimal(row[11].replace(',', ''))
+                if price == Decimal(0):
+                    continue
                 parsed_json.append({
                     'ticker': {
-                        'price': Decimal(row[11].replace(',', '')),
+                        'price': price,
                         'market_cap': market_cap,
                         'symbol': row[0]
                     },

@@ -92,3 +92,9 @@ class TickerStatement(TimeStampMixin):
     value = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
     ticker = models.ForeignKey(Ticker, on_delete=models.CASCADE, null=False,
                                related_name='ticker_statements')
+
+    class Meta:
+        """
+        Meta
+        """
+        unique_together = ['fiscal_date_ending', 'name']
