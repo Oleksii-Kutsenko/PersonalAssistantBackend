@@ -5,6 +5,7 @@ from datetime import date, timedelta
 
 from django.db import models
 from django.db.models import DecimalField, Q
+from querybuilder.query import Query
 
 from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES
 
@@ -26,6 +27,7 @@ class OutdatedTickersManager(models.Manager):
             .filter(Q(sector=Ticker.DEFAULT_VALUE) |
                     Q(industry=Ticker.DEFAULT_VALUE) |
                     Q(country=Ticker.DEFAULT_VALUE) |
+                    Q(pe=None) |
                     Q(ticker_statements__name=Statements.net_income.value,
                       ticker_statements__fiscal_date_ending__lte=quarter_ago) |
                     Q(ticker_statements__name=Statements.total_assets.value,
@@ -49,6 +51,7 @@ class Ticker(TimeStampMixin):
     industry = models.CharField(max_length=50, default=DEFAULT_VALUE)
     market_cap = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES,
                                      null=True)
+    pe = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES, null=True)
     price = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
     sector = models.CharField(max_length=50, default=DEFAULT_VALUE)
     symbol = models.CharField(max_length=100, unique=True)
@@ -67,6 +70,36 @@ class Ticker(TimeStampMixin):
 
     def __str__(self):
         return f"{self.symbol}"
+
+    def net_income_statements(self, start_date):
+        """
+        Returns net income ticker statements
+        """
+        return self.ticker_statements \
+            .filter(name=Statements.net_income,
+                    fiscal_date_ending__gte=start_date) \
+            .order_by('-fiscal_date_ending')
+
+    def get_debt_statements(self, statement, value_alias):
+        """
+        Returns ticker statements related to calculating debt to equity and assets to equity
+        """
+        return Query() \
+            .from_table(TickerStatement, [TickerStatement.fiscal_date_ending.field.name,
+                                          {value_alias: TickerStatement.value.field.name}]) \
+            .where(ticker_id=self.id, name=statement) \
+            .group_by(TickerStatement.fiscal_date_ending.field.name) \
+            .group_by(TickerStatement.value.field.name) \
+            .order_by(TickerStatement.fiscal_date_ending.field.name, desc=True)
+
+    def get_returns_statements(self, statement):
+        """
+        Returns ticker statements related to calculating ROA and ROE
+        """
+        quarter = 4
+        return self.ticker_statements \
+                   .filter(name=statement) \
+                   .order_by(f'-{TickerStatement.fiscal_date_ending.field.name}')[:quarter]
 
 
 class Statements(models.TextChoices):
@@ -97,4 +130,4 @@ class TickerStatement(TimeStampMixin):
         """
         Meta
         """
-        unique_together = ['fiscal_date_ending', 'name']
+        unique_together = ['fiscal_date_ending', 'name', 'ticker_id']

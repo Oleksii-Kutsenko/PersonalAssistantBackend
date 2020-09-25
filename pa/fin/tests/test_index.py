@@ -27,6 +27,31 @@ class IndexFactory(factory.DjangoModelFactory):
     data_source_url = FuzzyChoice(Source)
 
 
+class IndexTests(BaseTestCase):
+    """
+    Tests for index amount
+    """
+
+    def setUp(self) -> None:
+        self.user = User.objects.create(username='test_user', email='test_user@gmail.com')
+        self.login(self.user)
+        self.index = IndexFactory()
+
+    def test_the_right_serialization_class_used(self):
+        """
+        Tests if viewset use right serializer
+        """
+        index_list_url = reverse('index-list')
+        detailed_index_url = reverse('index-detail', kwargs={'pk': self.index.id})
+        list_response = self.client.get(index_list_url)
+        detailed_response = self.client.get(detailed_index_url)
+
+        assert 'industries_breakdown' in detailed_response.data.keys()
+        assert 'sectors_breakdown' in detailed_response.data.keys()
+
+        assert len(list_response.data['results'][0]) == 3
+
+
 class AdjustedIndexTests(BaseTestCase):
     """
     Tests for index-adjusted endpoint
