@@ -83,5 +83,5 @@ class AVParsersTests(BaseTestCase):
         tickers_statements = parse_time_series_monthly(ticker, ticker_time_series)
         TickerStatement.objects.bulk_create(tickers_statements)
 
-        tickers_statements = ticker.ticker_statements.order_by(f'-fiscal_date_ending')
+        tickers_statements = ticker.ticker_statements.order_by('-fiscal_date_ending')
         assert len(tickers_statements) == expected_length
