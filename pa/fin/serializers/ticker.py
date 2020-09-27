@@ -2,12 +2,13 @@
 Serializer for Ticker model in different variants
 """
 from datetime import date
-from decimal import Decimal
 from statistics import mean
 
+import numpy as np
 from querybuilder.fields import MultiField
 from querybuilder.query import Query
 from rest_framework import serializers
+from sklearn.linear_model import LinearRegression
 
 from fin.models.index import TickerIndexWeight
 from fin.models.ticker import Ticker, TickerStatement, Statements
@@ -18,6 +19,7 @@ class DebtToEquityField(MultiField):
     """
     Calculates debt to equity ratio
     """
+
     def __init__(self, short_debt, long_debt, equity):
         super().__init__()
         self.short_debt = short_debt
@@ -33,6 +35,7 @@ class AssetsToEquityField(MultiField):
     """
     Calculates assets to equity ratio
     """
+
     def __init__(self, total_assets, equity):
         super().__init__()
         self.total_assets = total_assets
@@ -72,14 +75,26 @@ class TickerSerializer(serializers.ModelSerializer):
         """
         Calculates annual earnings growth
         """
+        yearly_earnings = []
+        quarter = 4
         query = obj.net_income_statements(self.five_years_ago)
-        years_ago = query.count() // 4
-        if years_ago >= 2:
-            first_year_income = sum([statement.value for statement in query[:4]])
-            last_year_income = sum([statement.value for statement in query[years_ago * 4 - 4:]])
+        counter = query.count()
 
-            return ((first_year_income / last_year_income) ** Decimal(1 / years_ago) - 1) * 100
-        return None
+        if counter < quarter:
+            return None
+
+        while counter >= quarter:
+            yearly_earnings.append(query[counter - 1].value +
+                                   query[counter - 2].value +
+                                   query[counter - 3].value +
+                                   query[counter - 4].value)
+            counter -= 1
+
+        yearly_earnings = np.array(yearly_earnings)
+        time_points = np.array(list(range(yearly_earnings.shape[0]))).reshape((-1, 1))
+        model = LinearRegression(normalize=True)
+        model.fit(time_points, yearly_earnings)
+        return model.coef_ / float(np.mean(yearly_earnings))
 
     def get_debt(self, obj):
         """
@@ -171,7 +186,7 @@ class TickerSerializer(serializers.ModelSerializer):
         """
         model = Ticker
         fields = ['annual_earnings_growth', 'company_name', 'country', 'debt', 'industry', 'pe',
-                  'price', 'returns_ratios', 'sector', 'symbol']
+                  'price', 'returns_ratios', 'sector', 'symbol', 'updated']
         depth = 1
 
 
