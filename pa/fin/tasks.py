@@ -26,6 +26,7 @@ def update_tickers_statements(tickers_query):
         ticker.country = ticker_overview.get('Country', Ticker.DEFAULT_VALUE)
         ticker.industry = ticker_overview.get('Industry', Ticker.DEFAULT_VALUE)
         ticker.sector = ticker_overview.get('Sector', Ticker.DEFAULT_VALUE)
+        ticker.pe = ticker_overview.get('PERatio', None)
 
         ticker_income_statement = av_api.call(AVFunctions.income_statement.value,
                                               ticker.symbol)

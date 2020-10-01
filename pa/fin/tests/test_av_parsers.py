@@ -1,7 +1,6 @@
 """
 Tests for AV parsers
 """
-from django.urls import reverse
 
 from fin.external_api.alpha_vantage.parsers import parse_time_series_monthly
 from fin.models.portfolio import Portfolio, PortfolioTickers
@@ -80,12 +79,9 @@ class AVParsersTests(BaseTestCase):
                 }
             }
         }
-        expected_length = len(ticker_time_series["Monthly Adjusted Time Series"].keys()) - 1
+        expected_length = len(ticker_time_series["Monthly Adjusted Time Series"].keys())
         tickers_statements = parse_time_series_monthly(ticker, ticker_time_series)
         TickerStatement.objects.bulk_create(tickers_statements)
 
-        url = reverse('portfolios-detail', kwargs={'pk': portfolio.id})
-        response = self.client.get(url).json()
-        ticker = response.get('tickers')[0]
-
-        assert len(ticker.get('ticker_statements')) == expected_length
+        tickers_statements = ticker.ticker_statements.order_by('-fiscal_date_ending')
+        assert len(tickers_statements) == expected_length

@@ -23,5 +23,6 @@ COPY . /usr/src/app
 
 RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt
+RUN pip3 install -r dev-requirements.txt
 
 ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
