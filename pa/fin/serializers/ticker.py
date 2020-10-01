@@ -92,9 +92,9 @@ class TickerSerializer(serializers.ModelSerializer):
 
         yearly_earnings = np.array(yearly_earnings)
         time_points = np.array(list(range(yearly_earnings.shape[0]))).reshape((-1, 1))
-        model = LinearRegression(normalize=True)
-        model.fit(time_points, yearly_earnings)
-        return round((model.coef_ / float(np.mean(yearly_earnings)) * 100)[0], 2)
+        annual_earnings_line_model = LinearRegression(normalize=True)
+        annual_earnings_line_model.fit(time_points, yearly_earnings)
+        return round((annual_earnings_line_model.coef_ / float(np.mean(yearly_earnings)) * 100)[0], 2)
 
     def get_debt(self, obj):
         """
