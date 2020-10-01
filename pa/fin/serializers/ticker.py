@@ -94,7 +94,7 @@ class TickerSerializer(serializers.ModelSerializer):
         time_points = np.array(list(range(yearly_earnings.shape[0]))).reshape((-1, 1))
         model = LinearRegression(normalize=True)
         model.fit(time_points, yearly_earnings)
-        return model.coef_ / float(np.mean(yearly_earnings))
+        return round((model.coef_ / float(np.mean(yearly_earnings)) * 100)[0], 2)
 
     def get_debt(self, obj):
         """
@@ -148,8 +148,8 @@ class TickerSerializer(serializers.ModelSerializer):
         query = query.select()
         if query:
             return {
-                'debt_to_equity': query[0]['debt_to_equity'],
-                'assets_to_equity': query[0]['assets_to_equity']
+                'debt_to_equity': round(query[0]['debt_to_equity'], 2),
+                'assets_to_equity': round(query[0]['assets_to_equity'], 2)
             }
         return None
 
@@ -165,16 +165,18 @@ class TickerSerializer(serializers.ModelSerializer):
 
             total_assets = obj.get_returns_statements(Statements.total_assets)
             if total_assets.count() == 4:
-                roa = sum([statement.value for statement in net_income]) / \
-                      mean([statement.value for statement in total_assets]) \
-                      * 100
+                roa = round(sum([statement.value for statement in net_income]) / \
+                            mean([statement.value for statement in total_assets]) \
+                            * 100, 2)
 
             equity = obj.get_returns_statements(Statements.total_shareholder_equity)
             if equity.count() == 4:
-                roe = sum([statement.value for statement in net_income]) / \
-                      mean([statement.value for statement in equity]) \
-                      * 100
+                roe = round(sum([statement.value for statement in net_income]) / \
+                            mean([statement.value for statement in equity]) \
+                            * 100, 2)
 
+        if roa is None and roe is None:
+            return None
         return {
             'roa': roa,
             'roe': roe
