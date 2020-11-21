@@ -2,7 +2,7 @@
 Tests for main functionality of update_tickers_statements_task
 """
 from fin.models.ticker import Ticker, Statements
-from fin.tasks import update_tickers_statements
+from fin.tasks.update_tickers_statements import update_tickers_statements
 from fin.tests.base import BaseTestCase
 
 

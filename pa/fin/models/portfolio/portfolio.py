@@ -12,7 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from fin.models.index import Index
 from fin.models.index.index import REASONABLE_LOT_PRICE
 from fin.models.ticker import Ticker
-from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES
+from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES, UpdatingStatus
 from fin.serializers.ticker import AdjustedTickerSerializer
 from users.models import User
 
@@ -22,6 +22,8 @@ class Portfolio(TimeStampMixin):
     Class that represents the portfolio
     """
     name = CharField(max_length=100)
+    status = models.IntegerField(choices=UpdatingStatus.choices,
+                                 default=UpdatingStatus.successfully_updated)
     tickers = ManyToManyField(Ticker, through='PortfolioTickers')
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
 

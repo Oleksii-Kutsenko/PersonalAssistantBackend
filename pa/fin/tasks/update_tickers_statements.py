@@ -1,15 +1,21 @@
 """
 The function that fetch information about ticker statements
 """
+import logging
 
 from redis.exceptions import LockError
 
 from fin.external_api.alpha_vantage import AlphaVantage, AVFunctions
 from fin.external_api.alpha_vantage.parsers import parse_time_series_monthly, parse_balance_sheet, \
     parse_income_statement
+from fin.models.index import Index
+from fin.models.utils import UpdatingStatus
+from fin.models.portfolio import Portfolio
 from fin.models.ticker import Ticker, TickerStatement
 from pa import celery_app
 from pa.celery import redis_client as r
+
+logger = logging.getLogger(__name__)
 
 
 def update_tickers_statements(tickers_query):
@@ -57,6 +63,40 @@ def update_tickers_statements_task():
         lock = r.lock('update_tickers_statements_task')
         if lock.acquire(blocking=False):
             update_tickers_statements(Ticker.outdated_tickers.all())
+            return True
+        return 'Locked'
+    except LockError:
+        return 'Locked'
+
+
+@celery_app.task()
+def update_model_tickers_statements_task(obj_type, obj_id):
+    """
+    Updating tickers statements for given object type with given id
+    """
+    obj_types = {
+        'Index': Index,
+        'Portfolio': Portfolio
+    }
+    model = obj_types[obj_type]
+    try:
+        task_id = f'update_{obj_type}_{obj_id}_tickers_statements_task'
+        lock = r.lock(task_id)
+        if lock.acquire(blocking=False):
+            obj = model.objects.get(pk=obj_id)
+            obj.status = UpdatingStatus.updating
+            obj.save()
+
+            try:
+                update_tickers_statements(obj.tickers.all())
+            except Exception as error:
+                logger.exception(error)
+                obj.status = UpdatingStatus.update_failed
+                obj.save()
+                return False
+
+            obj.status = UpdatingStatus.successfully_updated
+            obj.save()
             return True
         return 'Locked'
     except LockError:

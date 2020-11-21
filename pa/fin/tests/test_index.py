@@ -1,30 +1,13 @@
 """
 Tests
 """
-import factory
 from django.urls import reverse
-from factory.fuzzy import FuzzyChoice
 from rest_framework import status
 
-from fin.models.index import Index
-from fin.models.index.parsers import Source
 from fin.serializers.ticker import AdjustedTickerSerializer
 from fin.tests.base import BaseTestCase
+from fin.tests.factories.index import IndexFactory
 from users.models import User
-
-
-class IndexFactory(factory.DjangoModelFactory):
-    """
-    Creates Index object
-    """
-
-    class Meta:
-        """
-        Factory meta class
-        """
-        model = Index
-
-    data_source_url = FuzzyChoice(Source)
 
 
 class IndexTests(BaseTestCase):
@@ -49,7 +32,7 @@ class IndexTests(BaseTestCase):
         assert 'industries_breakdown' in detailed_response.data.keys()
         assert 'sectors_breakdown' in detailed_response.data.keys()
 
-        assert len(list_response.data['results'][0]) == 3
+        assert len(list_response.data['results'][0]) == 5
 
 
 class AdjustedIndexTests(BaseTestCase):
