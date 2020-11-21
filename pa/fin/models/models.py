@@ -38,5 +38,5 @@ class Goal(TimeStampMixin):
             self.target_money_amount *= (self.coefficient + Decimal(1))
             self.level += 1
 
-        super(Goal, self).save(force_insert=False, force_update=False, using=None,
-                               update_fields=None)
+        super().save(force_insert=False, force_update=False, using=None,
+                     update_fields=None)

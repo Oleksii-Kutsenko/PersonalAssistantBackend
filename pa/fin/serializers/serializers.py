@@ -13,7 +13,7 @@ class GoalSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.IntegerField(read_only=True)
 
     def __init__(self, *args, **kwargs):
-        super(GoalSerializer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.error_messages['current_money_amount'] = \
             'Target money amount must be greater or equals to the current money amount'
 

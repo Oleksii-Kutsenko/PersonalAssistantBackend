@@ -10,41 +10,16 @@ class BadRequest(APIException):
     default_code = 'bad_request'
 
 
-class WebSocketException(Exception):
-
-    def __init__(self, base_exception=None, detail=None):
-        if base_exception is None:
-            base_exception = Exception(detail)
-
-        self.exception_type = base_exception.__class__.__name__
-        self.exception_detail = base_exception
-
-        super(WebSocketException, self).__init__()
-
-    def to_json(self):
-        """
-        Returns json representation of the exception
-        """
-        return {'class': self.__class__.__name__,
-                'detail': f'{self.exception_type}: {str(self.exception_detail)}'}
-
-
-class FormatError(WebSocketException):
-    pass
-
-
-class InvalidData(WebSocketException):
-    pass
-
-
-class InvalidMessageType(WebSocketException):
-    pass
-
-
 class ServiceUnavailable(APIException):
+    """
+    The default exception for 503 HTTP code
+    """
     status_code = 503
     default_detail = 'Service temporarily unavailable, try again later.'
 
 
 class TraderNetAPIUnavailable(ServiceUnavailable):
+    """
+    Exception when broker API is unavailable
+    """
     default_detail = 'TraderNet API is not responding'
