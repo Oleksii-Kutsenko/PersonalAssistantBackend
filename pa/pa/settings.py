@@ -174,7 +174,7 @@ CELERY_RESULT_SERIALIZER = 'json'
 
 CELERY_BEAT_SCHEDULE = {
     'update_tickers_statements': {
-        'task': 'fin.tasks.update_tickers_statements_task',
+        'task': 'fin.tasks.update_tickers_statements',
         'schedule': crontab(0, 0, month_of_year='*/1'),  # every month
     },
 }

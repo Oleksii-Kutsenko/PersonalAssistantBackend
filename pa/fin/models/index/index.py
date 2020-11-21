@@ -10,7 +10,7 @@ from django.db.models.functions import Cast, Coalesce
 
 from fin.models.index.parsers import SlickChartsParser, ISharesParser, Source
 from fin.models.ticker import Ticker
-from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES
+from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES, UpdatingStatus
 
 REASONABLE_LOT_PRICE = Decimal(202)
 
@@ -29,6 +29,8 @@ class Index(TimeStampMixin):
     }
 
     data_source_url = models.URLField(choices=Source.choices, unique=True)
+    status = models.IntegerField(choices=UpdatingStatus.choices,
+                                 default=UpdatingStatus.successfully_updated)
     tickers = models.ManyToManyField(Ticker, through='TickerIndexWeight')
 
     class Meta:

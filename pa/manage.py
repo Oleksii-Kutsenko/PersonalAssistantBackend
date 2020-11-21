@@ -3,7 +3,7 @@
 import os
 import sys
 
-# pylint: disable=missing-function-docstring, import-outside-toplevel
+
 def main():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pa.settings')
     try:
