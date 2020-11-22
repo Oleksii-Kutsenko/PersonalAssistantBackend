@@ -1,13 +1,13 @@
 """
 The Portfolio model serializer and related models serializers
 """
-from django.db.models import Sum, F, DecimalField
+from django.db.models import Sum, F, DecimalField, Min
 from django.db.models.functions import Cast
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
 from fin.models.portfolio import Portfolio, Account, PortfolioTickers
-from fin.models.utils import MAX_DIGITS, DECIMAL_PLACES
+from fin.models.utils import MAX_DIGITS, DECIMAL_PLACES, UpdatingStatus
 from fin.serializers.ticker import TickerSerializer
 from fin.serializers.utils import FlattenMixin
 
@@ -57,7 +57,9 @@ class PortfolioSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     industries_breakdown = SerializerMethodField(read_only=True)
     sectors_breakdown = SerializerMethodField(read_only=True)
+    status = SerializerMethodField(read_only=True)
     tickers = SerializerMethodField(read_only=True)
+    tickers_last_updated = SerializerMethodField(read_only=True)
     total = SerializerMethodField(read_only=True)
     total_accounts = SerializerMethodField(read_only=True)
     total_tickers = SerializerMethodField(read_only=True)
@@ -86,6 +88,12 @@ class PortfolioSerializer(serializers.ModelSerializer):
             .annotate(sum_cost=Sum('cost')).order_by('-sum_cost').distinct()
         return query
 
+    def get_status(self, obj):
+        """
+        Returns Updating Status
+        """
+        return UpdatingStatus(obj.status).label
+
     def get_tickers(self, obj):
         """
         Returns portfolio tickers with their cost
@@ -96,6 +104,12 @@ class PortfolioSerializer(serializers.ModelSerializer):
         portfolio_tickers = PortfolioTickers.objects.filter(portfolio=obj) \
             .annotate(cost=cost).order_by('-cost')
         return PortfolioTickersSerializer(portfolio_tickers, many=True).data
+
+    def get_tickers_last_updated(self, obj):
+        """
+        Returns portfolio tickers last updated time
+        """
+        return obj.tickers.aggregate(Min('updated')).get('updated__min')
 
     def get_total(self, obj):
         """
@@ -120,5 +134,5 @@ class PortfolioSerializer(serializers.ModelSerializer):
         Serializer meta class
         """
         model = Portfolio
-        fields = ('id', 'accounts', 'tickers', 'name', 'total_accounts', 'total_tickers', 'total',
-                  'sectors_breakdown', 'industries_breakdown')
+        fields = ('accounts', 'id', 'tickers', 'tickers_last_updated', 'name', 'total_accounts',
+                  'total_tickers', 'total', 'sectors_breakdown', 'status', 'industries_breakdown')

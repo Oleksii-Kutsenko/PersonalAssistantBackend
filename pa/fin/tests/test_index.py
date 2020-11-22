@@ -32,7 +32,7 @@ class IndexTests(BaseTestCase):
         assert 'industries_breakdown' in detailed_response.data.keys()
         assert 'sectors_breakdown' in detailed_response.data.keys()
 
-        assert len(list_response.data['results'][0]) == 5
+        assert len(list_response.data['results'][0]) == 6
 
 
 class AdjustedIndexTests(BaseTestCase):

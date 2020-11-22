@@ -63,6 +63,7 @@ def update_tickers_statements_task():
         lock = r.lock('update_tickers_statements_task')
         if lock.acquire(blocking=False):
             update_tickers_statements(Ticker.outdated_tickers.all())
+            lock.release()
             return True
         return 'Locked'
     except LockError:
@@ -93,10 +94,12 @@ def update_model_tickers_statements_task(obj_type, obj_id):
                 logger.exception(error)
                 obj.status = UpdatingStatus.update_failed
                 obj.save()
+                lock.release()
                 return False
 
             obj.status = UpdatingStatus.successfully_updated
             obj.save()
+            lock.release()
             return True
         return 'Locked'
     except LockError:

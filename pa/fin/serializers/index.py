@@ -2,14 +2,14 @@
 The Index model serializer
 """
 
-from django.db.models import DecimalField, Count
+from django.db.models import DecimalField, Count, Min
 from django.db.models.functions import Cast
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
 from fin.models.index import Index
 from fin.models.index.parsers import Source
-from fin.models.utils import MAX_DIGITS, DECIMAL_PLACES
+from fin.models.utils import MAX_DIGITS, DECIMAL_PLACES, UpdatingStatus
 
 
 # pylint: disable=no-self-use
@@ -18,6 +18,8 @@ class IndexSerializer(serializers.ModelSerializer):
     Serialization class for the relation between indexes and tickers
     """
     name = serializers.SerializerMethodField()
+    status = SerializerMethodField(read_only=True)
+    tickers_last_updated = SerializerMethodField(read_only=True)
 
     def get_name(self, obj):
         """
@@ -25,12 +27,24 @@ class IndexSerializer(serializers.ModelSerializer):
         """
         return dict(Source.choices).get(obj.data_source_url, 'Unknown')
 
+    def get_status(self, obj):
+        """
+        Returns Updating Status
+        """
+        return UpdatingStatus(obj.status).label
+
+    def get_tickers_last_updated(self, obj):
+        """
+        Returns portfolio tickers last updated time
+        """
+        return obj.tickers.aggregate(Min('updated')).get('updated__min')
+
     class Meta:
         """
         Serializer meta class
         """
         model = Index
-        fields = ('id', 'data_source_url', 'name', 'status', 'updated')
+        fields = ('id', 'data_source_url', 'name', 'status', 'tickers_last_updated', 'updated')
         read_only_fields = ('id', 'name', 'status', 'updated')
 
 
