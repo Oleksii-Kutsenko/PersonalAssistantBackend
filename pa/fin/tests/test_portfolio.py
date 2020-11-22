@@ -1,11 +1,18 @@
 """
 Portfolio Tests
 """
+
+from django.urls import reverse
+from django.utils import timezone
+from rest_framework.status import HTTP_406_NOT_ACCEPTABLE, HTTP_202_ACCEPTED, HTTP_200_OK
+
 from fin.models.index.index import Index, REASONABLE_LOT_PRICE
 from fin.models.portfolio import Portfolio, PortfolioTickers
 from fin.models.ticker import Ticker
+from fin.models.utils import UpdatingStatus
 from fin.tests.base import BaseTestCase
 from fin.views import AdjustMixin
+from users.models import User
 
 
 class PortfolioTests(BaseTestCase):
@@ -15,6 +22,10 @@ class PortfolioTests(BaseTestCase):
     fixtures = ['fin/tests/fixtures/ticker.json',
                 'fin/tests/fixtures/portfolio.json',
                 'fin/tests/fixtures/index.json']
+
+    def setUp(self) -> None:
+        self.user = User.objects.create(username='test_user', email='test_user@gmail.com')
+        self.login(self.user)
 
     def test_portfolio_index_queries_diff(self):
         """
@@ -38,3 +49,29 @@ class PortfolioTests(BaseTestCase):
         for i in range(0, 3):
             self.assertEqual(expected_result[i].ticker.symbol, tickers_diff[i].get('symbol'))
             self.assertEqual(expected_result[i].amount, tickers_diff[i].get('amount'))
+
+    def test_update_portfolio_tickers(self):
+        """
+        Tests that endpoint returns desirable responses
+        """
+        portfolio = Portfolio.objects.first()
+        update_portfolio_tickers_url = reverse('portfolios-update-tickers',
+                                               kwargs={'pk': portfolio.id})
+
+        response = self.client.put(update_portfolio_tickers_url)
+        self.assertEqual(response.status_code, HTTP_202_ACCEPTED)
+
+        portfolio.status = UpdatingStatus.updating
+        portfolio.save()
+
+        response = self.client.put(update_portfolio_tickers_url)
+        self.assertEqual(response.status_code, HTTP_406_NOT_ACCEPTABLE)
+
+        portfolio.status = UpdatingStatus.successfully_updated
+        portfolio.save()
+        for ticker in portfolio.tickers.all():
+            ticker.updated = timezone.now()
+            ticker.save()
+
+        response = self.client.put(update_portfolio_tickers_url)
+        self.assertEqual(response.status_code, HTTP_200_OK)
