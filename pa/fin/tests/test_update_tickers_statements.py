@@ -1,8 +1,11 @@
 """
 Tests for main functionality of update_tickers_statements_task
 """
+from time import sleep
+
 from fin.models.ticker import Ticker, Statements
-from fin.tasks.update_tickers_statements import update_tickers_statements
+from fin.tasks.update_tickers_statements import update_tickers_statements, \
+    update_tickers_statements_task, LOCKED
 from fin.tests.base import BaseTestCase
 
 
@@ -11,6 +14,16 @@ class UpdateTickersStatementsTests(BaseTestCase):
     Tests for main functionality of celery task
     """
     fixtures = ['fin/tests/fixtures/empty_ticker.json']
+
+    def test_task_locking(self):
+        """
+        Tests that only one instance of task running
+        """
+        update_tickers_statements_task.delay()
+        task = update_tickers_statements_task.delay()
+        while not task.ready():
+            sleep(0.1)
+        self.assertEqual(task.result, LOCKED)
 
     def test_update_tickers_statements(self):
         """

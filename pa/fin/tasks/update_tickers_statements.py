@@ -16,6 +16,7 @@ from pa import celery_app
 from pa.celery import redis_client as r
 
 logger = logging.getLogger(__name__)
+LOCKED = 'Locked'
 
 
 def update_tickers_statements(tickers_query):
@@ -65,9 +66,9 @@ def update_tickers_statements_task():
             update_tickers_statements(Ticker.outdated_tickers.all())
             lock.release()
             return True
-        return 'Locked'
+        return LOCKED
     except LockError:
-        return 'Locked'
+        return LOCKED
 
 
 @celery_app.task()
@@ -101,6 +102,6 @@ def update_model_tickers_statements_task(obj_type, obj_id):
             obj.save()
             lock.release()
             return True
-        return 'Locked'
+        return LOCKED
     except LockError:
-        return 'Locked'
+        return LOCKED
