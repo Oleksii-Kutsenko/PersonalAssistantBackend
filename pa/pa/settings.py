@@ -76,7 +76,9 @@ ROOT_URLCONF = 'pa.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR + 'pa/fin/templates'
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -174,7 +176,7 @@ CELERY_RESULT_SERIALIZER = 'json'
 
 CELERY_BEAT_SCHEDULE = {
     'update_tickers_statements': {
-        'task': 'fin.tasks.update_tickers_statements',
+        'task': 'fin.tasks.update_tickers_statements.update_tickers_statements_task',
         'schedule': crontab(0, 0, month_of_year='*/1'),  # every month
     },
 }

@@ -6,3 +6,4 @@ omit =
     */wsgi.py
     */manage.py
     */PublicApiClient.py
+    */update_tickers_statements.py

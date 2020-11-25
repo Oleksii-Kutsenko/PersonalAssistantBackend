@@ -1,9 +1,14 @@
 """
 Tests
 """
+from random import choice
+
 from django.urls import reverse
 from rest_framework import status
+from rest_framework.status import HTTP_200_OK
 
+from fin.models.index import Index
+from fin.models.index.parsers import Source
 from fin.serializers.ticker import AdjustedTickerSerializer
 from fin.tests.base import BaseTestCase
 from fin.tests.factories.index import IndexFactory
@@ -19,6 +24,20 @@ class IndexTests(BaseTestCase):
         self.user = User.objects.create(username='test_user', email='test_user@gmail.com')
         self.login(self.user)
         self.index = IndexFactory()
+
+    def test_import_index_from_csv(self):
+        """
+        Tests
+        """
+        url = reverse('admin:import-csv')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, HTTP_200_OK)
+
+        index_choice = choice(response.context['form'].fields['index'].choices)[0]
+        with open(f'fin/tests/files/{Source(index_choice).label}.csv') as file:
+            response = self.client.post(url, {'index': index_choice, 'csv_file': file}, follow=True)
+            self.assertEqual(response.status_code, HTTP_200_OK)
+        self.assertEqual(Index.objects.filter(data_source_url=index_choice).count(), 1)
 
     def test_the_right_serialization_class_used(self):
         """

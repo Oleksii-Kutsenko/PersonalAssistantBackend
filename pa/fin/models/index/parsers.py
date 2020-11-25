@@ -11,26 +11,29 @@ import requests
 from bs4 import BeautifulSoup
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from yfinance import Ticker
 
 
 class Source(models.TextChoices):
     """
     Source for index data
     """
-    SP500 = 'https://www.slickcharts.com/sp500', _("S&P 500")
-    NASDAQ100 = 'https://www.slickcharts.com/nasdaq100', _("NASDAQ 100")
     IHI = 'https://www.ishares.com/us/products/239516/ishares-us-medical-devices-etf' \
           '/1467271812596.ajax', _('IHI')
+    NASDAQ100 = 'https://www.slickcharts.com/nasdaq100', _("NASDAQ 100")
+    PBW = 'http://invescopowershares.com/products/overview.aspx?ticker=PBW', _("PBW")
     RUSSEL3000 = 'https://www.ishares.com/us/products/239714/ishares-russell-3000-etf' \
                  '/1467271812596.ajax', _('RUSSEL3000')
     SOXX = 'https://www.ishares.com/us/products/239705/ishares-phlx-semiconductor-etf' \
            '/1467271812596.ajax', _('SOXX')
+    SP500 = 'https://www.slickcharts.com/sp500', _("S&P 500")
 
 
 class Parser(ABC):
     """
     Parser basic class
     """
+    updatable = True
 
     @abstractmethod
     def parse(self):
@@ -48,36 +51,38 @@ class Parser(ABC):
         """
 
 
-class SlickChartsParser(Parser):
+class InvescoCSVParser(Parser):
     """
-    Parser for SlickCharts indexes
+    Parser for Invesco indexes
     """
-    browser_headers = {'User-Agent': 'Magic Browser'}
+    updatable = False
 
-    def __init__(self, source_url):
-        self.source_url = source_url
+    def __init__(self):
+        self.csv_file = None
+
+    def set_csv_file(self, csv_file):
+        """
+        Set CSV File which contains index data
+        """
+        self.csv_file = csv_file
 
     def parse(self):
-        response = requests.get(self.source_url, headers=self.browser_headers)
-        page = response.text
-
-        page_html = BeautifulSoup(page, 'html.parser')
-        tickers_table_classes = 'table table-hover table-borderless table-sm'
-        tickers_table = page_html.find('table', class_=tickers_table_classes)
-        tickers_rows = tickers_table.find('tbody')
-
         parsed_json = []
-        for node in tickers_rows:
-            if node.name == 'tr':
-                tds = node.find_all('td')
 
+        file_strings = self.csv_file.splitlines()
+        reader = csv.reader(file_strings)
+        first_row_id = 'Fund Ticker'
+
+        for row in reader:
+            if row[0] != first_row_id:
+                ticker = Ticker(row[2].strip())
                 parsed_json.append({
                     'ticker': {
-                        'company_name': str(tds[1].text),
-                        'symbol': str(tds[2].text),
-                        'price': Decimal(tds[4].text.replace(',', '')),
+                        'company_name': row[6],
+                        'symbol': row[2],
+                        'price': ticker.info.get('ask')
                     },
-                    'ticker_weight': Decimal(tds[3].text)
+                    'ticker_weight': row[5]
                 })
         return parsed_json
 
@@ -130,4 +135,38 @@ class ISharesParser(Parser):
                 total_market_cap += market_cap
         for ticker_json in parsed_json:
             ticker_json['ticker_weight'] = ticker_json['ticker']['market_cap'] / total_market_cap
+        return parsed_json
+
+
+class SlickChartsParser(Parser):
+    """
+    Parser for SlickCharts indexes
+    """
+    browser_headers = {'User-Agent': 'Magic Browser'}
+
+    def __init__(self, source_url):
+        self.source_url = source_url
+
+    def parse(self):
+        response = requests.get(self.source_url, headers=self.browser_headers)
+        page = response.text
+
+        page_html = BeautifulSoup(page, 'html.parser')
+        tickers_table_classes = 'table table-hover table-borderless table-sm'
+        tickers_table = page_html.find('table', class_=tickers_table_classes)
+        tickers_rows = tickers_table.find('tbody')
+
+        parsed_json = []
+        for node in tickers_rows:
+            if node.name == 'tr':
+                tds = node.find_all('td')
+
+                parsed_json.append({
+                    'ticker': {
+                        'company_name': str(tds[1].text),
+                        'symbol': str(tds[2].text),
+                        'price': Decimal(tds[4].text.replace(',', '')),
+                    },
+                    'ticker_weight': Decimal(tds[3].text)
+                })
         return parsed_json
