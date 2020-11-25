@@ -8,7 +8,7 @@ from django.db import models, transaction
 from django.db.models import DecimalField, Sum, F
 from django.db.models.functions import Cast, Coalesce
 
-from fin.models.index.parsers import SlickChartsParser, ISharesParser, Source
+from fin.models.index.parsers import SlickChartsParser, ISharesParser, Source, InvescoCSVParser
 from fin.models.ticker import Ticker
 from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES, UpdatingStatus
 
@@ -21,11 +21,12 @@ class Index(TimeStampMixin):
     """
 
     url_parsers = {
-        Source.SP500.value: SlickChartsParser(Source.SP500.value),
-        Source.NASDAQ100.value: SlickChartsParser(Source.NASDAQ100.value),
         Source.IHI.value: ISharesParser(Source.IHI.value),
+        Source.NASDAQ100.value: SlickChartsParser(Source.NASDAQ100.value),
+        Source.PBW.value: InvescoCSVParser(),
         Source.RUSSEL3000.value: ISharesParser(Source.RUSSEL3000.value),
-        Source.SOXX.value: ISharesParser(Source.SOXX.value)
+        Source.SOXX.value: ISharesParser(Source.SOXX.value),
+        Source.SP500.value: SlickChartsParser(Source.SP500.value),
     }
 
     data_source_url = models.URLField(choices=Source.choices, unique=True)
@@ -112,12 +113,16 @@ class Index(TimeStampMixin):
         Update tickers prices and their weights
         :return: None
         """
-        ticker_parsed_data = self.url_parsers[self.data_source_url].parse()
+        if self.parser.updatable:
+            tickers_parsed_json = self.parser.parse()
+            self.update_from_tickers_parsed_json(tickers_parsed_json)
+
+    def update_from_tickers_parsed_json(self, ticker_parsed_json):
+        """
+        Creates objects for the relation between the current index and tickers JSON
+        """
         index_tickers = []
-
-        TickerIndexWeight.objects.filter(index=self).delete()
-
-        for ticker_info in ticker_parsed_data:
+        for ticker_info in ticker_parsed_json:
             symbol = ticker_info['ticker'].pop('symbol')
             ticker, _ = Ticker.objects \
                 .update_or_create(symbol=symbol, defaults=ticker_info['ticker'])
@@ -125,8 +130,12 @@ class Index(TimeStampMixin):
             index_ticker = TickerIndexWeight(index=self, ticker=ticker,
                                              weight=ticker_info['ticker_weight'])
             index_tickers.append(index_ticker)
-
+        TickerIndexWeight.objects.filter(index=self).delete()
         TickerIndexWeight.objects.bulk_create(index_tickers)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.parser = self.url_parsers[self.data_source_url]
 
     def __str__(self):
         return str(dict(Source.choices)[self.data_source_url])
