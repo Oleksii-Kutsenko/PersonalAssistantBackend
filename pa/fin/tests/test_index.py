@@ -6,7 +6,7 @@ from time import sleep
 
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED
+from rest_framework.status import HTTP_200_OK
 
 from fin.models.index import Index
 from fin.models.index.parsers import Source
@@ -41,6 +41,9 @@ class IndexTests(BaseTestCase):
         self.assertEqual(Index.objects.filter(data_source_url=index_choice).count(), 1)
 
     def test_index_creation(self):
+        """
+        Tests that after index creation runs task for updating the index tickers
+        """
         url = reverse('index-list')
         index = IndexFactory.build()
 
