@@ -1,8 +1,7 @@
 """
 URLs
 """
-from django.conf.urls import url
-from django.urls import include
+from django.urls import include, re_path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import routers, permissions
@@ -14,8 +13,9 @@ router.register(r'accounts', views.AccountViewSet)
 router.register(r'indices', views.IndexViewSet)
 router.register(r'goals', views.GoalViewSet)
 router.register(r'portfolios', views.PortfolioViewSet, basename='portfolios')
+router.register(r'portfolio-policies', views.PortfolioPolicyViewSet, basename='portfolio-policies')
 
-schema_view = get_schema_view(
+SchemaView = get_schema_view(
     openapi.Info(
         title="PA.FIN API",
         default_version='v1',
@@ -25,8 +25,10 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    url(r'^api/', include(router.urls)),
-    url(r'^api/indices/(?P<index_id>[1-9][0-9]*)/adjusted/$', views.AdjustedIndexView.as_view(), name='index-adjusted'),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    re_path(r'^api/', include(router.urls)),
+    re_path(r'^api/indices/(?P<index_id>[1-9][0-9]*)/adjusted/$', views.AdjustedIndexView.as_view(),
+            name='index-adjusted'),
+    re_path(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    re_path(r'^swagger/$', SchemaView.with_ui('swagger', cache_timeout=0),
+            name='schema-swagger-ui'),
 ]
