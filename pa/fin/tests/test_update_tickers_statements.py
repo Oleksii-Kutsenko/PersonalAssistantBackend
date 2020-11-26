@@ -19,8 +19,8 @@ class UpdateTickersStatementsTests(BaseTestCase):
         """
         Tests that only one instance of task running
         """
-        update_tickers_statements_task.delay()
-        task = update_tickers_statements_task.delay()
+        update_tickers_statements_task.apply()
+        task = update_tickers_statements_task.apply()
         while not task.ready():
             sleep(0.1)
         self.assertEqual(task.result, LOCKED)

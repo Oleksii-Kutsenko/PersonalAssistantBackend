@@ -27,6 +27,18 @@ class PortfolioTests(BaseTestCase):
         self.user = User.objects.create(username='test_user', email='test_user@gmail.com')
         self.login(self.user)
 
+    def test_metadata_of_the_portfolio(self):
+        """
+        Check that portfolio metadata contains the expected fields
+        """
+        url = reverse('portfolios-list')
+
+        response = self.client.options(url)
+        json_data = response.json()
+
+        self.assertIn('pub_', json_data['actions']['POST']['query_params'].keys())
+        self.assertIn('sec_', json_data['actions']['POST']['query_params'].keys())
+
     def test_portfolio_index_queries_diff(self):
         """
         Test function that subtract existed portfolio from index

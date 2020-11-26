@@ -4,6 +4,7 @@ The Portfolio model serializer and related models serializers
 from django.db.models import Sum, F, DecimalField, Min
 from django.db.models.functions import Cast
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from rest_framework.fields import SerializerMethodField
 
 from fin.models.portfolio import Portfolio, Account, PortfolioTickers
@@ -129,10 +130,19 @@ class PortfolioSerializer(serializers.ModelSerializer):
         """
         return obj.total_tickers
 
+    def validate_portfolio_policy(self, value):
+        """
+        Validate that portfolio_policy field is unchangeable
+        """
+        if self.instance and self.instance != value:
+            raise ValidationError('Portfolio Policy field is unchangeable')
+        return value
+
     class Meta:
         """
         Serializer meta class
         """
         model = Portfolio
-        fields = ('accounts', 'id', 'tickers', 'tickers_last_updated', 'name', 'total_accounts',
-                  'total_tickers', 'total', 'sectors_breakdown', 'status', 'industries_breakdown')
+        fields = ('accounts', 'id', 'portfolio_policy', 'tickers', 'tickers_last_updated', 'name',
+                  'total_accounts', 'total_tickers', 'total', 'sectors_breakdown', 'status',
+                  'industries_breakdown')

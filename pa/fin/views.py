@@ -19,16 +19,18 @@ from rest_framework.status import HTTP_406_NOT_ACCEPTABLE, HTTP_200_OK, \
     HTTP_202_ACCEPTED
 from rest_framework.views import APIView
 
+from fin.serializers.portfolio.portfolio import PortfolioSerializer, AccountSerializer
 from .exceptions import BadRequest, TraderNetAPIUnavailable
 from .external_api.tradernet.PublicApiClient import PublicApiClient
 from .external_api.tradernet.error_codes import BAD_SIGN
 from .models.index import Index
 from .models.models import Goal
 from .models.portfolio import Portfolio, PortfolioTickers, Account
+from .models.portfolio.portfolio_policy import PortfolioPolicy
 from .models.ticker import Ticker
 from .models.utils import UpdatingStatus
 from .serializers.index import IndexSerializer, DetailIndexSerializer
-from .serializers.portfolio import PortfolioSerializer, AccountSerializer
+from .serializers.portfolio.portfolio_policy import PortfolioPolicySerializer
 from .serializers.serializers import GoalSerializer
 from .serializers.ticker import AdjustedTickerSerializer
 from .tasks.update_tickers_statements import update_model_tickers_statements_task
@@ -283,3 +285,14 @@ class PortfolioViewSet(AdjustMixin, UpdateTickersMixin, viewsets.ModelViewSet):
 
         return Response(data=PortfolioSerializer(portfolio_model).data,
                         status=status.HTTP_201_CREATED)
+
+
+class PortfolioPolicyViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows portfolio policy to be viewed or edited
+    """
+    serializer_class = PortfolioPolicySerializer
+
+    def get_queryset(self):
+        queryset = PortfolioPolicy.objects.filter(portfolio__user_id=self.request.user).all()
+        return queryset
