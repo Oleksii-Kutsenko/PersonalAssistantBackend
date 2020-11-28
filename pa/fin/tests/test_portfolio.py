@@ -7,7 +7,7 @@ from django.utils import timezone
 from rest_framework.status import HTTP_406_NOT_ACCEPTABLE, HTTP_202_ACCEPTED, HTTP_200_OK
 
 from fin.models.index.index import Index
-from fin.models.portfolio import Portfolio, PortfolioTickers
+from fin.models.portfolio import Portfolio, PortfolioTicker
 from fin.models.ticker import Ticker
 from fin.models.utils import UpdatingStatus
 from fin.tests.base import BaseTestCase
@@ -27,6 +27,10 @@ class PortfolioTests(BaseTestCase):
         self.user = User.objects.create(username='test_user', email='test_user@gmail.com')
         self.login(self.user)
 
+        portfolio = Portfolio.objects.first()
+        portfolio.user = self.user
+        portfolio.save()
+
     def test_metadata_of_the_portfolio(self):
         """
         Check that portfolio metadata contains the expected fields
@@ -39,22 +43,35 @@ class PortfolioTests(BaseTestCase):
         self.assertIn('pub_', json_data['actions']['POST']['query_params'].keys())
         self.assertIn('sec_', json_data['actions']['POST']['query_params'].keys())
 
+    def test_portfolio_displayable_status(self):
+        """
+        Tests that portfolio statuses displayed properly
+        """
+        portfolio = Portfolio.objects.first()
+        url = reverse('portfolios-detail', kwargs={'pk': portfolio.id})
+
+        for status in UpdatingStatus:
+            portfolio.status = status.value
+            portfolio.save()
+            response = self.client.get(url)
+            self.assertEqual(response.data['status'], status.label)
+
     def test_portfolio_index_queries_diff(self):
         """
         Test function that subtract existed portfolio from index
         """
         expected_result = [
-            PortfolioTickers(ticker=Ticker.objects.get(symbol='AAPL'), amount=7),
-            PortfolioTickers(ticker=Ticker.objects.get(symbol='TSLA'), amount=1),
-            PortfolioTickers(ticker=Ticker.objects.get(symbol='PYPL'), amount=1),
-            PortfolioTickers(ticker=Ticker.objects.get(symbol='INTC'), amount=2)
+            PortfolioTicker(ticker=Ticker.objects.get(symbol='AAPL'), amount=7),
+            PortfolioTicker(ticker=Ticker.objects.get(symbol='TSLA'), amount=1),
+            PortfolioTicker(ticker=Ticker.objects.get(symbol='PYPL'), amount=1),
+            PortfolioTicker(ticker=Ticker.objects.get(symbol='INTC'), amount=2)
         ]
         step = 200
 
         portfolio = Portfolio.objects.first()
         index = Index.objects.first()
 
-        portfolio_query = PortfolioTickers.objects.filter(portfolio=portfolio)
+        portfolio_query = PortfolioTicker.objects.filter(portfolio=portfolio)
         adjusted_index, _ = index.adjust(portfolio.total_tickers + step * 2,
                                          AdjustMixin.default_adjust_options, step)
         tickers_diff = Portfolio.portfolio_index_queries_diff(adjusted_index, portfolio_query)
@@ -62,6 +79,41 @@ class PortfolioTests(BaseTestCase):
         for i in range(0, 4):
             self.assertEqual(expected_result[i].ticker.symbol, tickers_diff[i].get('symbol'))
             self.assertEqual(expected_result[i].amount, tickers_diff[i].get('amount'))
+
+    def test_portfolio_breakdowns_calculation(self):
+        """
+        Tests that the breakdowns in the Portfolio model calculate properly
+        """
+        portfolio = Portfolio.objects.first()
+        url = reverse('portfolios-detail', kwargs={'pk': portfolio.id})
+        expected_industries = {}
+        expected_sectors = {}
+        portfolio_tickers = PortfolioTicker.objects.filter(portfolio=portfolio)
+
+        for portfolio_ticker in portfolio_tickers:
+            ticker_cost = portfolio_ticker.ticker.price * portfolio_ticker.amount
+
+            if expected_sectors.get(portfolio_ticker.ticker.sector):
+                expected_sectors[portfolio_ticker.ticker.sector] += ticker_cost
+            else:
+                expected_sectors[portfolio_ticker.ticker.sector] = ticker_cost
+
+            if expected_industries.get(portfolio_ticker.ticker.industry):
+                expected_industries[portfolio_ticker.ticker.industry] += ticker_cost
+            else:
+                expected_industries[portfolio_ticker.ticker.industry] = ticker_cost
+
+        response = self.client.get(url)
+
+        given_sectors = {}
+        for sector in response.data['sectors_breakdown']:
+            given_sectors[sector['ticker__sector']] = sector['sum_cost']
+        given_industries = {}
+        for industry in response.data['industries_breakdown']:
+            given_industries[industry['ticker__industry']] = industry['sum_cost']
+
+        self.assertEqual(given_sectors, expected_sectors)
+        self.assertEqual(given_industries, expected_industries)
 
     def test_update_portfolio_tickers(self):
         """

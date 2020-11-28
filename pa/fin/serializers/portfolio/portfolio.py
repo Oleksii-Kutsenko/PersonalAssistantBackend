@@ -7,7 +7,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import SerializerMethodField
 
-from fin.models.portfolio import Portfolio, Account, PortfolioTickers
+from fin.models.portfolio import Portfolio, Account, PortfolioTicker
 from fin.models.utils import MAX_DIGITS, DECIMAL_PLACES, UpdatingStatus
 from fin.serializers.ticker import TickerSerializer
 from fin.serializers.utils import FlattenMixin
@@ -27,7 +27,8 @@ class AccountSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'currency', 'portfolio', 'value')
 
 
-class PortfolioTickersSerializer(FlattenMixin, serializers.ModelSerializer):
+# pylint: disable=no-self-use
+class PortfolioTickerSerializer(FlattenMixin, serializers.ModelSerializer):
     """
     Serializer for Ticker model inside Portfolio model
     """
@@ -43,7 +44,7 @@ class PortfolioTickersSerializer(FlattenMixin, serializers.ModelSerializer):
         """
         Serializer meta class
         """
-        model = PortfolioTickers
+        model = PortfolioTicker
         fields = ('amount', 'cost')
         flatten = [('ticker', TickerSerializer)]
         depth = 1
@@ -63,8 +64,10 @@ class PortfolioSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 
-# pylint: disable=no-self-use
 class DetailedPortfolioSerializer(PortfolioSerializer):
+    """
+    The portfolio serializer contains all fields of model
+    """
     accounts = AccountSerializer(many=True, read_only=True)
     industries_breakdown = SerializerMethodField(read_only=True)
     sectors_breakdown = SerializerMethodField(read_only=True)
@@ -82,7 +85,7 @@ class DetailedPortfolioSerializer(PortfolioSerializer):
         decimal_field = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
         cost = Cast(F('amount') * F('ticker__price'), decimal_field)
 
-        query = PortfolioTickers.objects.filter(portfolio=obj) \
+        query = PortfolioTicker.objects.filter(portfolio=obj) \
             .annotate(cost=cost).values('ticker__sector', 'ticker__industry') \
             .annotate(sum_cost=Sum('cost')).order_by('-sum_cost').distinct()
         return query
@@ -94,7 +97,7 @@ class DetailedPortfolioSerializer(PortfolioSerializer):
         decimal_field = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
         cost = Cast(F('amount') * F('ticker__price'), decimal_field)
 
-        query = PortfolioTickers.objects.filter(portfolio=obj) \
+        query = PortfolioTicker.objects.filter(portfolio=obj) \
             .annotate(cost=cost).values('ticker__sector') \
             .annotate(sum_cost=Sum('cost')).order_by('-sum_cost').distinct()
         return query
@@ -112,9 +115,9 @@ class DetailedPortfolioSerializer(PortfolioSerializer):
         decimal_field = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
         cost = Cast(F('amount') * F('ticker__price'), decimal_field)
 
-        portfolio_tickers = PortfolioTickers.objects.filter(portfolio=obj) \
+        portfolio_tickers = PortfolioTicker.objects.filter(portfolio=obj) \
             .annotate(cost=cost).order_by('-cost')
-        return PortfolioTickersSerializer(portfolio_tickers, many=True).data
+        return PortfolioTickerSerializer(portfolio_tickers, many=True).data
 
     def get_tickers_last_updated(self, obj):
         """

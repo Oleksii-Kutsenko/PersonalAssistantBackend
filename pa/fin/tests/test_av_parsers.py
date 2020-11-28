@@ -3,7 +3,7 @@ Tests for AV parsers
 """
 
 from fin.external_api.alpha_vantage.parsers import parse_time_series_monthly
-from fin.models.portfolio import Portfolio, PortfolioTickers
+from fin.models.portfolio import Portfolio, PortfolioTicker
 from fin.models.ticker import Ticker, TickerStatement
 from fin.tests.base import BaseTestCase
 from users.models import User
@@ -30,7 +30,7 @@ class AVParsersTests(BaseTestCase):
         portfolio = Portfolio.objects.create(name='test_portfolio', user=self.user)
         portfolio.save()
 
-        portfolio_ticker = PortfolioTickers(portfolio=portfolio, ticker=ticker, amount=1)
+        portfolio_ticker = PortfolioTicker(portfolio=portfolio, ticker=ticker, amount=1)
         portfolio_ticker.save()
 
         ticker_time_series = {

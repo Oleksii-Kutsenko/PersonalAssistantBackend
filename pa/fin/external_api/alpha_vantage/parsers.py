@@ -42,7 +42,7 @@ def parse_balance_sheet(ticker, ticker_balance_sheet):
                 Q(name=Statements.capital_lease_obligations.value)) \
         .filter(ticker=ticker) \
         .values_list('fiscal_date_ending', flat=True).distinct()
-    for quarterly_report in ticker_balance_sheet.get('quarterlyReports'):
+    for quarterly_report in ticker_balance_sheet.get('quarterlyReports') or []:
         fiscal_date_ending = datetime.strptime(quarterly_report.get('fiscalDateEnding'),
                                                '%Y-%m-%d').date()
         if fiscal_date_ending not in existed_dates:
@@ -94,7 +94,7 @@ def parse_income_statement(ticker, ticker_income_statement):
                 Q(name=Statements.total_revenue.value)) \
         .filter(ticker=ticker) \
         .values_list('fiscal_date_ending', flat=True).distinct()
-    for quarterly_report in ticker_income_statement.get('quarterlyReports'):
+    for quarterly_report in ticker_income_statement.get('quarterlyReports') or []:
         fiscal_date_ending = datetime.strptime(quarterly_report.get('fiscalDateEnding'),
                                                '%Y-%m-%d').date()
         if fiscal_date_ending not in existed_dates:

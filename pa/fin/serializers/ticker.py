@@ -10,7 +10,7 @@ from querybuilder.query import Query
 from rest_framework import serializers
 from sklearn.linear_model import LinearRegression
 
-from fin.models.index import TickerIndexWeight
+from fin.models.index import IndexTicker
 from fin.models.ticker import Ticker, TickerStatement, Statements
 from fin.serializers.utils import FlattenMixin
 
@@ -94,7 +94,8 @@ class TickerSerializer(serializers.ModelSerializer):
         time_points = np.array(list(range(yearly_earnings.shape[0]))).reshape((-1, 1))
         annual_earnings_line_model = LinearRegression(normalize=True)
         annual_earnings_line_model.fit(time_points, yearly_earnings)
-        return round((annual_earnings_line_model.coef_ / float(np.mean(yearly_earnings)) * 100)[0], 2)
+        return round((annual_earnings_line_model.coef_ / float(np.mean(yearly_earnings)) * 100)[0],
+                     2)
 
     def get_debt(self, obj):
         """
@@ -192,7 +193,7 @@ class TickerSerializer(serializers.ModelSerializer):
         depth = 1
 
 
-class AdjustedTickerSerializer(FlattenMixin, serializers.ModelSerializer):
+class IndexTickerSerializer(FlattenMixin, serializers.ModelSerializer):
     """
     Serializer for ticker model that returns from the adjust function
     """
@@ -215,6 +216,6 @@ class AdjustedTickerSerializer(FlattenMixin, serializers.ModelSerializer):
         """
         Serializer meta class
         """
-        model = TickerIndexWeight
+        model = IndexTicker
         fields = ('amount', 'cost', 'weight')
         flatten = [('ticker', TickerSerializer)]

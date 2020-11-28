@@ -30,7 +30,7 @@ class Index(TimeStampMixin):
     data_source_url = models.URLField(choices=Source.choices, unique=True)
     status = models.IntegerField(choices=UpdatingStatus.choices,
                                  default=UpdatingStatus.successfully_updated)
-    tickers = models.ManyToManyField(Ticker, through='TickerIndexWeight')
+    tickers = models.ManyToManyField(Ticker, through='fin.IndexTicker')
 
     class Meta:
         """
@@ -46,7 +46,7 @@ class Index(TimeStampMixin):
         Calculate index adjusted by the amount of money
         """
 
-        tickers_query = TickerIndexWeight.objects.filter(index=self) \
+        tickers_query = IndexTicker.objects.filter(index=self) \
             .exclude(ticker__country__in=options['skip_countries']) \
             .exclude(ticker__sector__in=options['skip_sectors']) \
             .exclude(ticker__industry__in=options['skip_industries']) \
@@ -123,11 +123,11 @@ class Index(TimeStampMixin):
             ticker, _ = Ticker.objects \
                 .update_or_create(symbol=symbol, defaults=ticker_info['ticker'])
 
-            index_ticker = TickerIndexWeight(index=self, ticker=ticker,
-                                             weight=ticker_info['ticker_weight'])
+            index_ticker = IndexTicker(index=self, ticker=ticker,
+                                       weight=ticker_info['ticker_weight'])
             index_tickers.append(index_ticker)
-        TickerIndexWeight.objects.filter(index=self).delete()
-        TickerIndexWeight.objects.bulk_create(index_tickers)
+        IndexTicker.objects.filter(index=self).delete()
+        IndexTicker.objects.bulk_create(index_tickers)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -137,7 +137,7 @@ class Index(TimeStampMixin):
         return str(dict(Source.choices)[self.data_source_url])
 
 
-class TickerIndexWeight(TimeStampMixin):
+class IndexTicker(TimeStampMixin):
     """
     M2M table between Index and Ticker models
     """

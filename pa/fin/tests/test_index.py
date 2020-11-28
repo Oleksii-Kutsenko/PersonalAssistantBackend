@@ -10,7 +10,7 @@ from rest_framework.status import HTTP_200_OK
 
 from fin.models.index import Index
 from fin.models.index.parsers import Source
-from fin.serializers.ticker import AdjustedTickerSerializer
+from fin.serializers.ticker import IndexTickerSerializer
 from fin.tasks.update_tickers_statements import update_model_tickers_statements_task, LOCKED
 from fin.tests.base import BaseTestCase
 from fin.tests.factories.index import IndexFactory
@@ -110,7 +110,7 @@ class AdjustedIndexTests(BaseTestCase):
             'skip_tickers': []
         }
         adjusted_index, _ = self.index.adjust(money, options)
-        serialized_index = AdjustedTickerSerializer(adjusted_index, many=True)
+        serialized_index = IndexTickerSerializer(adjusted_index, many=True)
         self.assertEqual(response.data.get('tickers'), serialized_index.data)
 
     def test_when_received_wrong_parameter(self):

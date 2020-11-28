@@ -26,14 +26,14 @@ from .external_api.tradernet.PublicApiClient import PublicApiClient
 from .external_api.tradernet.error_codes import BAD_SIGN
 from .models.index import Index
 from .models.models import Goal
-from .models.portfolio import Portfolio, PortfolioTickers, Account
+from .models.portfolio import Portfolio, PortfolioTicker, Account
 from .models.portfolio.portfolio_policy import PortfolioPolicy
 from .models.ticker import Ticker
 from .models.utils import UpdatingStatus
 from .serializers.index import IndexSerializer, DetailIndexSerializer
 from .serializers.portfolio.portfolio_policy import PortfolioPolicySerializer
 from .serializers.serializers import GoalSerializer
-from .serializers.ticker import AdjustedTickerSerializer
+from .serializers.ticker import IndexTickerSerializer
 from .tasks.update_tickers_statements import update_model_tickers_statements_task
 
 logger = logging.getLogger(__name__)
@@ -164,7 +164,7 @@ class AdjustedIndexView(AdjustMixin, APIView):
         index = get_object_or_404(queryset=Index.objects.all(), pk=index_id)
 
         adjusted_index, summary_cost = index.adjust(self.money, self.adjust_options)
-        serialized_index = AdjustedTickerSerializer(adjusted_index, many=True)
+        serialized_index = IndexTickerSerializer(adjusted_index, many=True)
         return Response(data={'tickers': serialized_index.data, 'summary_cost': summary_cost})
 
 
@@ -281,9 +281,9 @@ class PortfolioViewSet(AdjustMixin, UpdateTickersMixin, viewsets.ModelViewSet):
             ticker_model, _ = Ticker.objects.get_or_create(symbol=ticker_symbol,
                                                            defaults=ticker_info)
             ticker_model.save()
-            portfolio_tickers = PortfolioTickers(portfolio=portfolio_model,
-                                                 ticker=ticker_model,
-                                                 amount=ticker.get('q'))
+            portfolio_tickers = PortfolioTicker(portfolio=portfolio_model,
+                                                ticker=ticker_model,
+                                                amount=ticker.get('q'))
             portfolio_tickers.save()
 
         update_model_tickers_statements_task.delay(self.model.__name__, portfolio_model.id)

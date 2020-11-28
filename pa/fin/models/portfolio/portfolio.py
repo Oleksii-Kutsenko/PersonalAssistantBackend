@@ -12,7 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from fin.models.index import Index
 from fin.models.ticker import Ticker
 from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES, UpdatingStatus
-from fin.serializers.ticker import AdjustedTickerSerializer
+from fin.serializers.ticker import IndexTickerSerializer
 from users.models import User
 
 
@@ -23,7 +23,7 @@ class Portfolio(TimeStampMixin):
     name = CharField(max_length=100)
     status = models.IntegerField(choices=UpdatingStatus.choices,
                                  default=UpdatingStatus.successfully_updated)
-    tickers = ManyToManyField(Ticker, through='PortfolioTickers')
+    tickers = ManyToManyField(Ticker, through='fin.PortfolioTicker')
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
 
     class Meta:
@@ -43,7 +43,7 @@ class Portfolio(TimeStampMixin):
         cost = Cast(F('amount') * F('ticker__price'), decimal_field)
         index = Index.objects.get(pk=index_id)
 
-        proper_portfolio_tickers = PortfolioTickers.objects \
+        proper_portfolio_tickers = PortfolioTicker.objects \
             .filter(portfolio=self) \
             .filter(ticker__symbol__in=index.tickers.values_list('symbol', flat=True))
 
@@ -92,11 +92,11 @@ class Portfolio(TimeStampMixin):
                 if cost >= 0:
                     adjusted_ticker.amount -= matched_portfolio_ticker.amount
                     result.append({
-                        **AdjustedTickerSerializer(adjusted_ticker).data,
+                        **IndexTickerSerializer(adjusted_ticker).data,
                     })
             else:
                 result.append({
-                    **AdjustedTickerSerializer(adjusted_ticker).data,
+                    **IndexTickerSerializer(adjusted_ticker).data,
                 })
         return result
 
@@ -123,12 +123,12 @@ class Portfolio(TimeStampMixin):
         """
         decimal_field = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
         cost = Cast(F('amount') * F('ticker__price'), decimal_field)
-        query = PortfolioTickers.objects.filter(portfolio=self).annotate(cost=cost)
+        query = PortfolioTicker.objects.filter(portfolio=self).annotate(cost=cost)
         tickers_sum = query.aggregate(Sum('cost')).get('cost__sum')
         return tickers_sum or 0
 
 
-class PortfolioTickers(TimeStampMixin):
+class PortfolioTicker(TimeStampMixin):
     """
     Associated table for M2M relation between Portfolio model and Ticker model
     """
