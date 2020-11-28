@@ -9,7 +9,7 @@ from fin.tests.factories.user import UserFactory
 
 class PortfolioFactory(factory.DjangoModelFactory):
     """
-    Creates Account objects
+    Creates Portfolio objects
     """
 
     class Meta:
