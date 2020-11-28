@@ -43,6 +43,24 @@ class PortfolioTests(BaseTestCase):
         self.assertIn('pub_', json_data['actions']['POST']['query_params'].keys())
         self.assertIn('sec_', json_data['actions']['POST']['query_params'].keys())
 
+    def test_portfolio_adjusting(self):
+        """
+        Tests that portfolio adjusting works properly
+        """
+        expected_tickers = {
+            'AAPL': 1,
+            'INTC': 1,
+            'SIRI': 2
+        }
+        portfolio = Portfolio.objects.first()
+        index = Index.objects.get(data_source_url='https://www.slickcharts.com/nasdaq100')
+        url = reverse('portfolios-adjust', kwargs={'pk': portfolio.id, 'index_id': index.id})
+
+        response = self.client.get(url, {'money': 200})
+
+        for ticker in response.data['tickers']:
+            self.assertEqual(expected_tickers[ticker['symbol']], ticker['amount'])
+
     def test_portfolio_displayable_status(self):
         """
         Tests that portfolio statuses displayed properly

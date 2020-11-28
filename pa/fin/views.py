@@ -25,14 +25,12 @@ from .exceptions import BadRequest, TraderNetAPIUnavailable
 from .external_api.tradernet.PublicApiClient import PublicApiClient
 from .external_api.tradernet.error_codes import BAD_SIGN
 from .models.index import Index
-from .models.models import Goal
 from .models.portfolio import Portfolio, PortfolioTicker, Account
 from .models.portfolio.portfolio_policy import PortfolioPolicy
 from .models.ticker import Ticker
 from .models.utils import UpdatingStatus
 from .serializers.index import IndexSerializer, DetailIndexSerializer
 from .serializers.portfolio.portfolio_policy import PortfolioPolicySerializer
-from .serializers.serializers import GoalSerializer
 from .serializers.ticker import IndexTickerSerializer
 from .tasks.update_tickers_statements import update_model_tickers_statements_task
 
@@ -166,16 +164,6 @@ class AdjustedIndexView(AdjustMixin, APIView):
         adjusted_index, summary_cost = index.adjust(self.money, self.adjust_options)
         serialized_index = IndexTickerSerializer(adjusted_index, many=True)
         return Response(data={'tickers': serialized_index.data, 'summary_cost': summary_cost})
-
-
-class GoalViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows goals to be viewed or edited
-    """
-    queryset = Goal.objects.all().order_by('updated')
-    serializer_class = GoalSerializer
-    filter_backends = [filters.OrderingFilter]
-    ordering_fields = '__all__'
 
 
 class PortfolioViewSet(AdjustMixin, UpdateTickersMixin, viewsets.ModelViewSet):
