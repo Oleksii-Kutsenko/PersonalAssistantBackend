@@ -10,7 +10,6 @@ from django.db.models.functions import Cast
 from django.utils.translation import gettext_lazy as _
 
 from fin.models.index import Index
-from fin.models.index.index import REASONABLE_LOT_PRICE
 from fin.models.ticker import Ticker
 from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES, UpdatingStatus
 from fin.serializers.ticker import AdjustedTickerSerializer
@@ -67,7 +66,7 @@ class Portfolio(TimeStampMixin):
         result = []
         for ticker in ticker_diff:
             amount = money // Decimal(ticker['price'])
-            if amount == 0 or amount * Decimal(ticker['price']) < REASONABLE_LOT_PRICE:
+            if amount == 0:
                 continue
             if amount < ticker['amount']:
                 ticker['amount'] = amount
@@ -90,7 +89,7 @@ class Portfolio(TimeStampMixin):
             if matched_portfolio_ticker:
                 amount_diff = adjusted_ticker.amount - matched_portfolio_ticker.amount
                 cost = adjusted_ticker.ticker.price * amount_diff
-                if cost >= REASONABLE_LOT_PRICE:
+                if cost >= 0:
                     adjusted_ticker.amount -= matched_portfolio_ticker.amount
                     result.append({
                         **AdjustedTickerSerializer(adjusted_ticker).data,

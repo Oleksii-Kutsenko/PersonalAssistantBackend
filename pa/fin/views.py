@@ -19,7 +19,8 @@ from rest_framework.status import HTTP_406_NOT_ACCEPTABLE, HTTP_200_OK, \
     HTTP_202_ACCEPTED
 from rest_framework.views import APIView
 
-from fin.serializers.portfolio.portfolio import PortfolioSerializer, AccountSerializer
+from fin.serializers.portfolio.portfolio import PortfolioSerializer, AccountSerializer, \
+    DetailedPortfolioSerializer
 from .exceptions import BadRequest, TraderNetAPIUnavailable
 from .external_api.tradernet.PublicApiClient import PublicApiClient
 from .external_api.tradernet.error_codes import BAD_SIGN
@@ -205,7 +206,6 @@ class PortfolioViewSet(AdjustMixin, UpdateTickersMixin, viewsets.ModelViewSet):
             }
             return base_metadata
 
-    serializer_class = PortfolioSerializer
     metadata_class = PortfolioMetadata
     filter_backends = [filters.OrderingFilter]
     model = Portfolio
@@ -214,6 +214,11 @@ class PortfolioViewSet(AdjustMixin, UpdateTickersMixin, viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Portfolio.objects.filter(user=self.request.user).all()
         return queryset
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return DetailedPortfolioSerializer
+        return PortfolioSerializer
 
     @action(detail=True, url_path='adjust/indices/(?P<index_id>[^/.]+)')
     def adjust(self, request, *args, **kwargs):

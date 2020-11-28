@@ -12,8 +12,6 @@ from fin.models.index.parsers import SlickChartsParser, ISharesParser, Source, I
 from fin.models.ticker import Ticker
 from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES, UpdatingStatus
 
-REASONABLE_LOT_PRICE = Decimal(202)
-
 
 class Index(TimeStampMixin):
     """
@@ -81,13 +79,11 @@ class Index(TimeStampMixin):
             tickers_query = tickers_query.annotate(amount=amount(adjusted_money_amount), cost=cost)
 
             summary_cost = tickers_query \
-                .filter(cost__gte=REASONABLE_LOT_PRICE) \
                 .aggregate(summary_cost=Coalesce(Sum('cost'), 0)).get('summary_cost')
 
         adjusted_money_amount -= step
         tickers_query = tickers_query \
-            .annotate(amount=amount(adjusted_money_amount), cost=cost) \
-            .filter(cost__gte=REASONABLE_LOT_PRICE)
+            .annotate(amount=amount(adjusted_money_amount), cost=cost)
         summary_cost = tickers_query.aggregate(Sum('cost')).get('cost__sum')
 
         if len(tickers_query) == 0:

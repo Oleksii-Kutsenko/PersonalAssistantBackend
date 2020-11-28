@@ -27,7 +27,6 @@ class AccountSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'currency', 'portfolio', 'value')
 
 
-# pylint: disable=no-self-use
 class PortfolioTickersSerializer(FlattenMixin, serializers.ModelSerializer):
     """
     Serializer for Ticker model inside Portfolio model
@@ -54,8 +53,19 @@ class PortfolioSerializer(serializers.ModelSerializer):
     """
     Serializer for Portfolio model
     """
-    accounts = AccountSerializer(many=True, read_only=True)
     id = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        """
+        Serializer meta class
+        """
+        model = Portfolio
+        fields = ('id', 'name')
+
+
+# pylint: disable=no-self-use
+class DetailedPortfolioSerializer(PortfolioSerializer):
+    accounts = AccountSerializer(many=True, read_only=True)
     industries_breakdown = SerializerMethodField(read_only=True)
     sectors_breakdown = SerializerMethodField(read_only=True)
     status = SerializerMethodField(read_only=True)
@@ -110,7 +120,7 @@ class PortfolioSerializer(serializers.ModelSerializer):
         """
         Returns portfolio tickers last updated time
         """
-        return obj.tickers.aggregate(Min('updated')).get('updated__min')
+        return obj.tickers.aggregate(Min('updated')).get('updated__min') or obj.updated
 
     def get_total(self, obj):
         """
@@ -140,9 +150,10 @@ class PortfolioSerializer(serializers.ModelSerializer):
 
     class Meta:
         """
-        Serializer meta class
+        Meta
         """
-        model = Portfolio
-        fields = ('accounts', 'id', 'portfolio_policy', 'tickers', 'tickers_last_updated', 'name',
-                  'total_accounts', 'total_tickers', 'total', 'sectors_breakdown', 'status',
-                  'industries_breakdown')
+        model = PortfolioSerializer.Meta.model
+        fields = ('accounts', 'industries_breakdown', 'portfolio_policy', 'sectors_breakdown',
+                  'status', 'tickers', 'tickers_last_updated', 'total', 'total_accounts',
+                  'total_tickers') + PortfolioSerializer.Meta.fields
+        depth = 1

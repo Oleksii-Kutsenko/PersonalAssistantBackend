@@ -75,11 +75,12 @@ class InvescoCSVParser(Parser):
 
         for row in reader:
             if row[0] != first_row_id:
-                ticker = Ticker(row[2].strip())
+                symbol = row[2].strip()
+                ticker = Ticker(symbol)
                 parsed_json.append({
                     'ticker': {
                         'company_name': row[6],
-                        'symbol': row[2],
+                        'symbol': symbol,
                         'price': ticker.info.get('ask')
                     },
                     'ticker_weight': row[5]

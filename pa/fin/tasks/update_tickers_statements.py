@@ -33,7 +33,8 @@ def update_tickers_statements(tickers_query):
         ticker.country = ticker_overview.get('Country', Ticker.DEFAULT_VALUE)
         ticker.industry = ticker_overview.get('Industry', Ticker.DEFAULT_VALUE)
         ticker.sector = ticker_overview.get('Sector', Ticker.DEFAULT_VALUE)
-        ticker.pe = ticker_overview.get('PERatio', None)
+        pe_ratio = ticker_overview.get('PERatio')
+        ticker.pe = None if pe_ratio == 'None' else pe_ratio
 
         ticker_income_statement = av_api.call(AVFunctions.income_statement.value,
                                               ticker.symbol)
@@ -47,7 +48,8 @@ def update_tickers_statements(tickers_query):
                                                  ticker.symbol)
         tickers_statements += parse_time_series_monthly(ticker, ticker_time_series_monthly)
 
-        TickerStatement.objects.bulk_create(tickers_statements)
+        if tickers_statements:
+            TickerStatement.objects.bulk_create(tickers_statements)
         ticker_price = ticker.ticker_statements \
             .filter(name='price') \
             .order_by('-fiscal_date_ending').first()
@@ -93,6 +95,7 @@ def update_model_tickers_statements_task(obj_type, obj_id):
                 update_tickers_statements(obj.tickers.all())
             except Exception as error:
                 logger.exception(error)
+                logger.exception(obj.tickers.all())
                 obj.status = UpdatingStatus.update_failed
                 obj.save()
                 lock.release()
