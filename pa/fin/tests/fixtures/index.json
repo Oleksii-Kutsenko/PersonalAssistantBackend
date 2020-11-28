@@ -9,7 +9,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5031,
     "fields": {
       "created": "2020-09-02T20:21:06.581Z",
@@ -20,7 +20,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5032,
     "fields": {
       "created": "2020-09-02T20:21:06.581Z",
@@ -31,7 +31,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5033,
     "fields": {
       "created": "2020-09-02T20:21:06.581Z",
@@ -42,7 +42,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5034,
     "fields": {
       "created": "2020-09-02T20:21:06.581Z",
@@ -53,7 +53,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5035,
     "fields": {
       "created": "2020-09-02T20:21:06.581Z",
@@ -64,7 +64,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5036,
     "fields": {
       "created": "2020-09-02T20:21:06.581Z",
@@ -75,7 +75,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5037,
     "fields": {
       "created": "2020-09-02T20:21:06.581Z",
@@ -86,7 +86,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5038,
     "fields": {
       "created": "2020-09-02T20:21:06.581Z",
@@ -97,7 +97,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5039,
     "fields": {
       "created": "2020-09-02T20:21:06.581Z",
@@ -108,7 +108,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5040,
     "fields": {
       "created": "2020-09-02T20:21:06.581Z",
@@ -119,7 +119,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5041,
     "fields": {
       "created": "2020-09-02T20:21:06.581Z",
@@ -130,7 +130,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5042,
     "fields": {
       "created": "2020-09-02T20:21:06.581Z",
@@ -141,7 +141,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5043,
     "fields": {
       "created": "2020-09-02T20:21:06.581Z",
@@ -152,7 +152,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5044,
     "fields": {
       "created": "2020-09-02T20:21:06.581Z",
@@ -163,7 +163,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5045,
     "fields": {
       "created": "2020-09-02T20:21:06.581Z",
@@ -174,7 +174,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5046,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -185,7 +185,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5047,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -196,7 +196,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5048,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -207,7 +207,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5049,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -218,7 +218,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5050,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -229,7 +229,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5051,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -240,7 +240,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5052,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -251,7 +251,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5053,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -262,7 +262,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5054,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -273,7 +273,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5055,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -284,7 +284,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5056,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -295,7 +295,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5057,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -306,7 +306,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5058,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -317,7 +317,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5059,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -328,7 +328,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5060,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -339,7 +339,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5061,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -350,7 +350,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5062,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -361,7 +361,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5063,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -372,7 +372,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5064,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -383,7 +383,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5065,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -394,7 +394,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5066,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -405,7 +405,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5067,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -416,7 +416,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5068,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -427,7 +427,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5069,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -438,7 +438,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5070,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -449,7 +449,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5071,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -460,7 +460,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5072,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -471,7 +471,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5073,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -482,7 +482,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5074,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -493,7 +493,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5075,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -504,7 +504,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5076,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -515,7 +515,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5077,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -526,7 +526,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5078,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -537,7 +537,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5079,
     "fields": {
       "created": "2020-09-02T20:21:06.582Z",
@@ -548,7 +548,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5080,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -559,7 +559,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5081,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -570,7 +570,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5082,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -581,7 +581,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5083,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -592,7 +592,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5084,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -603,7 +603,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5085,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -614,7 +614,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5086,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -625,7 +625,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5087,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -636,7 +636,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5088,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -647,7 +647,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5089,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -658,7 +658,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5090,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -669,7 +669,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5091,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -680,7 +680,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5092,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -691,7 +691,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5093,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -702,7 +702,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5094,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -713,7 +713,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5095,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -724,7 +724,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5096,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -735,7 +735,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5097,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -746,7 +746,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5098,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -757,7 +757,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5099,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -768,7 +768,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5100,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -779,7 +779,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5101,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -790,7 +790,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5102,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -801,7 +801,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5103,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -812,7 +812,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5104,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -823,7 +823,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5105,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -834,7 +834,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5106,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -845,7 +845,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5107,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -856,7 +856,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5108,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -867,7 +867,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5109,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -878,7 +878,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5110,
     "fields": {
       "created": "2020-09-02T20:21:06.583Z",
@@ -889,7 +889,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5111,
     "fields": {
       "created": "2020-09-02T20:21:06.584Z",
@@ -900,7 +900,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5112,
     "fields": {
       "created": "2020-09-02T20:21:06.584Z",
@@ -911,7 +911,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5113,
     "fields": {
       "created": "2020-09-02T20:21:06.584Z",
@@ -922,7 +922,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5114,
     "fields": {
       "created": "2020-09-02T20:21:06.584Z",
@@ -933,7 +933,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5115,
     "fields": {
       "created": "2020-09-02T20:21:06.584Z",
@@ -944,7 +944,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5116,
     "fields": {
       "created": "2020-09-02T20:21:06.584Z",
@@ -955,7 +955,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5117,
     "fields": {
       "created": "2020-09-02T20:21:06.584Z",
@@ -966,7 +966,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5118,
     "fields": {
       "created": "2020-09-02T20:21:06.584Z",
@@ -977,7 +977,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5119,
     "fields": {
       "created": "2020-09-02T20:21:06.584Z",
@@ -988,7 +988,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5120,
     "fields": {
       "created": "2020-09-02T20:21:06.584Z",
@@ -999,7 +999,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5121,
     "fields": {
       "created": "2020-09-02T20:21:06.584Z",
@@ -1010,7 +1010,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5122,
     "fields": {
       "created": "2020-09-02T20:21:06.584Z",
@@ -1021,7 +1021,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5123,
     "fields": {
       "created": "2020-09-02T20:21:06.584Z",
@@ -1032,7 +1032,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5124,
     "fields": {
       "created": "2020-09-02T20:21:06.584Z",
@@ -1043,7 +1043,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5125,
     "fields": {
       "created": "2020-09-02T20:21:06.584Z",
@@ -1054,7 +1054,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5126,
     "fields": {
       "created": "2020-09-02T20:21:06.584Z",
@@ -1065,7 +1065,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5127,
     "fields": {
       "created": "2020-09-02T20:21:06.584Z",
@@ -1076,7 +1076,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5128,
     "fields": {
       "created": "2020-09-02T20:21:06.584Z",
@@ -1087,7 +1087,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5129,
     "fields": {
       "created": "2020-09-02T20:21:06.584Z",
@@ -1098,7 +1098,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5130,
     "fields": {
       "created": "2020-09-02T20:21:06.584Z",
@@ -1109,7 +1109,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5131,
     "fields": {
       "created": "2020-09-02T20:21:06.584Z",
@@ -1120,7 +1120,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5132,
     "fields": {
       "created": "2020-09-02T20:21:06.584Z",
@@ -1131,7 +1131,7 @@
     }
   },
   {
-    "model": "fin.tickerindexweight",
+    "model": "fin.indexticker",
     "pk": 5133,
     "fields": {
       "created": "2020-09-02T20:21:06.584Z",

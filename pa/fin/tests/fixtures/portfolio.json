@@ -28,7 +28,7 @@
     }
   },
   {
-    "model": "fin.portfoliotickers",
+    "model": "fin.portfolioticker",
     "pk": 1,
     "fields": {
       "created": "2020-08-20T12:21:19.558Z",
@@ -39,7 +39,7 @@
     }
   },
   {
-    "model": "fin.portfoliotickers",
+    "model": "fin.portfolioticker",
     "pk": 2,
     "fields": {
       "created": "2020-08-20T12:21:19.558Z",
@@ -50,7 +50,7 @@
     }
   },
   {
-    "model": "fin.portfoliotickers",
+    "model": "fin.portfolioticker",
     "pk": 3,
     "fields": {
       "created": "2020-08-25T12:23:56.130Z",
@@ -61,7 +61,7 @@
     }
   },
   {
-    "model": "fin.portfoliotickers",
+    "model": "fin.portfolioticker",
     "pk": 4,
     "fields": {
       "created": "2020-08-25T12:23:56.131Z",
@@ -72,7 +72,7 @@
     }
   },
   {
-    "model": "fin.portfoliotickers",
+    "model": "fin.portfolioticker",
     "pk": 6,
     "fields": {
       "created": "2020-08-25T12:24:45.373Z",
@@ -83,7 +83,7 @@
     }
   },
   {
-    "model": "fin.portfoliotickers",
+    "model": "fin.portfolioticker",
     "pk": 9,
     "fields": {
       "created": "2020-08-25T12:32:32.658Z",

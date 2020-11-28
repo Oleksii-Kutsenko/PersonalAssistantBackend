@@ -95,7 +95,7 @@ def update_model_tickers_statements_task(obj_type, obj_id):
                 update_tickers_statements(obj.tickers.all())
             except Exception as error:
                 logger.exception(error)
-                logger.exception(obj.tickers.all())
+                logger.exception(obj_type, obj_id)
                 obj.status = UpdatingStatus.update_failed
                 obj.save()
                 lock.release()
