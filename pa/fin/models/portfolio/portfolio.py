@@ -48,7 +48,7 @@ class Portfolio(TimeStampMixin):
         proper_portfolio_tickers_sum = proper_portfolio_tickers.annotate(cost=cost) \
                                            .aggregate(Sum('cost')).get('cost__sum') or 0
 
-        adjusted_index_tickers = index.adjust(proper_portfolio_tickers_sum + money, options)
+        adjusted_index_tickers = index.adjust(float(proper_portfolio_tickers_sum) + money, options)
         ticker_diff = self.ticker_difference(adjusted_index_tickers, proper_portfolio_tickers)
         packed_ticker_diff = self.pack_tickers_difference(money, ticker_diff)
         return packed_ticker_diff
