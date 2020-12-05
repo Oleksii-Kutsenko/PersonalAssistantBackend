@@ -25,8 +25,6 @@ SchemaView = get_schema_view(
 
 urlpatterns = [
     re_path(r'^api/', include(router.urls)),
-    re_path(r'^api/indices/(?P<index_id>[1-9][0-9]*)/adjusted/$', views.AdjustedIndexView.as_view(),
-            name='index-adjusted'),
     re_path(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     re_path(r'^swagger/$', SchemaView.with_ui('swagger', cache_timeout=0),
             name='schema-swagger-ui'),

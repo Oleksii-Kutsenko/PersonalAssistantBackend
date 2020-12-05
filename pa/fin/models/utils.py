@@ -1,9 +1,13 @@
 """
 Helpers for models
 """
+
 from django.db import models
 from django.db.models import DateTimeField
 from django.utils.translation import gettext_lazy as _
+
+MAX_DIGITS = 19
+DECIMAL_PLACES = 2
 
 
 class TimeStampMixin(models.Model):
@@ -18,10 +22,6 @@ class TimeStampMixin(models.Model):
         Model meta class
         """
         abstract = True
-
-
-MAX_DIGITS = 19
-DECIMAL_PLACES = 2
 
 
 class UpdatingStatus(models.IntegerChoices):

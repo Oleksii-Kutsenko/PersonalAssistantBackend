@@ -4,7 +4,7 @@ Ticker and hard related models
 from datetime import date, timedelta
 
 from django.db import models
-from django.db.models import DecimalField, Q
+from django.db.models import Q
 from querybuilder.query import Query
 
 from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES
@@ -52,7 +52,7 @@ class Ticker(TimeStampMixin):
     market_cap = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES,
                                      null=True)
     pe = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES, null=True)
-    price = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
+    price = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
     sector = models.CharField(max_length=50, default=DEFAULT_VALUE)
     symbol = models.CharField(max_length=100, unique=True)
 

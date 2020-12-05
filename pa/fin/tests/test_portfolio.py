@@ -11,6 +11,7 @@ from fin.models.portfolio import Portfolio, PortfolioTicker
 from fin.models.ticker import Ticker
 from fin.models.utils import UpdatingStatus
 from fin.tests.base import BaseTestCase
+from fin.tests.factories.portfolio_policy import PortfolioPolicyFactory
 from fin.views import AdjustMixin
 from users.models import User
 
@@ -52,7 +53,8 @@ class PortfolioTests(BaseTestCase):
             'INTC': 1,
             'SIRI': 2
         }
-        portfolio = Portfolio.objects.first()
+        portfolio_policy = PortfolioPolicyFactory()
+        portfolio = portfolio_policy.portfolio
         index = Index.objects.get(data_source_url='https://www.slickcharts.com/nasdaq100')
         url = reverse('portfolios-adjust', kwargs={'pk': portfolio.id, 'index_id': index.id})
 
@@ -90,9 +92,9 @@ class PortfolioTests(BaseTestCase):
         index = Index.objects.first()
 
         portfolio_query = PortfolioTicker.objects.filter(portfolio=portfolio)
-        adjusted_index, _ = index.adjust(portfolio.total_tickers + step * 2,
-                                         AdjustMixin.default_adjust_options, step)
-        tickers_diff = Portfolio.portfolio_index_queries_diff(adjusted_index, portfolio_query)
+        adjusted_index = index.adjust(portfolio.total_tickers + step,
+                                      AdjustMixin.default_adjust_options)
+        tickers_diff = Portfolio.ticker_difference(adjusted_index, portfolio_query)
 
         for i in range(0, 4):
             self.assertEqual(expected_result[i].ticker.symbol, tickers_diff[i].get('symbol'))

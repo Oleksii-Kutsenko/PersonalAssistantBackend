@@ -1,16 +1,16 @@
 """
 Classes that helps operate with indexes and tickers
 """
-from decimal import Decimal
 
+import numpy as np
+import pandas as pd
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models, transaction
-from django.db.models import DecimalField, Sum, F
-from django.db.models.functions import Cast, Coalesce
+from django.db.models import Q
 
 from fin.models.index.parsers import SlickChartsParser, ISharesParser, Source, InvescoCSVParser
 from fin.models.ticker import Ticker
-from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES, UpdatingStatus
+from fin.models.utils import TimeStampMixin, MAX_DIGITS, UpdatingStatus
 
 
 class Index(TimeStampMixin):
@@ -40,8 +40,15 @@ class Index(TimeStampMixin):
             models.Index(fields=['data_source_url', ]),
         ]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.parser = self.url_parsers[self.data_source_url]
+
+    def __str__(self):
+        return str(dict(Source.choices)[self.data_source_url])
+
     @transaction.atomic
-    def adjust(self, money, options, step=None):
+    def adjust(self, money, options):
         """
         Calculate index adjusted by the amount of money
         """
@@ -53,55 +60,61 @@ class Index(TimeStampMixin):
             .exclude(ticker__symbol__in=options['skip_tickers']) \
             .order_by('-weight')
 
-        # adjust sum of weights to 100%
-        hundred_percent = Decimal(100)
-        tickers_weight = tickers_query.aggregate(Sum('weight')).get('weight__sum')
-        coefficient = hundred_percent / tickers_weight
+        # exclude tickers with highest PE ratio
+        if options.get('pe_quantile'):
+            threshold_pe_ratio = self.threshold_pe_ratio(options['pe_quantile'])
+            tickers_query = tickers_query.filter(Q(ticker__pe__lte=threshold_pe_ratio) |
+                                                 Q(ticker__pe__isnull=True))
 
-        for ticker in tickers_query:
-            ticker.weight *= coefficient
+        dataset = tickers_query.values_list('ticker__symbol', 'ticker__price', 'weight')
+        tickers_df = pd.DataFrame(list(dataset),
+                                  columns=['ticker__symbol', 'ticker__price', 'weight'])
+        tickers_df['ticker__price'] = tickers_df['ticker__price'].astype(float)
+        tickers_df['weight'] = tickers_df['weight'].astype(float)
 
-        # compute amount
-        decimal_field = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
-        integer_field = models.IntegerField()
-        cost = Cast(F('amount') * F('ticker__price'), decimal_field)
+        coefficient = 100 / tickers_df['weight'].sum()
+        tickers_df.iloc[:, 2] *= coefficient
 
-        adjusted_money_amount = Decimal(money)
-        # experimentally established value
-        step = step or Decimal(money) * Decimal(4)
+        adjusted_money_amount = money
+        step = money * 0.1
+        while True:
+            tickers_df['amount'] = (tickers_df['weight'] / 100) * adjusted_money_amount \
+                                   / tickers_df['ticker__price']
+            tickers_df['amount'] = tickers_df['amount'].round()
 
-        def amount(money_amount):
-            return Cast(F('weight') / 100 * money_amount / F('ticker__price'), integer_field)
-
-        summary_cost = 0
-        while summary_cost < money:
+            tickers_df['cost'] = tickers_df['amount'] * tickers_df['ticker__price']
+            if tickers_df['cost'].sum() > money:
+                break
             adjusted_money_amount += step
-            tickers_query = tickers_query.annotate(amount=amount(adjusted_money_amount), cost=cost)
-
-            summary_cost = tickers_query \
-                .aggregate(summary_cost=Coalesce(Sum('cost'), 0)).get('summary_cost')
 
         adjusted_money_amount -= step
-        tickers_query = tickers_query \
-            .annotate(amount=amount(adjusted_money_amount), cost=cost)
-        summary_cost = tickers_query.aggregate(Sum('cost')).get('cost__sum')
+        tickers_df['amount'] = tickers_df['weight'] / 100 * adjusted_money_amount / tickers_df[
+            'ticker__price']
+        tickers_df['amount'] = tickers_df['amount'].round()
 
-        if len(tickers_query) == 0:
-            return tickers_query, 0
+        tickers_df['cost'] = tickers_df['amount'] * tickers_df['ticker__price']
+        tickers_df = tickers_df[tickers_df.cost != 0]
 
-        # adjust sum of weights to 100%
-        tickers_query = tickers_query.filter(amount__gt=0)
-        tickers_weight = tickers_query.aggregate(Sum('weight')).get('weight__sum')
-        coefficient = hundred_percent / tickers_weight
+        coefficient = 100 / tickers_df['weight'].sum()
+        tickers_df.iloc[:, 2] *= coefficient
 
-        for ticker in tickers_query:
-            ticker.weight *= coefficient
-
-        return tickers_query, summary_cost
+        return tickers_df
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         super().save(force_insert=False, force_update=False, using=None, update_fields=None)
         self.update()
+
+    def threshold_pe_ratio(self, pe_quantile):
+        """
+        Calculates maximum acceptable pe value for the companies those to be taken to the adjusting
+        calculation
+        """
+        index_pe_list = IndexTicker.objects.filter(index=self, ticker__pe__isnull=False) \
+            .values_list('ticker__pe', flat=True) \
+            .order_by('ticker__pe')
+        if index_pe_list:
+            return np.percentile(index_pe_list, pe_quantile)
+        return 0
 
     @transaction.atomic
     def update(self):
@@ -128,13 +141,6 @@ class Index(TimeStampMixin):
             index_tickers.append(index_ticker)
         IndexTicker.objects.filter(index=self).delete()
         IndexTicker.objects.bulk_create(index_tickers)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.parser = self.url_parsers[self.data_source_url]
-
-    def __str__(self):
-        return str(dict(Source.choices)[self.data_source_url])
 
 
 class IndexTicker(TimeStampMixin):
