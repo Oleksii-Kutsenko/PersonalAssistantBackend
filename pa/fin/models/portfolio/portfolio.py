@@ -1,7 +1,6 @@
 """
 Portfolio model and related models
 """
-from decimal import Decimal
 
 from django.db import models
 from django.db.models import ForeignKey, CASCADE, ManyToManyField, IntegerField, CharField, \
@@ -12,7 +11,7 @@ from django.utils.translation import gettext_lazy as _
 from fin.models.index import Index
 from fin.models.ticker import Ticker
 from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES, UpdatingStatus
-from fin.serializers.ticker import IndexTickerSerializer
+from fin.serializers.ticker import TickerSerializer
 from users.models import User
 
 
@@ -46,57 +45,57 @@ class Portfolio(TimeStampMixin):
         proper_portfolio_tickers = PortfolioTicker.objects \
             .filter(portfolio=self) \
             .filter(ticker__symbol__in=index.tickers.values_list('symbol', flat=True))
+        proper_portfolio_tickers_sum = proper_portfolio_tickers.annotate(cost=cost) \
+                                           .aggregate(Sum('cost')).get('cost__sum') or 0
 
-        proper_portfolio_tickers_sum = proper_portfolio_tickers \
-                                           .annotate(cost=cost) \
-                                           .aggregate(Sum('cost')) \
-                                           .get('cost__sum') or 0
-
-        adjusted_index, _ = index.adjust(proper_portfolio_tickers_sum + money * 2, options, money)
-        ticker_diff = self.portfolio_index_queries_diff(adjusted_index, proper_portfolio_tickers)
-        packed_ticker_diff = self.pack_ticker_diff(ticker_diff, money)
+        adjusted_index_tickers = index.adjust(proper_portfolio_tickers_sum + money, options)
+        ticker_diff = self.ticker_difference(adjusted_index_tickers, proper_portfolio_tickers)
+        packed_ticker_diff = self.pack_tickers_difference(money, ticker_diff)
         return packed_ticker_diff
 
     @staticmethod
-    def pack_ticker_diff(ticker_diff, money):
+    def pack_tickers_difference(money, ticker_diff):
         """
         Tries to pack the tickers difference so that the tickers sum is less than the money
         parameter
         """
         result = []
         for ticker in ticker_diff:
-            amount = money // Decimal(ticker['price'])
+            amount = money // float(ticker['price'])
             if amount == 0:
                 continue
             if amount < ticker['amount']:
                 ticker['amount'] = amount
-            ticker['cost'] = Decimal(ticker['price']) * Decimal(ticker['amount'])
+            ticker['cost'] = ticker['amount'] * float(ticker['price'])
             money -= ticker['cost']
             result.append(ticker)
         return result
 
     @staticmethod
-    def portfolio_index_queries_diff(index_query, portfolio_query):
+    def ticker_difference(adjusted_index_tickers, proper_portfolio_tickers):
         """
-        Return query that exclude tickers from portfolio
+        Excludes tickers already present in the portfolio from the adjusted index tickers
         """
         result = []
-        for adjusted_ticker in index_query:
-            matched_portfolio_ticker = portfolio_query \
-                .filter(ticker__symbol=adjusted_ticker.ticker.symbol) \
-                .first()
-
+        for _, adjusted_ticker in adjusted_index_tickers.iterrows():
+            matched_portfolio_ticker = proper_portfolio_tickers \
+                .filter(ticker__symbol=adjusted_ticker['ticker__symbol']).first()
             if matched_portfolio_ticker:
-                amount_diff = adjusted_ticker.amount - matched_portfolio_ticker.amount
-                cost = adjusted_ticker.ticker.price * amount_diff
-                if cost >= 0:
-                    adjusted_ticker.amount -= matched_portfolio_ticker.amount
+                amount = adjusted_ticker['amount'] - matched_portfolio_ticker.amount
+                if amount > 0:
                     result.append({
-                        **IndexTickerSerializer(adjusted_ticker).data,
+                        **TickerSerializer(matched_portfolio_ticker.ticker).data,
+                        'amount': amount,
+                        'cost': float(matched_portfolio_ticker.ticker.price) * amount,
+                        'weight': adjusted_ticker['weight'],
                     })
             else:
+                ticker = Ticker.objects.get(symbol=adjusted_ticker['ticker__symbol'])
                 result.append({
-                    **IndexTickerSerializer(adjusted_ticker).data,
+                    **TickerSerializer(ticker).data,
+                    'amount': adjusted_ticker['amount'],
+                    'cost': float(ticker.price) * adjusted_ticker['amount'],
+                    'weight': adjusted_ticker['weight']
                 })
         return result
 
@@ -125,7 +124,9 @@ class Portfolio(TimeStampMixin):
         cost = Cast(F('amount') * F('ticker__price'), decimal_field)
         query = PortfolioTicker.objects.filter(portfolio=self).annotate(cost=cost)
         tickers_sum = query.aggregate(Sum('cost')).get('cost__sum')
-        return tickers_sum or 0
+        if tickers_sum:
+            return float(tickers_sum)
+        return 0
 
 
 class PortfolioTicker(TimeStampMixin):

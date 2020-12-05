@@ -4,7 +4,7 @@ Views
 import json
 import logging
 from datetime import timedelta
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal
 from json import JSONDecodeError
 
 from django.db import transaction
@@ -12,12 +12,10 @@ from django.db.models import Min
 from django.utils import timezone
 from rest_framework import filters, viewsets, status
 from rest_framework.decorators import action
-from rest_framework.generics import get_object_or_404
 from rest_framework.metadata import SimpleMetadata
 from rest_framework.response import Response
 from rest_framework.status import HTTP_406_NOT_ACCEPTABLE, HTTP_200_OK, \
     HTTP_202_ACCEPTED
-from rest_framework.views import APIView
 
 from fin.serializers.portfolio.portfolio import PortfolioSerializer, AccountSerializer, \
     DetailedPortfolioSerializer
@@ -31,7 +29,6 @@ from .models.ticker import Ticker
 from .models.utils import UpdatingStatus
 from .serializers.index import IndexSerializer, DetailIndexSerializer
 from .serializers.portfolio.portfolio_policy import PortfolioPolicySerializer
-from .serializers.ticker import IndexTickerSerializer
 from .tasks.update_tickers_statements import update_model_tickers_statements_task
 
 logger = logging.getLogger(__name__)
@@ -61,8 +58,8 @@ class AdjustMixin:
         super().initial(request, *args, **kwargs)
         money = request.GET.get('money')
         try:
-            self.money = Decimal(money)
-        except (InvalidOperation, TypeError):
+            self.money = float(money)
+        except (TypeError, ValueError):
             self.money = None
 
         options = {
@@ -131,41 +128,6 @@ class IndexViewSet(UpdateTickersMixin, viewsets.ModelViewSet):
         return response
 
 
-class AdjustedIndexView(AdjustMixin, APIView):
-    """
-    API endpoint that allows executing adjust method of the index
-    """
-
-    class AdjustedIndexMetadata(SimpleMetadata):
-        """
-        Metadata that helps frontend create filter form
-        """
-
-        def determine_metadata(self, request, view):
-            base_metadata = super().determine_metadata(request, view)
-            index = get_object_or_404(Index.objects.all(), pk=view.kwargs.get('index_id'))
-            base_metadata['query_params'] = {
-                'countries': index.tickers.values('country').distinct(),
-                'sectors': index.tickers.values('sector').distinct(),
-                'industries': index.tickers.values('industry').distinct(),
-            }
-            return base_metadata
-
-    metadata_class = AdjustedIndexMetadata
-
-    def get(self, request, index_id):
-        """
-        Calculate index adjusted by the amount of money
-        """
-        if self.money is None:
-            raise BadRequest(detail="Money parameter is invalid")
-        index = get_object_or_404(queryset=Index.objects.all(), pk=index_id)
-
-        adjusted_index, summary_cost = index.adjust(self.money, self.adjust_options)
-        serialized_index = IndexTickerSerializer(adjusted_index, many=True)
-        return Response(data={'tickers': serialized_index.data, 'summary_cost': summary_cost})
-
-
 class PortfolioViewSet(AdjustMixin, UpdateTickersMixin, viewsets.ModelViewSet):
     """
     API endpoint that allows to view portfolio
@@ -219,6 +181,7 @@ class PortfolioViewSet(AdjustMixin, UpdateTickersMixin, viewsets.ModelViewSet):
         portfolio_id = kwargs.get('pk')
 
         portfolio = Portfolio.objects.get(pk=portfolio_id)
+        self.adjust_options['pe_quantile'] = Decimal(portfolio.portfolio_policy.pe_quantile)
         adjusted_portfolio = portfolio.adjust(index_id, self.money, self.adjust_options)
 
         return Response(data={'tickers': adjusted_portfolio})

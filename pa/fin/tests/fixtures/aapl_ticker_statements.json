@@ -1,0 +1,290 @@
+[
+  {
+    "model": "fin.tickerstatement",
+    "pk": 19576,
+    "fields": {
+      "created": "2020-11-21T02:27:37.829Z",
+      "updated": "2020-11-21T02:27:37.829Z",
+      "name": "net_income",
+      "fiscal_date_ending": "2020-09-30",
+      "value": "12673000000.00",
+      "ticker": 1
+    }
+  },
+  {
+    "model": "fin.tickerstatement",
+    "pk": 19578,
+    "fields": {
+      "created": "2020-11-21T02:27:37.829Z",
+      "updated": "2020-11-21T02:27:37.829Z",
+      "name": "net_income",
+      "fiscal_date_ending": "2020-06-30",
+      "value": "11253000000.00",
+      "ticker": 1
+    }
+  },
+  {
+    "model": "fin.tickerstatement",
+    "pk": 19580,
+    "fields": {
+      "created": "2020-11-21T02:27:37.829Z",
+      "updated": "2020-11-21T02:27:37.829Z",
+      "name": "net_income",
+      "fiscal_date_ending": "2020-03-31",
+      "value": "11249000000.00",
+      "ticker": 1
+    }
+  },
+  {
+    "model": "fin.tickerstatement",
+    "pk": 19582,
+    "fields": {
+      "created": "2020-11-21T02:27:37.829Z",
+      "updated": "2020-11-21T02:27:37.829Z",
+      "name": "net_income",
+      "fiscal_date_ending": "2019-12-31",
+      "value": "22236000000.00",
+      "ticker": 1
+    }
+  },
+  {
+    "model": "fin.tickerstatement",
+    "pk": 19584,
+    "fields": {
+      "created": "2020-11-21T02:27:37.830Z",
+      "updated": "2020-11-21T02:27:37.830Z",
+      "name": "net_income",
+      "fiscal_date_ending": "2019-09-30",
+      "value": "13686000000.00",
+      "ticker": 1
+    }
+  },
+  {
+    "model": "fin.tickerstatement",
+    "pk": 19586,
+    "fields": {
+      "created": "2020-11-21T02:27:37.830Z",
+      "updated": "2020-11-21T02:27:37.830Z",
+      "name": "net_income",
+      "fiscal_date_ending": "2019-06-30",
+      "value": "10044000000.00",
+      "ticker": 1
+    }
+  },
+  {
+    "model": "fin.tickerstatement",
+    "pk": 19588,
+    "fields": {
+      "created": "2020-11-21T02:27:37.830Z",
+      "updated": "2020-11-21T02:27:37.830Z",
+      "name": "net_income",
+      "fiscal_date_ending": "2019-03-31",
+      "value": "11561000000.00",
+      "ticker": 1
+    }
+  },
+  {
+    "model": "fin.tickerstatement",
+    "pk": 19590,
+    "fields": {
+      "created": "2020-11-21T02:27:37.830Z",
+      "updated": "2020-11-21T02:27:37.830Z",
+      "name": "net_income",
+      "fiscal_date_ending": "2018-12-31",
+      "value": "19965000000.00",
+      "ticker": 1
+    }
+  },
+  {
+    "model": "fin.tickerstatement",
+    "pk": 19592,
+    "fields": {
+      "created": "2020-11-21T02:27:37.830Z",
+      "updated": "2020-11-21T02:27:37.830Z",
+      "name": "net_income",
+      "fiscal_date_ending": "2018-09-30",
+      "value": "14125000000.00",
+      "ticker": 1
+    }
+  },
+  {
+    "model": "fin.tickerstatement",
+    "pk": 19594,
+    "fields": {
+      "created": "2020-11-21T02:27:37.830Z",
+      "updated": "2020-11-21T02:27:37.830Z",
+      "name": "net_income",
+      "fiscal_date_ending": "2018-06-30",
+      "value": "11519000000.00",
+      "ticker": 1
+    }
+  },
+  {
+    "model": "fin.tickerstatement",
+    "pk": 19596,
+    "fields": {
+      "created": "2020-11-21T02:27:37.830Z",
+      "updated": "2020-11-21T02:27:37.831Z",
+      "name": "net_income",
+      "fiscal_date_ending": "2018-03-31",
+      "value": "13822000000.00",
+      "ticker": 1
+    }
+  },
+  {
+    "model": "fin.tickerstatement",
+    "pk": 19598,
+    "fields": {
+      "created": "2020-11-21T02:27:37.831Z",
+      "updated": "2020-11-21T02:27:37.831Z",
+      "name": "net_income",
+      "fiscal_date_ending": "2017-12-31",
+      "value": "20065000000.00",
+      "ticker": 1
+    }
+  },
+  {
+    "model": "fin.tickerstatement",
+    "pk": 19600,
+    "fields": {
+      "created": "2020-11-21T02:27:37.831Z",
+      "updated": "2020-11-21T02:27:37.831Z",
+      "name": "net_income",
+      "fiscal_date_ending": "2017-09-30",
+      "value": "10714000000.00",
+      "ticker": 1
+    }
+  },
+  {
+    "model": "fin.tickerstatement",
+    "pk": 19602,
+    "fields": {
+      "created": "2020-11-21T02:27:37.831Z",
+      "updated": "2020-11-21T02:27:37.831Z",
+      "name": "net_income",
+      "fiscal_date_ending": "2017-06-30",
+      "value": "8717000000.00",
+      "ticker": 1
+    }
+  },
+  {
+    "model": "fin.tickerstatement",
+    "pk": 19604,
+    "fields": {
+      "created": "2020-11-21T02:27:37.831Z",
+      "updated": "2020-11-21T02:27:37.831Z",
+      "name": "net_income",
+      "fiscal_date_ending": "2017-03-31",
+      "value": "11029000000.00",
+      "ticker": 1
+    }
+  },
+  {
+    "model": "fin.tickerstatement",
+    "pk": 19606,
+    "fields": {
+      "created": "2020-11-21T02:27:37.831Z",
+      "updated": "2020-11-21T02:27:37.831Z",
+      "name": "net_income",
+      "fiscal_date_ending": "2016-12-31",
+      "value": "17891000000.00",
+      "ticker": 1
+    }
+  },
+  {
+    "model": "fin.tickerstatement",
+    "pk": 19608,
+    "fields": {
+      "created": "2020-11-21T02:27:37.831Z",
+      "updated": "2020-11-21T02:27:37.831Z",
+      "name": "net_income",
+      "fiscal_date_ending": "2016-09-30",
+      "value": "9014000000.00",
+      "ticker": 1
+    }
+  },
+  {
+    "model": "fin.tickerstatement",
+    "pk": 19610,
+    "fields": {
+      "created": "2020-11-21T02:27:37.832Z",
+      "updated": "2020-11-21T02:27:37.832Z",
+      "name": "net_income",
+      "fiscal_date_ending": "2016-06-30",
+      "value": "7796000000.00",
+      "ticker": 1
+    }
+  },
+  {
+    "model": "fin.tickerstatement",
+    "pk": 19612,
+    "fields": {
+      "created": "2020-11-21T02:27:37.832Z",
+      "updated": "2020-11-21T02:27:37.832Z",
+      "name": "net_income",
+      "fiscal_date_ending": "2016-03-31",
+      "value": "10516000000.00",
+      "ticker": 1
+    }
+  },
+  {
+    "model": "fin.tickerstatement",
+    "pk": 19614,
+    "fields": {
+      "created": "2020-11-21T02:27:37.832Z",
+      "updated": "2020-11-21T02:27:37.832Z",
+      "name": "net_income",
+      "fiscal_date_ending": "2015-12-31",
+      "value": "18361000000.00",
+      "ticker": 1
+    }
+  },
+  {
+    "model": "fin.tickerstatement",
+    "pk": 19615,
+    "fields": {
+      "created": "2020-11-21T02:27:37.832Z",
+      "updated": "2020-11-21T02:27:37.832Z",
+      "name": "net_income",
+      "fiscal_date_ending": "2015-09-30",
+      "value": "11124000000.00",
+      "ticker": 1
+    }
+  },
+  {
+    "model": "fin.tickerstatement",
+    "pk": 19616,
+    "fields": {
+      "created": "2020-11-21T02:27:37.832Z",
+      "updated": "2020-11-21T02:27:37.832Z",
+      "name": "net_income",
+      "fiscal_date_ending": "2015-06-30",
+      "value": "10677000000.00",
+      "ticker": 1
+    }
+  },
+  {
+    "model": "fin.tickerstatement",
+    "pk": 19617,
+    "fields": {
+      "created": "2020-11-21T02:27:37.832Z",
+      "updated": "2020-11-21T02:27:37.832Z",
+      "name": "net_income",
+      "fiscal_date_ending": "2015-03-30",
+      "value": "13569000000.00",
+      "ticker": 1
+    }
+  },
+  {
+    "model": "fin.tickerstatement",
+    "pk": 19618,
+    "fields": {
+      "created": "2020-11-21T02:27:37.832Z",
+      "updated": "2020-11-21T02:27:37.832Z",
+      "name": "net_income",
+      "fiscal_date_ending": "2014-12-30",
+      "value": "18024000000.00",
+      "ticker": 1
+    }
+  }
+]
