@@ -72,31 +72,30 @@ class Portfolio(TimeStampMixin):
         return result
 
     @staticmethod
-    def ticker_difference(adjusted_index_tickers, proper_portfolio_tickers):
+    def ticker_difference(adjusted_index_tickers, portfolio_tickers):
         """
         Excludes tickers already present in the portfolio from the adjusted index tickers
         """
         result = []
         for _, adjusted_ticker in adjusted_index_tickers.iterrows():
-            matched_portfolio_ticker = proper_portfolio_tickers \
-                .filter(ticker__symbol=adjusted_ticker['ticker__symbol']).first()
-            if matched_portfolio_ticker:
-                amount = adjusted_ticker['amount'] - matched_portfolio_ticker.amount
-                if amount > 0:
-                    result.append({
-                        **TickerSerializer(matched_portfolio_ticker.ticker).data,
-                        'amount': amount,
-                        'cost': float(matched_portfolio_ticker.ticker.price) * amount,
-                        'weight': adjusted_ticker['weight'],
-                    })
+            symbol = adjusted_ticker['ticker__symbol']
+            portfolio_ticker = portfolio_tickers.filter(ticker__symbol=symbol).first()
+
+            if portfolio_ticker:
+                ticker = portfolio_ticker.ticker
+                amount = adjusted_ticker['amount'] - portfolio_ticker.amount
             else:
-                ticker = Ticker.objects.get(symbol=adjusted_ticker['ticker__symbol'])
+                ticker = Ticker.objects.get(symbol=symbol)
+                amount = adjusted_ticker['amount']
+
+            if amount > 0:
                 result.append({
                     **TickerSerializer(ticker).data,
-                    'amount': adjusted_ticker['amount'],
-                    'cost': float(ticker.price) * adjusted_ticker['amount'],
+                    'amount': amount,
+                    'cost': float(ticker.price) * amount,
                     'weight': adjusted_ticker['weight']
                 })
+
         return result
 
     @property
