@@ -1,31 +1,24 @@
 """
 Views
 """
-import json
 import logging
 from datetime import timedelta
 from decimal import Decimal
-from json import JSONDecodeError
 
-from django.db import transaction
 from django.db.models import Min
 from django.utils import timezone
-from rest_framework import filters, viewsets, status
+from rest_framework import filters, viewsets
 from rest_framework.decorators import action
-from rest_framework.metadata import SimpleMetadata
 from rest_framework.response import Response
 from rest_framework.status import HTTP_406_NOT_ACCEPTABLE, HTTP_200_OK, \
     HTTP_202_ACCEPTED
 
 from fin.serializers.portfolio.portfolio import PortfolioSerializer, AccountSerializer, \
     DetailedPortfolioSerializer
-from .exceptions import BadRequest, TraderNetAPIUnavailable
-from .external_api.tradernet.PublicApiClient import PublicApiClient
-from .external_api.tradernet.error_codes import BAD_SIGN
+from .exceptions import BadRequest
 from .models.index import Index
-from .models.portfolio import Portfolio, PortfolioTicker, Account
+from .models.portfolio import Portfolio, Account
 from .models.portfolio.portfolio_policy import PortfolioPolicy
-from .models.ticker import Ticker
 from .models.utils import UpdatingStatus
 from .serializers.index import IndexSerializer, DetailIndexSerializer
 from .serializers.portfolio.portfolio_policy import PortfolioPolicySerializer
@@ -133,30 +126,6 @@ class PortfolioViewSet(AdjustMixin, UpdateTickersMixin, viewsets.ModelViewSet):
     API endpoint that allows to view portfolio
     """
 
-    class PortfolioMetadata(SimpleMetadata):
-        """
-        Metadata that helps frontend to generate creation form
-        """
-
-        def determine_metadata(self, request, view):
-            base_metadata = super().determine_metadata(request, view)
-            base_metadata['actions']['POST']['query_params'] = {
-                'pub_': {
-                    'type': 'string',
-                    'required': True,
-                    'read_only': False,
-                    'label': 'Public Key'
-                },
-                'sec_': {
-                    'type': 'string',
-                    'required': True,
-                    'read_only': False,
-                    'label': 'Secret Key'
-                },
-            }
-            return base_metadata
-
-    metadata_class = PortfolioMetadata
     filter_backends = [filters.OrderingFilter]
     model = Portfolio
     ordering_fields = '__all__'
@@ -185,62 +154,6 @@ class PortfolioViewSet(AdjustMixin, UpdateTickersMixin, viewsets.ModelViewSet):
         adjusted_portfolio = portfolio.adjust(index_id, self.money, self.adjust_options)
 
         return Response(data={'tickers': adjusted_portfolio})
-
-    @transaction.atomic
-    def create(self, request, *args, **kwargs):
-        pub_ = request.GET.get('pub_')
-        sec_ = request.GET.get('sec_')
-        name = json.loads(request.body.decode('utf-8')).get('name')
-        cmd_ = 'getPositionJson'
-
-        if pub_ is None and sec_ is None:
-            raise BadRequest(detail='Missing pub_ or sec_ query params')
-
-        tradernet_api = PublicApiClient(pub_, sec_, PublicApiClient().V2)
-
-        raw_response = tradernet_api.sendRequest(cmd_).content.decode('utf-8')
-        try:
-            json_response = json.loads(raw_response)
-        except JSONDecodeError as error:
-            logger.error('TraderNet API is not responding')
-            logger.error(str(raw_response))
-            logger.exception(error)
-            raise TraderNetAPIUnavailable() from error
-
-        if json_response.get('code') == BAD_SIGN:
-            raise BadRequest(detail=json_response['errMsg'])
-
-        json_portfolio = json_response['result']['ps']
-
-        portfolio_accounts = json_portfolio['acc']
-        portfolio_tickers = json_portfolio['pos']
-
-        portfolio_model = Portfolio(user=request.user, name=name)
-        portfolio_model.save()
-
-        for account in portfolio_accounts:
-            account_model = Account(name=account.get('curr'),
-                                    currency=account.get('curr'),
-                                    value=account.get('s'),
-                                    portfolio=portfolio_model)
-            account_model.save()
-
-        for ticker in portfolio_tickers:
-            ticker_symbol = ticker.get('i').split('.')[0]
-            ticker_info = {'company_name': ticker.get('name'),
-                           'price': ticker.get('mkt_price')}
-            ticker_model, _ = Ticker.objects.get_or_create(symbol=ticker_symbol,
-                                                           defaults=ticker_info)
-            ticker_model.save()
-            portfolio_tickers = PortfolioTicker(portfolio=portfolio_model,
-                                                ticker=ticker_model,
-                                                amount=ticker.get('q'))
-            portfolio_tickers.save()
-
-        update_model_tickers_statements_task.delay(self.model.__name__, portfolio_model.id)
-
-        return Response(data=PortfolioSerializer(portfolio_model).data,
-                        status=status.HTTP_201_CREATED)
 
 
 class PortfolioPolicyViewSet(viewsets.ModelViewSet):
