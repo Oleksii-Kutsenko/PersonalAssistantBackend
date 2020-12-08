@@ -11,7 +11,9 @@ import requests
 from bs4 import BeautifulSoup
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from yfinance import Ticker
+from yfinance import Ticker as YTicker
+
+from fin.models.ticker import Ticker
 
 
 class Source(models.TextChoices):
@@ -71,22 +73,21 @@ class InvescoCSVParser(Parser):
 
         file_strings = self.csv_file.splitlines()
         reader = csv.reader(file_strings)
-        first_row_id = 'Fund Ticker'
+        next(reader)
 
         for row in reader:
-            if row[0] != first_row_id:
-                symbol = row[2].strip()
-                ticker = Ticker(symbol)
-                price = ticker.info.get('regularMarketPrice')
+            symbol = row[2].strip()
+            ticker = Ticker.objects.filter(symbol=symbol).first()
+            price = ticker.price if ticker else YTicker(symbol).info.get('regularMarketPrice')
 
-                parsed_json.append({
-                    'ticker': {
-                        'company_name': row[6],
-                        'symbol': symbol,
-                        'price': price
-                    },
-                    'ticker_weight': row[5]
-                })
+            parsed_json.append({
+                'ticker': {
+                    'company_name': row[6],
+                    'symbol': symbol,
+                    'price': price
+                },
+                'ticker_weight': row[5]
+            })
         return parsed_json
 
 
