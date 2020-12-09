@@ -2,6 +2,7 @@
 The function that fetch information about ticker statements
 """
 import logging
+from datetime import date
 
 from redis.exceptions import LockError
 
@@ -9,9 +10,9 @@ from fin.external_api.alpha_vantage import AlphaVantage, AVFunctions
 from fin.external_api.alpha_vantage.parsers import parse_time_series_monthly, parse_balance_sheet, \
     parse_income_statement
 from fin.models.index import Index
-from fin.models.utils import UpdatingStatus
 from fin.models.portfolio import Portfolio
-from fin.models.ticker import Ticker, TickerStatement
+from fin.models.ticker import Ticker, TickerStatement, Statements
+from fin.models.utils import UpdatingStatus
 from pa import celery_app
 from pa.celery import redis_client as r
 
@@ -33,8 +34,23 @@ def update_tickers_statements(tickers_query):
         ticker.country = ticker_overview.get('Country', Ticker.DEFAULT_VALUE)
         ticker.industry = ticker_overview.get('Industry', Ticker.DEFAULT_VALUE)
         ticker.sector = ticker_overview.get('Sector', Ticker.DEFAULT_VALUE)
+
         pe_ratio = ticker_overview.get('PERatio')
         ticker.pe = None if pe_ratio == 'None' else pe_ratio
+
+        outstanding_shares = TickerStatement.objects \
+            .filter(name=Statements.outstanding_shares,
+                    ticker=ticker) \
+            .order_by('-fiscal_date_ending') \
+            .first()
+        if not outstanding_shares \
+                or outstanding_shares.value != ticker_overview.get('SharesOutstanding'):
+            tickers_statements.append(TickerStatement(
+                name=Statements.outstanding_shares,
+                fiscal_date_ending=date.today(),
+                value=ticker_overview.get('SharesOutstanding'),
+                ticker=ticker
+            ))
 
         ticker_income_statement = av_api.call(AVFunctions.income_statement.value,
                                               ticker.symbol)

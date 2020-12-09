@@ -113,9 +113,10 @@ class Statements(models.TextChoices):
     """
     capital_lease_obligations = 'capital_lease_obligations'
     net_income = 'net_income'
+    outstanding_shares = 'outstanding_shares'
     price = 'price'
-    total_assets = 'total_assets'
     short_term_debt = 'short_term_debt'
+    total_assets = 'total_assets'
     total_long_term_debt = 'total_long_term_debt'
     total_revenue = 'total_revenue'
     total_shareholder_equity = 'total_shareholder_equity'
