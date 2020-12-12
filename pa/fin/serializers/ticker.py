@@ -68,6 +68,7 @@ class TickerSerializer(serializers.ModelSerializer):
 
     annual_earnings_growth = serializers.SerializerMethodField()
     debt = serializers.SerializerMethodField()
+    shares_dilution = serializers.SerializerMethodField()
     returns_ratios = serializers.SerializerMethodField()
 
     def get_annual_earnings_growth(self, obj):
@@ -157,6 +158,31 @@ class TickerSerializer(serializers.ModelSerializer):
             }
         return None
 
+    def get_shares_dilution(self, obj):
+        """
+        Return shares dilution rate
+        """
+        current_shares_amount = (
+            obj.ticker_statements
+                .filter(name=Statements.outstanding_shares)
+                .order_by('-fiscal_date_ending')
+                .first()
+        )
+
+        last_year_shares_amount = (
+            obj.ticker_statements
+                .filter(name=Statements.outstanding_shares,
+                        fiscal_date_ending__lte=date.today() - relativedelta(years=1),
+                        fiscal_date_ending__gte=date.today() - relativedelta(years=2))
+                .order_by('-fiscal_date_ending')
+                .first()
+        )
+
+        if current_shares_amount and last_year_shares_amount:
+            shares_dilution_rate = current_shares_amount.value / last_year_shares_amount.value
+            return round((shares_dilution_rate - 1) * 100, 2)
+        return None
+
     def get_returns_ratios(self, obj):
         """
         Calculates ROA and ROE ratios
@@ -192,5 +218,5 @@ class TickerSerializer(serializers.ModelSerializer):
         """
         model = Ticker
         fields = ['annual_earnings_growth', 'company_name', 'country', 'debt', 'industry', 'pe',
-                  'price', 'returns_ratios', 'sector', 'symbol', 'updated']
+                  'price', 'returns_ratios', 'sector', 'shares_dilution', 'symbol', 'updated']
         depth = 1
