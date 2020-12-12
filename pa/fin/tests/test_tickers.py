@@ -5,9 +5,10 @@ from datetime import date
 
 from dateutil.relativedelta import relativedelta
 
-from fin.models.ticker import Ticker, TickerStatement, Statements
+from fin.models.ticker import Ticker, Statements
 from fin.serializers.ticker import TickerSerializer
 from fin.tests.base import BaseTestCase
+from fin.tests.factories.ticker_statement import TickerStatementFactory
 
 
 class TickersTests(BaseTestCase):
@@ -36,19 +37,19 @@ class TickersTests(BaseTestCase):
         expected_dilution_rate = 100
 
         ticker = Ticker.objects.first()
-        TickerStatement(name=Statements.outstanding_shares,
-                        fiscal_date_ending=date.today(),
-                        value=4,
-                        ticker=ticker).save()
-        TickerStatement(name=Statements.outstanding_shares,
-                        fiscal_date_ending=date.today() - relativedelta(years=2, days=1),
-                        value=1,
-                        ticker=ticker).save()
+        TickerStatementFactory(name=Statements.outstanding_shares,
+                               fiscal_date_ending=date.today(),
+                               value=4,
+                               ticker=ticker).save()
+        TickerStatementFactory(name=Statements.outstanding_shares,
+                               fiscal_date_ending=date.today() - relativedelta(years=2, days=1),
+                               value=1,
+                               ticker=ticker).save()
         last_year = date.today() - relativedelta(years=1)
-        last_year_shares_amount = TickerStatement(name=Statements.outstanding_shares,
-                                                  fiscal_date_ending=last_year,
-                                                  value=2,
-                                                  ticker=ticker)
+        last_year_shares_amount = TickerStatementFactory(name=Statements.outstanding_shares,
+                                                         fiscal_date_ending=last_year,
+                                                         value=2,
+                                                         ticker=ticker)
         last_year_shares_amount.save()
 
         serializer = TickerSerializer()
@@ -73,14 +74,14 @@ class TickersTests(BaseTestCase):
         self.assertEqual(ratios, None)
 
         for i in range(0, 4):
-            TickerStatement(name=Statements.total_shareholder_equity,
-                            fiscal_date_ending=date.today() - relativedelta(months=i * 3),
-                            value=65000000000,
-                            ticker=ticker).save()
-            TickerStatement(name=Statements.total_assets,
-                            fiscal_date_ending=date.today() - relativedelta(months=i * 3),
-                            value=323000000000,
-                            ticker=ticker).save()
+            TickerStatementFactory(name=Statements.total_shareholder_equity,
+                                   fiscal_date_ending=date.today() - relativedelta(months=i * 3),
+                                   value=65000000000,
+                                   ticker=ticker).save()
+            TickerStatementFactory(name=Statements.total_assets,
+                                   fiscal_date_ending=date.today() - relativedelta(months=i * 3),
+                                   value=323000000000,
+                                   ticker=ticker).save()
 
         serializer = TickerSerializer()
         ratios = serializer.get_returns_ratios(ticker)

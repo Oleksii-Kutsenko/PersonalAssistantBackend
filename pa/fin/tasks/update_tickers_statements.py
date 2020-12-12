@@ -43,8 +43,8 @@ def update_tickers_statements(tickers_query):
                     ticker=ticker) \
             .order_by('-fiscal_date_ending') \
             .first()
-        if not outstanding_shares \
-                or outstanding_shares.value != ticker_overview.get('SharesOutstanding'):
+        if (not outstanding_shares or
+                outstanding_shares.value != ticker_overview.get('SharesOutstanding')):
             tickers_statements.append(TickerStatement(
                 name=Statements.outstanding_shares,
                 fiscal_date_ending=date.today(),
