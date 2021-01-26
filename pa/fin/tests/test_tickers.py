@@ -88,3 +88,9 @@ class TickersTests(BaseTestCase):
 
         self.assertEqual(round(ratios['roa']), expected_roa)
         self.assertEqual(round(ratios['roe']), expected_roe)
+
+    def test_outdated_tickers_manager(self):
+        """
+        Tests outdated tickers manager
+        """
+        self.assertEqual(Ticker.outdated_tickers.count(), 1)

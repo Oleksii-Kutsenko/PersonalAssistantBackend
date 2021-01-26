@@ -34,7 +34,8 @@ class OutdatedTickersManager(models.Manager):
                       ticker_statements__fiscal_date_ending__lte=quarter_ago) |
                     Q(ticker_statements__name=Statements.price.value,
                       ticker_statements__fiscal_date_ending__lte=quarter_ago)) \
-            .order_by('-ticker_statements__fiscal_date_ending')
+            .order_by('-ticker_statements__fiscal_date_ending') \
+            .distinct()
 
 
 class Ticker(TimeStampMixin):

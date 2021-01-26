@@ -64,7 +64,7 @@ class TickerSerializer(serializers.ModelSerializer):
     Serialization class for the Ticker model
     """
     fiscal_date_ending_field = TickerStatement.fiscal_date_ending.field.name
-    five_years_three_quarters_ago = date.today() - relativedelta(years=5, months=9)
+    almost_six_years_ago = date.today() - relativedelta(years=5, months=11)
 
     annual_earnings_growth = serializers.SerializerMethodField()
     debt = serializers.SerializerMethodField()
@@ -77,7 +77,7 @@ class TickerSerializer(serializers.ModelSerializer):
         """
         yearly_earnings = []
         quarter = 4
-        query = obj.net_income_statements(self.five_years_three_quarters_ago)
+        query = obj.net_income_statements(self.almost_six_years_ago)
         if extra_statements := query.count() - 23 > 0:
             query = query[extra_statements:]
         counter = query.count()
@@ -94,7 +94,7 @@ class TickerSerializer(serializers.ModelSerializer):
 
         yearly_earnings = np.array(yearly_earnings)
         time_points = np.array(list(range(yearly_earnings.shape[0]))).reshape((-1, 1))
-        annual_earnings_line_model = LinearRegression(normalize=True)
+        annual_earnings_line_model = LinearRegression()
         annual_earnings_line_model.fit(time_points, yearly_earnings)
 
         average_earnings = float(np.mean(yearly_earnings))

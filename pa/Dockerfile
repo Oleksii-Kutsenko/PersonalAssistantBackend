@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM python:3.8
 
 WORKDIR /usr/src/app
 
@@ -16,13 +16,13 @@ RUN apt-get install -yqq --no-install-recommends libffi-dev libssl-dev
 # python
 RUN apt-get install -yqq --no-install-recommends python3 python3-pip
 
-# delete cache
-RUN apt-get autoremove -yqq && apt-get clean -yqq && rm -rf /var/lib/apt/lists/*
-
-COPY . /usr/src/app
+ADD ./requirements.txt /usr/src/app/requirements.txt
+ADD ./dev-requirements.txt /usr/src/app/dev-requirements.txt
 
 RUN pip3 install --upgrade pip
 RUN pip3 install -r requirements.txt
 RUN pip3 install -r dev-requirements.txt
+
+COPY . /usr/src/app
 
 ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
