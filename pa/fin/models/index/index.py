@@ -20,6 +20,7 @@ class Index(TimeStampMixin):
 
     url_parsers = {
         Source.IHI.value: ISharesParser(Source.IHI.value),
+        Source.ITOT.value: ISharesParser(Source.ITOT.value),
         Source.NASDAQ100.value: SlickChartsParser(Source.NASDAQ100.value),
         Source.PBW.value: InvescoCSVParser(),
         Source.RUSSEL3000.value: ISharesParser(Source.RUSSEL3000.value),

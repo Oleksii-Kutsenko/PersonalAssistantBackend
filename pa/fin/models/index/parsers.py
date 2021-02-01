@@ -2,7 +2,6 @@
 Parsers for indexes sources
 """
 import csv
-
 from abc import ABC, abstractmethod
 from decimal import Decimal
 from io import StringIO
@@ -11,9 +10,6 @@ import requests
 from bs4 import BeautifulSoup
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from yfinance import Ticker as YTicker
-
-from fin.models.ticker import Ticker
 
 
 class Source(models.TextChoices):
@@ -22,6 +18,8 @@ class Source(models.TextChoices):
     """
     IHI = 'https://www.ishares.com/us/products/239516/ishares-us-medical-devices-etf' \
           '/1467271812596.ajax', _('IHI')
+    ITOT = 'https://www.ishares.com/us/products/239724/ishares-core-sp-total-us-stock-market-etf/1467271812596.ajax', \
+           _('ITOT')
     NASDAQ100 = 'https://www.slickcharts.com/nasdaq100', _("NASDAQ 100")
     PBW = 'http://invescopowershares.com/products/overview.aspx?ticker=PBW', _("PBW")
     RUSSEL3000 = 'https://www.ishares.com/us/products/239714/ishares-russell-3000-etf' \
@@ -77,8 +75,7 @@ class InvescoCSVParser(Parser):
 
         for row in reader:
             symbol = row[2].strip()
-            ticker = Ticker.objects.filter(symbol=symbol).first()
-            price = ticker.price if ticker else YTicker(symbol).info.get('regularMarketPrice')
+            price = float(row[4]) / int(row[3])
 
             parsed_json.append({
                 'ticker': {
@@ -99,6 +96,9 @@ class ISharesParser(Parser):
         Source.IHI.value: {'fileType': 'csv',
                            'fileName': 'IHI_holdings',
                            'dataType': 'fund'},
+        Source.ITOT.value: {'fileType': 'csv',
+                            'fileName': 'ITOT_holdings',
+                            'dataType': 'fund'},
         Source.RUSSEL3000.value: {'fileType': 'csv',
                                   'fileName': 'IWV_holdings',
                                   'dataType': 'fund'},
