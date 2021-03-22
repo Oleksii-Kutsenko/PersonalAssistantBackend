@@ -79,13 +79,15 @@ class Portfolio(TimeStampMixin):
         result = []
         for _, adjusted_ticker in adjusted_index_tickers.iterrows():
             symbol = adjusted_ticker['ticker__symbol']
-            portfolio_ticker = portfolio_tickers.filter(ticker__symbol=symbol).first()
+            stock_exchange = adjusted_ticker['ticker__stock_exchange']
+            portfolio_ticker = portfolio_tickers.filter(ticker__symbol=symbol,
+                                                        ticker__stock_exchange=stock_exchange).first()
 
             if portfolio_ticker:
                 ticker = portfolio_ticker.ticker
                 amount = adjusted_ticker['amount'] - portfolio_ticker.amount
             else:
-                ticker = Ticker.objects.get(symbol=symbol)
+                ticker = Ticker.objects.get(symbol=symbol, stock_exchange=stock_exchange)
                 amount = adjusted_ticker['amount']
 
             if amount > 0:

@@ -20,6 +20,8 @@ class Source(models.TextChoices):
           '/1467271812596.ajax', _('IHI')
     ITOT = 'https://www.ishares.com/us/products/239724/ishares-core-sp-total-us-stock-market-etf/1467271812596.ajax', \
            _('ITOT')
+    IXUS = 'https://www.ishares.com/us/products/244048/ishares-core-msci-total-international-stock-etf/1467271812596.ajax', \
+           _('IXUS')
     NASDAQ100 = 'https://www.slickcharts.com/nasdaq100', _("NASDAQ 100")
     PBW = 'http://invescopowershares.com/products/overview.aspx?ticker=PBW', _("PBW")
     RUSSEL3000 = 'https://www.ishares.com/us/products/239714/ishares-russell-3000-etf' \
@@ -99,6 +101,9 @@ class ISharesParser(Parser):
         Source.ITOT.value: {'fileType': 'csv',
                             'fileName': 'ITOT_holdings',
                             'dataType': 'fund'},
+        Source.IXUS.value: {'fileType': 'csv',
+                            'fileName': 'IXUS_holdings',
+                            'dataType': 'fund'},
         Source.RUSSEL3000.value: {'fileType': 'csv',
                                   'fileName': 'IWV_holdings',
                                   'dataType': 'fund'},
@@ -132,6 +137,7 @@ class ISharesParser(Parser):
                     'ticker': {
                         'price': price,
                         'market_cap': market_cap,
+                        'stock_exchange': row[13],
                         'symbol': row[0]
                     },
                     'ticker_weight': None

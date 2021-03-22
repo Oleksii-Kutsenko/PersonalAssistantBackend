@@ -21,6 +21,7 @@ class Index(TimeStampMixin):
     url_parsers = {
         Source.IHI.value: ISharesParser(Source.IHI.value),
         Source.ITOT.value: ISharesParser(Source.ITOT.value),
+        Source.IXUS.value: ISharesParser(Source.IXUS.value),
         Source.NASDAQ100.value: SlickChartsParser(Source.NASDAQ100.value),
         Source.PBW.value: InvescoCSVParser(),
         Source.RUSSEL3000.value: ISharesParser(Source.RUSSEL3000.value),
@@ -58,8 +59,9 @@ class Index(TimeStampMixin):
             .exclude(ticker__country__in=options['skip_countries']) \
             .exclude(ticker__sector__in=options['skip_sectors']) \
             .exclude(ticker__industry__in=options['skip_industries']) \
-            .exclude(ticker__symbol__in=options['skip_tickers']) \
             .order_by('-weight')
+        for ticker in options['skip_tickers']:
+            tickers_query = tickers_query.exclude(Q(ticker__stock_exchange=ticker[0], ticker__symbol=ticker[1]))
 
         # exclude tickers with highest PE ratio
         if options.get('pe_quantile'):
@@ -67,14 +69,14 @@ class Index(TimeStampMixin):
             tickers_query = tickers_query.filter(Q(ticker__pe__lte=threshold_pe_ratio) |
                                                  Q(ticker__pe__isnull=True))
 
-        dataset = tickers_query.values_list('ticker__symbol', 'ticker__price', 'weight')
+        dataset = tickers_query.values_list('ticker__stock_exchange', 'ticker__symbol', 'ticker__price', 'weight')
         tickers_df = pd.DataFrame(list(dataset),
-                                  columns=['ticker__symbol', 'ticker__price', 'weight'])
+                                  columns=['ticker__stock_exchange', 'ticker__symbol', 'ticker__price', 'weight'])
         tickers_df['ticker__price'] = tickers_df['ticker__price'].astype(float)
         tickers_df['weight'] = tickers_df['weight'].astype(float)
 
         coefficient = 100 / tickers_df['weight'].sum()
-        tickers_df.iloc[:, 2] *= coefficient
+        tickers_df.iloc[:, 3] *= coefficient
 
         adjusted_money_amount = money
         step = money * 0.1
@@ -97,7 +99,7 @@ class Index(TimeStampMixin):
         tickers_df = tickers_df[tickers_df.cost != 0]
 
         coefficient = 100 / tickers_df['weight'].sum()
-        tickers_df.iloc[:, 2] *= coefficient
+        tickers_df.iloc[:, 3] *= coefficient
 
         return tickers_df
 
@@ -121,7 +123,6 @@ class Index(TimeStampMixin):
     def update(self):
         """
         Update tickers prices and their weights
-        :return: None
         """
         if self.parser.updatable:
             tickers_parsed_json = self.parser.parse()
@@ -134,8 +135,9 @@ class Index(TimeStampMixin):
         index_tickers = []
         for ticker_info in ticker_parsed_json:
             symbol = ticker_info['ticker'].pop('symbol')
+            stock_exchange = ticker_info['ticker'].pop('stock_exchange')
             ticker, _ = Ticker.objects \
-                .update_or_create(symbol=symbol, defaults=ticker_info['ticker'])
+                .update_or_create(symbol=symbol, stock_exchange=stock_exchange, defaults=ticker_info['ticker'])
 
             index_ticker = IndexTicker(index=self, ticker=ticker,
                                        weight=ticker_info['ticker_weight'])

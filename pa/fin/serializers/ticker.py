@@ -218,5 +218,5 @@ class TickerSerializer(serializers.ModelSerializer):
         """
         model = Ticker
         fields = ['annual_earnings_growth', 'company_name', 'country', 'debt', 'industry', 'pe',
-                  'price', 'returns_ratios', 'sector', 'shares_dilution', 'symbol', 'updated']
+                  'price', 'returns_ratios', 'sector', 'shares_dilution', 'stock_exchange', 'symbol', 'updated']
         depth = 1

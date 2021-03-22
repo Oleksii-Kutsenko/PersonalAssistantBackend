@@ -55,16 +55,16 @@ class Ticker(TimeStampMixin):
     pe = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES, null=True)
     price = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
     sector = models.CharField(max_length=50, default=DEFAULT_VALUE)
-    symbol = models.CharField(max_length=100, unique=True)
+    stock_exchange = models.CharField(max_length=100, default=DEFAULT_VALUE)
+    symbol = models.CharField(max_length=100)
 
     class Meta:
         """
         Model meta class
         """
         constraints = [
-            models.CheckConstraint(
-                check=models.Q(price__gt=0), name='ticker_price_non_negative'
-            )
+            models.CheckConstraint(check=models.Q(price__gt=0), name='ticker_price_non_negative'),
+            models.UniqueConstraint(fields=['stock_exchange', 'symbol'], name='unique_stock_ex_ticker_combination')
         ]
         indexes = [
             models.Index(fields=['company_name', ]),
