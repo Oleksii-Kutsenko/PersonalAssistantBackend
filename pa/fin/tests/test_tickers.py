@@ -22,7 +22,7 @@ class TickersTests(BaseTestCase):
         """
         Tests that annual earnings growth calculates correctly
         """
-        expected_annual_earnings_growth = 4.85
+        expected_annual_earnings_growth = 5.75
 
         ticker = Ticker.objects.first()
         serializer = TickerSerializer()

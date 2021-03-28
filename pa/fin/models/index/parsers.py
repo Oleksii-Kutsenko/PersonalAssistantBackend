@@ -75,9 +75,14 @@ class InvescoCSVParser(Parser):
         reader = csv.reader(file_strings)
         next(reader)
 
+        cash_identifier = 'CASHUSD00'
         for row in reader:
+            if row[1].strip() == cash_identifier:
+                continue
             symbol = row[2].strip()
-            price = float(row[4]) / int(row[3])
+            market_value = float(row[4].replace(',', ''))
+            shares = int(row[3].replace(',', ''))
+            price = market_value / shares
 
             parsed_json.append({
                 'ticker': {

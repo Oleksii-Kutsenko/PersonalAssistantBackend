@@ -69,10 +69,10 @@ class PortfolioTests(BaseTestCase):
         Test function that subtract existed portfolio from index
         """
         expected_result = [
-            PortfolioTicker(ticker=Ticker.objects.get(symbol='AAPL'), amount=7),
+            PortfolioTicker(ticker=Ticker.objects.get(symbol='AAPL'), amount=11),
             PortfolioTicker(ticker=Ticker.objects.get(symbol='TSLA'), amount=1),
             PortfolioTicker(ticker=Ticker.objects.get(symbol='PYPL'), amount=1),
-            PortfolioTicker(ticker=Ticker.objects.get(symbol='INTC'), amount=2)
+            PortfolioTicker(ticker=Ticker.objects.get(symbol='INTC'), amount=4)
         ]
         step = 200
 
@@ -80,8 +80,7 @@ class PortfolioTests(BaseTestCase):
         index = Index.objects.first()
 
         portfolio_query = PortfolioTicker.objects.filter(portfolio=portfolio)
-        adjusted_index = index.adjust(portfolio.total_tickers + step,
-                                      AdjustMixin.default_adjust_options)
+        adjusted_index = index.adjust(portfolio.total_tickers + step, AdjustMixin.default_adjust_options)
         tickers_diff = Portfolio.ticker_difference(adjusted_index, portfolio_query)
 
         for i in range(0, 4):

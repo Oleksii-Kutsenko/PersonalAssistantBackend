@@ -86,10 +86,11 @@ class Index(TimeStampMixin):
             tickers_df['amount'] = tickers_df['amount'].round()
 
             tickers_df['cost'] = tickers_df['amount'] * tickers_df['ticker__price']
-            if tickers_df['cost'].sum() > money:
+            if tickers_df[tickers_df['cost'] > (money * 0.1)]['cost'].sum() > money:
                 break
             adjusted_money_amount += step
 
+        tickers_df = tickers_df[tickers_df['cost'] > 200]
         adjusted_money_amount -= step
         tickers_df['amount'] = tickers_df['weight'] / 100 * adjusted_money_amount / tickers_df[
             'ticker__price']
@@ -134,8 +135,11 @@ class Index(TimeStampMixin):
         """
         index_tickers = []
         for ticker_info in ticker_parsed_json:
+            stock_exchange = Ticker.DEFAULT_VALUE
+            if ticker_info['ticker'].get('stock_exchange'):
+                stock_exchange = ticker_info['ticker'].pop('stock_exchange')
             symbol = ticker_info['ticker'].pop('symbol')
-            stock_exchange = ticker_info['ticker'].pop('stock_exchange')
+
             ticker, _ = Ticker.objects \
                 .update_or_create(symbol=symbol, stock_exchange=stock_exchange, defaults=ticker_info['ticker'])
 

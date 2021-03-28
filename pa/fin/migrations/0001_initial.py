@@ -10,8 +10,6 @@ import fin.models.ticker.ticker
 
 class Migration(migrations.Migration):
 
-    replaces = [('fin', '0001_initial'), ('fin', '0002_auto_20200511_2151'), ('fin', '0003_auto_20200519_1238'), ('fin', '0004_auto_20200524_1322'), ('fin', '0005_auto_20200607_0113'), ('fin', '0006_auto_20200617_0105'), ('fin', '0007_tickerstatement'), ('fin', '0008_auto_20200903_1458'), ('fin', '0009_auto_20200921_0916'), ('fin', '0010_auto_20201121_0224'), ('fin', '0011_auto_20201122_0235'), ('fin', '0012_auto_20201123_0328'), ('fin', '0013_portfoliopolicy'), ('fin', '0014_auto_20201128_0356'), ('fin', '0015_auto_20201128_2121'), ('fin', '0016_auto_20201209_1322'), ('fin', '0017_auto_20210201_0229'), ('fin', '0018_auto_20210321_1331'), ('fin', '0019_auto_20210321_2313')]
-
     initial = True
 
     dependencies = [
