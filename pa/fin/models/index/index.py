@@ -64,10 +64,6 @@ class Index(TimeStampMixin):
             tickers_query = tickers_query.exclude(Q(ticker__stock_exchange=ticker[0], ticker__symbol=ticker[1]))
 
         # exclude tickers with highest PE ratio
-        if options.get('pe_quantile'):
-            threshold_pe_ratio = self.threshold_pe_ratio(options['pe_quantile'])
-            tickers_query = tickers_query.filter(Q(ticker__pe__lte=threshold_pe_ratio) |
-                                                 Q(ticker__pe__isnull=True))
 
         dataset = tickers_query.values_list('ticker__stock_exchange', 'ticker__symbol', 'ticker__price', 'weight')
         tickers_df = pd.DataFrame(list(dataset),
@@ -90,7 +86,7 @@ class Index(TimeStampMixin):
                 break
             adjusted_money_amount += step
 
-        tickers_df = tickers_df[tickers_df['cost'] > 200]
+        # tickers_df = tickers_df[tickers_df['cost'] > 200]
         adjusted_money_amount -= step
         tickers_df['amount'] = tickers_df['weight'] / 100 * adjusted_money_amount / tickers_df[
             'ticker__price']
