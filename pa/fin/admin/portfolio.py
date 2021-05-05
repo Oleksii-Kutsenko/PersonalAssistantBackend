@@ -12,6 +12,7 @@ class TickerInlineAdmin(TabularInline):
     Adds Portfolio Ticker M2M relation to the admin panel
     """
     model = Portfolio.tickers.through
+    autocomplete_fields = ['ticker']
 
 
 class PortfolioAdmin(ModelAdmin):
