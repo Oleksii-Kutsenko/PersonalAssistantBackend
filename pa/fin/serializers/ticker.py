@@ -150,13 +150,15 @@ class TickerSerializer(serializers.ModelSerializer):
         )
         query.order_by(self.fiscal_date_ending_field, desc=True).limit(1)
 
-        query = query.select()
-        if query:
-            return {
-                'debt_to_equity': round(query[0]['debt_to_equity'], 2),
-                'assets_to_equity': round(query[0]['assets_to_equity'], 2)
-            }
-        return None
+        try:
+            query = query.select()
+            if query:
+                return {
+                    'debt_to_equity': round(query[0]['debt_to_equity'], 2),
+                    'assets_to_equity': round(query[0]['assets_to_equity'], 2)
+                }
+        except:
+            return None
 
     def get_shares_dilution(self, obj):
         """

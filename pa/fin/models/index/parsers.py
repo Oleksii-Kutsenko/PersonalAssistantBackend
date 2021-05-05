@@ -2,10 +2,12 @@
 Parsers for indexes sources
 """
 import csv
+import io
 from abc import ABC, abstractmethod
 from decimal import Decimal
 from io import StringIO
 
+import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 from django.db import models
@@ -16,6 +18,7 @@ class Source(models.TextChoices):
     """
     Source for index data
     """
+    IBUY = 'https://amplifyetfs.com/Data/Feeds/ForesideAmplify.40XL.XL_Holdings.csv', _('IBUY')
     IHI = 'https://www.ishares.com/us/products/239516/ishares-us-medical-devices-etf' \
           '/1467271812596.ajax', _('IHI')
     ITOT = 'https://www.ishares.com/us/products/239724/ishares-core-sp-total-us-stock-market-etf/1467271812596.ajax', \
@@ -51,6 +54,33 @@ class Parser(ABC):
             'ticker_weight': value
         }
         """
+
+
+class AmplifyParser(Parser):
+    def __init__(self, source_url):
+        self.source_url = source_url
+
+    def parse(self):
+        response = requests.get(self.source_url)
+        csv_file = pd.read_csv(io.StringIO(response.text))
+        ibuy_csv_rows = csv_file[csv_file['Account'] == 'IBUY']
+
+        parsed_json = []
+        cash_ticker = 'Cash&Other'
+        for _, row in ibuy_csv_rows.iterrows():
+            if row['StockTicker'] == cash_ticker:
+                continue
+
+            parsed_json.append({
+                'ticker': {
+                    'company_name': row['SecurityName'],
+                    'symbol': row['StockTicker'],
+                    'price': row['Price'],
+                    'market_cap': row['MarketValue']
+                },
+                'ticker_weight': Decimal(row['Weightings'][:-1])
+            })
+        return parsed_json
 
 
 class InvescoCSVParser(Parser):

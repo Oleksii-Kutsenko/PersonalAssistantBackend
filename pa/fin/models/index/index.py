@@ -8,7 +8,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models, transaction
 from django.db.models import Q
 
-from fin.models.index.parsers import SlickChartsParser, ISharesParser, Source, InvescoCSVParser
+from fin.models.index.parsers import SlickChartsParser, ISharesParser, Source, InvescoCSVParser, AmplifyParser
 from fin.models.ticker import Ticker
 from fin.models.utils import TimeStampMixin, MAX_DIGITS, UpdatingStatus
 
@@ -19,6 +19,7 @@ class Index(TimeStampMixin):
     """
 
     url_parsers = {
+        Source.IBUY.value: AmplifyParser(Source.IBUY.value),
         Source.IHI.value: ISharesParser(Source.IHI.value),
         Source.ITOT.value: ISharesParser(Source.ITOT.value),
         Source.IXUS.value: ISharesParser(Source.IXUS.value),
