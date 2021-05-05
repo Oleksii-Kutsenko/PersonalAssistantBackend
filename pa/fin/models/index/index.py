@@ -140,11 +140,10 @@ class Index(TimeStampMixin):
             ticker, _ = Ticker.objects \
                 .update_or_create(symbol=symbol, stock_exchange=stock_exchange, defaults=ticker_info['ticker'])
 
-            index_ticker = IndexTicker(index=self, ticker=ticker,
-                                       weight=ticker_info['ticker_weight'])
+            index_ticker = IndexTicker(index=self, ticker=ticker, weight=ticker_info['ticker_weight'])
             index_tickers.append(index_ticker)
         IndexTicker.objects.filter(index=self).delete()
-        IndexTicker.objects.bulk_create(index_tickers)
+        IndexTicker.objects.bulk_create(index_tickers, batch_size=1000)
 
 
 class IndexTicker(TimeStampMixin):

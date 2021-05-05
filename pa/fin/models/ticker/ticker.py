@@ -50,8 +50,7 @@ class Ticker(TimeStampMixin):
     company_name = models.CharField(max_length=100, default=DEFAULT_VALUE)
     country = models.CharField(max_length=50, default=DEFAULT_VALUE)
     industry = models.CharField(max_length=50, default=DEFAULT_VALUE)
-    market_cap = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES,
-                                     null=True)
+    market_cap = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES, null=True)
     pe = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES, null=True)
     price = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
     sector = models.CharField(max_length=50, default=DEFAULT_VALUE)
