@@ -10,6 +10,7 @@ class TickerAdmin(admin.ModelAdmin):
     """
     Adds Ticker model to the admin panel
     """
+    search_fields = ('symbol',)
 
 
 admin.site.register(Ticker, TickerAdmin)
