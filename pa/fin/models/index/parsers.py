@@ -13,7 +13,10 @@ from bs4 import BeautifulSoup
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from fin.models.ticker import Ticker
 
+
+# pylint: disable=line-too-long
 class Source(models.TextChoices):
     """
     Source for index data
@@ -33,6 +36,8 @@ class Source(models.TextChoices):
            '/1467271812596.ajax', _('SOXX')
     SP500 = 'https://www.slickcharts.com/sp500', _("S&P 500")
 
+
+# pylint: enable=line-too-long
 
 class Parser(ABC):
     """
@@ -57,6 +62,13 @@ class Parser(ABC):
 
 
 class AmplifyParser(Parser):
+    exchanges = {
+        'GR': 'Xetra',
+        'JP': 'Tokyo Stock Exchange',
+        'LN': 'London Stock Exchange',
+        'NA': 'Euronext Amsterdam'
+    }
+
     def __init__(self, source_url):
         self.source_url = source_url
 
@@ -71,15 +83,24 @@ class AmplifyParser(Parser):
             if row['StockTicker'] == cash_ticker:
                 continue
 
+            split_ticker_row = row['StockTicker'].split(' ')
+            stock_exchange = Ticker.DEFAULT_VALUE
+            if len(split_ticker_row) > 1:
+                stock_exchange = self.exchanges[split_ticker_row[1]]
+            symbol = split_ticker_row[0]
+
             parsed_json.append({
+                'raw_data': row.to_dcit(),
                 'ticker': {
                     'company_name': row['SecurityName'],
-                    'symbol': row['StockTicker'],
+                    'symbol': symbol,
                     'price': row['Price'],
-                    'market_cap': row['MarketValue']
+                    'market_cap': row['MarketValue'],
+                    'stock_exchange': stock_exchange
                 },
                 'ticker_weight': Decimal(row['Weightings'][:-1])
             })
+
         return parsed_json
 
 

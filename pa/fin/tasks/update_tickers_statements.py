@@ -107,6 +107,7 @@ def update_model_tickers_statements_task(obj_type, obj_id):
             obj.status = UpdatingStatus.updating
             obj.save()
 
+            # pylint: disable=broad-except
             try:
                 update_tickers_statements(obj.tickers.all())
             except Exception as error:
@@ -116,6 +117,7 @@ def update_model_tickers_statements_task(obj_type, obj_id):
                 obj.save()
                 lock.release()
                 return False
+            # pylint: enable=broad-except
 
             obj.status = UpdatingStatus.successfully_updated
             obj.save()

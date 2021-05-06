@@ -32,3 +32,10 @@ Key features:
 ### ER-diagram
 
 ![ER-diagram](public.png)
+
+### Before release
+Inside the docker django container:
+```
+pylint --rcfile=.pylintrc ./fin/*
+./manage.py test
+```

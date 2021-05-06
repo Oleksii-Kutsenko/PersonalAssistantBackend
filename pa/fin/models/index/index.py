@@ -132,15 +132,18 @@ class Index(TimeStampMixin):
         """
         index_tickers = []
         for ticker_info in ticker_parsed_json:
-            stock_exchange = Ticker.DEFAULT_VALUE
-            if ticker_info['ticker'].get('stock_exchange'):
-                stock_exchange = ticker_info['ticker'].pop('stock_exchange')
             symbol = ticker_info['ticker'].pop('symbol')
+            stock_exchange = ticker_info['ticker'].pop('stock_exchange')
+            if stock_exchange == Ticker.DEFAULT_VALUE:
+                tickers_queryset = Ticker.objects.filter(symbol=symbol)
+                if tickers_queryset.count() == 1:
+                    stock_exchange = tickers_queryset.first().stock_exchange
 
             ticker, _ = Ticker.objects \
                 .update_or_create(symbol=symbol, stock_exchange=stock_exchange, defaults=ticker_info['ticker'])
 
-            index_ticker = IndexTicker(index=self, ticker=ticker, weight=ticker_info['ticker_weight'])
+            index_ticker = IndexTicker(index=self, raw_data=ticker['raw_data'], ticker=ticker,
+                                       weight=ticker_info['ticker_weight'])
             index_tickers.append(index_ticker)
         IndexTicker.objects.filter(index=self).delete()
         IndexTicker.objects.bulk_create(index_tickers, batch_size=1000)
@@ -151,6 +154,7 @@ class IndexTicker(TimeStampMixin):
     M2M table between Index and Ticker models
     """
     index = models.ForeignKey(Index, on_delete=models.CASCADE, related_name='index')
+    raw_data = models.JSONField()
     ticker = models.ForeignKey(Ticker, on_delete=models.CASCADE, related_name='ticker')
     weight = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=10,
                                  validators=[MinValueValidator(0.000001),
