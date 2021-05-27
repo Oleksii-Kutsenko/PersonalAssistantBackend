@@ -61,6 +61,10 @@ class Index(TimeStampMixin):
             .exclude(ticker__sector__in=options['skip_sectors']) \
             .exclude(ticker__industry__in=options['skip_industries']) \
             .order_by('-weight')
+
+        if tickers_query.count() == 0:
+            raise Exception('Not enough data for adjusting')
+
         for ticker in options['skip_tickers']:
             tickers_query = tickers_query.exclude(Q(ticker__stock_exchange=ticker[0], ticker__symbol=ticker[1]))
 

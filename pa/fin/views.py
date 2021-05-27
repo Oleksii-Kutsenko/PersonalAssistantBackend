@@ -164,5 +164,5 @@ class PortfolioPolicyViewSet(viewsets.ModelViewSet):
     serializer_class = PortfolioPolicySerializer
 
     def get_queryset(self):
-        queryset = PortfolioPolicy.objects.filter(portfolio__user_id=self.request.user).all()
+        queryset = PortfolioPolicy.objects.filter(portfolio__user_id=self.request.user).order_by('-id').all()
         return queryset
