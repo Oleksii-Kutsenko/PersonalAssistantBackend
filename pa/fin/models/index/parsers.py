@@ -50,11 +50,14 @@ class Parser(ABC):
         """
         Fetch raw data and uniform it in format
         {
+            'raw_data': { ...data... },
             'ticker': {
                 'company_name': value, optional
                 'symbol': value, required
                 'price': value, optional
-                'market_cap': market_cap, optional
+                'market_cap': market_cap, optional,
+                'stock_exchange': name, required,
+                'sector': name, optional,
             },
             'ticker_weight': value
         }
@@ -73,16 +76,14 @@ class AmplifyParser(Parser):
         self.source_url = source_url
 
     def parse(self):
+        index_name = 'IBUY'
+        cash_ticker = 'Cash&Other'
         response = requests.get(self.source_url)
         csv_file = pd.read_csv(io.StringIO(response.text))
-        ibuy_csv_rows = csv_file[csv_file['Account'] == 'IBUY']
+        ibuy_csv_rows = csv_file[(csv_file['Account'] == index_name) & (csv_file['StockTicker'] != cash_ticker)]
 
         parsed_json = []
-        cash_ticker = 'Cash&Other'
         for _, row in ibuy_csv_rows.iterrows():
-            if row['StockTicker'] == cash_ticker:
-                continue
-
             split_ticker_row = row['StockTicker'].split(' ')
             stock_exchange = Ticker.DEFAULT_VALUE
             if len(split_ticker_row) > 1:
@@ -90,7 +91,7 @@ class AmplifyParser(Parser):
             symbol = split_ticker_row[0]
 
             parsed_json.append({
-                'raw_data': row.to_dcit(),
+                'raw_data': row.to_json(),
                 'ticker': {
                     'company_name': row['SecurityName'],
                     'symbol': symbol,
@@ -113,35 +114,24 @@ class InvescoCSVParser(Parser):
     def __init__(self):
         self.csv_file = None
 
-    def set_csv_file(self, csv_file):
-        """
-        Set CSV File which contains index data
-        """
-        self.csv_file = csv_file
-
     def parse(self):
+        cash_identifier = 'CASHUSD00'
         parsed_json = []
 
-        file_strings = self.csv_file.splitlines()
-        reader = csv.reader(file_strings)
-        next(reader)
-
-        cash_identifier = 'CASHUSD00'
-        for row in reader:
-            if row[1].strip() == cash_identifier:
-                continue
-            symbol = row[2].strip()
-            market_value = float(row[4].replace(',', ''))
-            shares = int(row[3].replace(',', ''))
-            price = market_value / shares
-
+        raw_index_ticker_rows = pd.read_csv(StringIO(self.csv_file), sep=',')
+        index_ticker_rows = raw_index_ticker_rows[raw_index_ticker_rows['Security Identifier'] != cash_identifier]
+        for _, row in index_ticker_rows.iterrows():
             parsed_json.append({
+                'raw_data': row.to_json(),
                 'ticker': {
-                    'company_name': row[6],
-                    'symbol': symbol,
-                    'price': price
+                    'company_name': row['Name'],
+                    'symbol': row['Holding Ticker'],
+                    'price': float(row['MarketValue'].replace(',', '')) / int(row['Shares/Par Value'].replace(',', '')),
+                    'market_cap': row['MarketValue'].replace(',', ''),
+                    'stock_exchange': Ticker.DEFAULT_VALUE,
+                    'sector': row['Sector']
                 },
-                'ticker_weight': row[5]
+                'ticker_weight': row['Weight']
             })
         return parsed_json
 

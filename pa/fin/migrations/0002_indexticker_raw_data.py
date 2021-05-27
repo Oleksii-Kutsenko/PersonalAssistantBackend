@@ -13,7 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='indexticker',
             name='raw_data',
-            field=models.JSONField(default=None),
-            preserve_default=False,
+            field=models.JSONField(default={}),
         ),
     ]

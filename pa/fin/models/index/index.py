@@ -145,8 +145,7 @@ class Index(TimeStampMixin):
 
             ticker, _ = Ticker.objects \
                 .update_or_create(symbol=symbol, stock_exchange=stock_exchange, defaults=ticker_info['ticker'])
-
-            index_ticker = IndexTicker(index=self, raw_data=ticker['raw_data'], ticker=ticker,
+            index_ticker = IndexTicker(index=self, raw_data=ticker_info['raw_data'], ticker=ticker,
                                        weight=ticker_info['ticker_weight'])
             index_tickers.append(index_ticker)
         IndexTicker.objects.filter(index=self).delete()
@@ -158,7 +157,7 @@ class IndexTicker(TimeStampMixin):
     M2M table between Index and Ticker models
     """
     index = models.ForeignKey(Index, on_delete=models.CASCADE, related_name='index')
-    raw_data = models.JSONField()
+    raw_data = models.JSONField(default={})
     ticker = models.ForeignKey(Ticker, on_delete=models.CASCADE, related_name='ticker')
     weight = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=10,
                                  validators=[MinValueValidator(0.000001),

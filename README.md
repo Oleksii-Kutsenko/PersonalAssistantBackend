@@ -9,7 +9,7 @@ List of what you need to run the application:
 * docker-compose 1.25.3
 * docker 19.03.6
 
-### Installing 
+### Installing
 
 1. Create copy from every .env distributive without .dist
 2. Fill them
@@ -22,6 +22,7 @@ List of what you need to run the application:
 This is a module of the system that responses for tracking the financial information
 
 Key features:
+
 1. Managing your money accounts (with convenient grouping)
 2. Collecting information about cash flow between account through time
 3. Enabling supporting of FF API (with convenient grouping)
@@ -34,8 +35,11 @@ Key features:
 ![ER-diagram](public.png)
 
 ### Before release
+
 Inside the docker django container:
-```
-pylint --rcfile=.pylintrc ./fin/*
+
+```bash
+pylint --rcfile=./.pylintrc
 ./manage.py test
+pytest --cov-report html --cov=./
 ```

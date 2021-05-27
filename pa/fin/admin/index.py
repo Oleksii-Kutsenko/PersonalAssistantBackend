@@ -44,7 +44,7 @@ class IndexAdmin(ModelAdmin):
             if form.is_valid():
                 csv_file = form.cleaned_data['csv_file'].read().decode('utf-8')
                 index, _ = Index.objects.get_or_create(data_source_url=form.cleaned_data['index'])
-                index.parser.set_csv_file(csv_file)
+                index.parser.csv_file = csv_file
                 tickers_parsed_json = index.parser.parse()
                 index.update_from_tickers_parsed_json(tickers_parsed_json)
                 self.message_user(request, 'Your csv file has been imported')
