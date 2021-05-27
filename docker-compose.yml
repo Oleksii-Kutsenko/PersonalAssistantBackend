@@ -32,7 +32,7 @@ services:
     env_file:
       - .env/.env.dev
     volumes:
-      - pa:/usr/src/app/
+      - ./pa:/usr/src/app/
       - ./nginx/certs/:/etc/certs
       - static_volume:/usr/src/app/static
     expose:
@@ -54,6 +54,7 @@ services:
   flower:
     image: mher/flower
     command: flower --broker=redis://redis:6379/0 --port=8888
+    container_name: flower
     ports:
       - 8888:8888
     depends_on:

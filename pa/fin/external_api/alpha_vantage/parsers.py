@@ -52,7 +52,7 @@ def parse_balance_sheet(ticker, ticker_balance_sheet):
             shareholder_equity = quarterly_report.get('totalShareholderEquity')
             shareholder_equity = shareholder_equity if shareholder_equity != 'None' else 0
 
-            total_long_term_debt = quarterly_report.get('totalLongTermDebt')
+            total_long_term_debt = quarterly_report.get('longTermDebtNoncurrent')
             total_long_term_debt = total_long_term_debt if total_long_term_debt != 'None' else 0
 
             short_term_debt = quarterly_report.get('shortTermDebt')

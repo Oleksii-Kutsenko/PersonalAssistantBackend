@@ -26,6 +26,7 @@ class AlphaVantage:
     Class that make calls on AV API
     """
     SCHEME = 'https'
+    STEP = 60
     NETLOC = 'www.alphavantage.co'
     PATH = '/query'
     await_message = 'Thank you for using Alpha Vantage! Our standard API call frequency is 5 ' \
@@ -36,7 +37,7 @@ class AlphaVantage:
     def __init__(self):
         self.apikey = os.environ.get('ALPHAVANTAGE_API_KEY')
         self.await_seconds = 0
-        self.step = 60
+        self.step = self.STEP
 
     def call(self, function, symbol):
         """
