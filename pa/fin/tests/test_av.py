@@ -1,6 +1,7 @@
 """
 Tests for AV
 """
+import time
 from datetime import datetime
 
 from fin.external_api.alpha_vantage import AlphaVantage, AVFunctions
@@ -15,6 +16,7 @@ class AVTests(BaseTestCase):
         """
         Tests an awaiting of Alpha Vantage client
         """
+        time.sleep(AlphaVantage.STEP)
         test_symbol = 'AAPL'
 
         av_api = AlphaVantage()
@@ -26,4 +28,4 @@ class AVTests(BaseTestCase):
         end_time = datetime.now()
 
         difference = end_time - start_time
-        self.assertGreaterEqual(difference.seconds, 60)
+        self.assertGreaterEqual(difference.seconds, AlphaVantage.STEP)
