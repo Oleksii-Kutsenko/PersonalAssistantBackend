@@ -4,6 +4,7 @@ services:
   celery:
     build: ./pa
     command: celery -A pa worker -l info
+    container_name: celery
     env_file:
       .env/.env.dev
     volumes:
@@ -11,35 +12,45 @@ services:
     depends_on:
       - db
       - redis
+
   celery-beat:
     build: ./pa
     command: celery -A pa beat -l info
+    container_name: celery-beat
     env_file:
       .env/.env.dev
     volumes:
       - ./pa:/usr/src/app/
     depends_on:
       - redis
+
   django:
     build: ./pa
-    command: python3 manage.py runserver 0.0.0.0:8000
-    volumes:
-      - ./pa:/usr/src/app/
-    ports:
-      - 8000:8000
+    command: gunicorn --certfile=/etc/certs/localhost.crt --keyfile=/etc/certs/localhost.key pa.wsgi:application
+      --bind 0.0.0.0:443
+    container_name: django
     env_file:
       - .env/.env.dev
+    volumes:
+      - pa:/usr/src/app/
+      - ./nginx/certs/:/etc/certs
+      - static_volume:/usr/src/app/static
+    expose:
+      - "443"
     depends_on:
       - db
       - redis
+
   db:
     image: postgres:12.1-alpine
-    volumes:
-      - ./postgres_data:/var/lib/postgresql/data
+    container_name: db
     env_file:
       .env/.env.dev
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     ports:
       - 5432:5432
+
   flower:
     image: mher/flower
     command: flower --broker=redis://redis:6379/0 --port=8888
@@ -47,9 +58,24 @@ services:
       - 8888:8888
     depends_on:
       - celery
+
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - static_volume:/home/app/pa/static
+      - ./nginx/certs:/etc/nginx/conf.d/certs
+    depends_on:
+      - django
+
   redis:
     image: 'redis:alpine'
+    container_name: redis
 
 volumes:
-  postgres_data:
   pa:
+  postgres_data:
+  static_volume:
