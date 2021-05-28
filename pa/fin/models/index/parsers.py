@@ -1,7 +1,6 @@
 """
 Parsers for indexes sources
 """
-import csv
 import io
 import json
 from abc import ABC, abstractmethod
@@ -161,32 +160,33 @@ class ISharesParser(Parser):
         self.params = self.index_params[source_url]
 
     def parse(self):
-        response = requests.get(self.source_url, params=self.params)
-
+        parsed_json = []
         equity_name = 'Equity'
         tickers_data_start_word = 'Ticker'
+
+        response = requests.get(self.source_url, params=self.params)
+
         tickers_data_start_index = response.text.find(tickers_data_start_word)
         tickers_data = StringIO(response.text[tickers_data_start_index:])
 
-        total_market_cap = Decimal(0)
-        parsed_json = []
-        reader = csv.reader(tickers_data, delimiter=',')
-        for row in reader:
-            if len(row) > 2 and row[3] == equity_name:
-                market_cap = Decimal(row[4].replace(',', ''))
-                price = Decimal(row[11].replace(',', ''))
-                if price == Decimal(0):
-                    continue
-                parsed_json.append({
-                    'ticker': {
-                        'price': price,
-                        'market_cap': market_cap,
-                        'stock_exchange': row[13],
-                        'symbol': row[0]
-                    },
-                    'ticker_weight': None
-                })
-                total_market_cap += market_cap
-        for ticker_json in parsed_json:
-            ticker_json['ticker_weight'] = ticker_json['ticker']['market_cap'] / total_market_cap
+        index_df = pd.read_csv(tickers_data, thousands=',')
+        index_df = index_df[(index_df['Asset Class'] == equity_name) & (index_df['Price'] > 0)]
+
+        index_df['Market Value'] = index_df['Market Value'].astype('float64')
+        total_cap = index_df['Market Value'].sum()
+        index_df['weight'] = index_df['Market Value'] / total_cap * 100
+
+        for _, row in index_df.iterrows():
+            parsed_json.append({
+                'raw_data': json.loads(row.to_json()),
+                'ticker': {
+                    'company_name': row['Name'],
+                    'symbol': row['Ticker'],
+                    'price': row['Price'],
+                    'stock_exchange': row['Exchange'],
+                    'sector': row['Sector']
+                },
+                'ticker_weight': row['weight']
+            })
+
         return parsed_json
