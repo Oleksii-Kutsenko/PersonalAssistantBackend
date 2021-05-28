@@ -39,7 +39,6 @@ Key features:
 Inside the docker django container:
 
 ```bash
-pylint --rcfile=./.pylintrc
-./manage.py test
+pylint --rcfile=./.pylintrc fin/* pa/* users/*
 pytest --cov-report html --cov=./
 ```

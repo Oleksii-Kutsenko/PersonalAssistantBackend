@@ -4,7 +4,6 @@ Views
 import json
 import logging
 from datetime import timedelta
-from decimal import Decimal
 
 from django.db.models import Min
 from django.utils import timezone
