@@ -27,7 +27,7 @@ services:
   django:
     build: ./pa
     command: gunicorn --certfile=/etc/certs/localhost.crt --keyfile=/etc/certs/localhost.key pa.wsgi:application
-      --bind 0.0.0.0:443
+      --bind 0.0.0.0:443 --reload
     container_name: django
     env_file:
       - .env/.env.dev

@@ -8,7 +8,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models, transaction
 from django.db.models import Q
 
-from fin.models.index.parsers import SlickChartsParser, ISharesParser, Source, InvescoCSVParser, AmplifyParser
+from fin.models.index.parsers import ISharesParser, Source, InvescoCSVParser, AmplifyParser
 from fin.models.ticker import Ticker
 from fin.models.utils import TimeStampMixin, MAX_DIGITS, UpdatingStatus
 
@@ -23,11 +23,9 @@ class Index(TimeStampMixin):
         Source.IHI.value: ISharesParser(Source.IHI.value),
         Source.ITOT.value: ISharesParser(Source.ITOT.value),
         Source.IXUS.value: ISharesParser(Source.IXUS.value),
-        Source.NASDAQ100.value: SlickChartsParser(Source.NASDAQ100.value),
         Source.PBW.value: InvescoCSVParser(),
         Source.RUSSEL3000.value: ISharesParser(Source.RUSSEL3000.value),
         Source.SOXX.value: ISharesParser(Source.SOXX.value),
-        Source.SP500.value: SlickChartsParser(Source.SP500.value),
     }
 
     data_source_url = models.URLField(choices=Source.choices, unique=True)
@@ -136,19 +134,20 @@ class Index(TimeStampMixin):
         """
         index_tickers = []
         for ticker_info in ticker_parsed_json:
-            stock_exchange = Ticker.DEFAULT_VALUE
-            if ticker_info['ticker'].get('stock_exchange'):
-                stock_exchange = ticker_info['ticker'].pop('stock_exchange')
             symbol = ticker_info['ticker'].pop('symbol')
+            stock_exchange = ticker_info['ticker'].pop('stock_exchange')
+            if stock_exchange == Ticker.DEFAULT_VALUE:
+                tickers_queryset = Ticker.objects.filter(symbol=symbol)
+                if tickers_queryset.count() == 1:
+                    stock_exchange = tickers_queryset.first().stock_exchange
 
             ticker, _ = Ticker.objects \
                 .update_or_create(symbol=symbol, stock_exchange=stock_exchange, defaults=ticker_info['ticker'])
-
-            index_ticker = IndexTicker(index=self, ticker=ticker,
+            index_ticker = IndexTicker(index=self, raw_data=ticker_info['raw_data'], ticker=ticker,
                                        weight=ticker_info['ticker_weight'])
             index_tickers.append(index_ticker)
         IndexTicker.objects.filter(index=self).delete()
-        IndexTicker.objects.bulk_create(index_tickers)
+        IndexTicker.objects.bulk_create(index_tickers, batch_size=1000)
 
 
 class IndexTicker(TimeStampMixin):
@@ -156,6 +155,7 @@ class IndexTicker(TimeStampMixin):
     M2M table between Index and Ticker models
     """
     index = models.ForeignKey(Index, on_delete=models.CASCADE, related_name='index')
+    raw_data = models.JSONField(default=dict())
     ticker = models.ForeignKey(Ticker, on_delete=models.CASCADE, related_name='ticker')
     weight = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=10,
                                  validators=[MinValueValidator(0.000001),

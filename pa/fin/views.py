@@ -4,7 +4,6 @@ Views
 import json
 import logging
 from datetime import timedelta
-from decimal import Decimal
 
 from django.db.models import Min
 from django.utils import timezone
@@ -151,7 +150,6 @@ class PortfolioViewSet(AdjustMixin, UpdateTickersMixin, viewsets.ModelViewSet):
         portfolio_id = kwargs.get('pk')
 
         portfolio = Portfolio.objects.get(pk=portfolio_id)
-        self.adjust_options['pe_quantile'] = Decimal(portfolio.portfolio_policy.pe_quantile)
         adjusted_portfolio = portfolio.adjust(index_id, self.money, self.adjust_options)
 
         return Response(data={'tickers': adjusted_portfolio})

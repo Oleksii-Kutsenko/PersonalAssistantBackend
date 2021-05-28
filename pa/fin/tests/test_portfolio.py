@@ -43,7 +43,7 @@ class PortfolioTests(BaseTestCase):
         }
         portfolio_policy = PortfolioPolicyFactory()
         portfolio = portfolio_policy.portfolio
-        index = Index.objects.get(data_source_url='https://www.slickcharts.com/nasdaq100')
+        index = Index.objects.get(data_source_url='https://www.ishares.com/us/products/239724/ishares-core-sp-total-us-stock-market-etf/1467271812596.ajax')
         url = reverse('portfolios-adjust', kwargs={'pk': portfolio.id, 'index_id': index.id})
 
         response = self.client.get(url, {'money': 200})
