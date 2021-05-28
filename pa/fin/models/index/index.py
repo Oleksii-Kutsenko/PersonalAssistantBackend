@@ -8,7 +8,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models, transaction
 from django.db.models import Q
 
-from fin.models.index.parsers import SlickChartsParser, ISharesParser, Source, InvescoCSVParser, AmplifyParser
+from fin.models.index.parsers import ISharesParser, Source, InvescoCSVParser, AmplifyParser
 from fin.models.ticker import Ticker
 from fin.models.utils import TimeStampMixin, MAX_DIGITS, UpdatingStatus
 
@@ -23,11 +23,9 @@ class Index(TimeStampMixin):
         Source.IHI.value: ISharesParser(Source.IHI.value),
         Source.ITOT.value: ISharesParser(Source.ITOT.value),
         Source.IXUS.value: ISharesParser(Source.IXUS.value),
-        Source.NASDAQ100.value: SlickChartsParser(Source.NASDAQ100.value),
         Source.PBW.value: InvescoCSVParser(),
         Source.RUSSEL3000.value: ISharesParser(Source.RUSSEL3000.value),
         Source.SOXX.value: ISharesParser(Source.SOXX.value),
-        Source.SP500.value: SlickChartsParser(Source.SP500.value),
     }
 
     data_source_url = models.URLField(choices=Source.choices, unique=True)
@@ -157,7 +155,7 @@ class IndexTicker(TimeStampMixin):
     M2M table between Index and Ticker models
     """
     index = models.ForeignKey(Index, on_delete=models.CASCADE, related_name='index')
-    raw_data = models.JSONField(default={})
+    raw_data = models.JSONField(default=dict())
     ticker = models.ForeignKey(Ticker, on_delete=models.CASCADE, related_name='ticker')
     weight = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=10,
                                  validators=[MinValueValidator(0.000001),
