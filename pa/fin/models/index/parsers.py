@@ -49,7 +49,8 @@ class Parser(ABC):
         {
             'raw_data': { ...data... },
             'ticker': {
-                'company_name': value, optional
+                'company_name': value, optional,
+                'cusip', value, optional
                 'symbol': value, required
                 'price': value, optional
                 'market_cap': market_cap, optional,
@@ -76,7 +77,7 @@ class AmplifyParser(Parser):
         index_name = 'IBUY'
         cash_ticker = 'Cash&Other'
         response = requests.get(self.source_url)
-        csv_file = pd.read_csv(io.StringIO(response.text))
+        csv_file = pd.read_csv(io.StringIO(response.text), thousands=',')
         ibuy_csv_rows = csv_file[(csv_file['Account'] == index_name) & (csv_file['StockTicker'] != cash_ticker)]
 
         parsed_json = []
@@ -91,8 +92,9 @@ class AmplifyParser(Parser):
                 'raw_data': json.loads(row.to_json()),
                 'ticker': {
                     'company_name': row['SecurityName'],
+                    'cusip': row['CUSIP'],
                     'symbol': symbol,
-                    'price': row['Price'],
+                    'price': row['MarketValue'] / row['Shares'],
                     'market_cap': row['MarketValue'],
                     'stock_exchange': stock_exchange
                 },
@@ -122,6 +124,7 @@ class InvescoCSVParser(Parser):
                 'raw_data': json.loads(row.to_json()),
                 'ticker': {
                     'company_name': row['Name'],
+                    'cusip': row['Security Identifier'],
                     'symbol': row['Holding Ticker'],
                     'price': float(row['MarketValue'].replace(',', '')) / int(row['Shares/Par Value'].replace(',', '')),
                     'market_cap': row['MarketValue'].replace(',', ''),
@@ -170,7 +173,13 @@ class ISharesParser(Parser):
         tickers_data = StringIO(response.text[tickers_data_start_index:])
 
         index_df = pd.read_csv(tickers_data, thousands=',')
-        index_df = index_df[(index_df['Asset Class'] == equity_name) & (index_df['Price'] > 0)]
+        index_df = index_df[(index_df['Asset Class'] == equity_name) &
+                            (index_df['Price'] > 0) &
+                            (index_df['Ticker'] != '-')]
+
+        index_df.loc[(index_df.CUSIP == '-'), 'CUSIP'] = None
+        index_df.loc[(index_df.CUSIP == '-'), 'ISIN'] = None
+        index_df.loc[(index_df.CUSIP == '-'), 'SEDOL'] = None
 
         index_df['Market Value'] = index_df['Market Value'].astype('float64')
         total_cap = index_df['Market Value'].sum()
@@ -181,10 +190,13 @@ class ISharesParser(Parser):
                 'raw_data': json.loads(row.to_json()),
                 'ticker': {
                     'company_name': row['Name'],
-                    'symbol': row['Ticker'],
+                    'cusip': row['CUSIP'],
+                    'isin': row['ISIN'],
                     'price': row['Price'],
+                    'sector': row['Sector'],
+                    'sedol': row['SEDOL'],
                     'stock_exchange': row['Exchange'],
-                    'sector': row['Sector']
+                    'symbol': row['Ticker'],
                 },
                 'ticker_weight': row['weight']
             })

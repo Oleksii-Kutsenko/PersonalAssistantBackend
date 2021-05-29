@@ -134,15 +134,30 @@ class Index(TimeStampMixin):
         """
         index_tickers = []
         for ticker_info in ticker_parsed_json:
-            symbol = ticker_info['ticker'].pop('symbol')
-            stock_exchange = ticker_info['ticker'].pop('stock_exchange')
-            if stock_exchange == Ticker.DEFAULT_VALUE:
-                tickers_queryset = Ticker.objects.filter(symbol=symbol)
-                if tickers_queryset.count() == 1:
-                    stock_exchange = tickers_queryset.first().stock_exchange
+            # Extracting the find keys
+            keys = {k: v
+                    for k, v in {'cusip': ticker_info['ticker'].pop('cusip', None),
+                                 'isin': ticker_info['ticker'].pop('isin', None),
+                                 'sedol': ticker_info['ticker'].pop('sedol', None)}.items()
+                    if v is not None}
 
-            ticker, _ = Ticker.objects \
-                .update_or_create(symbol=symbol, stock_exchange=stock_exchange, defaults=ticker_info['ticker'])
+            # Searching
+            ticker = None
+            for key_name, key_value in keys.items():
+                if (ticker := Ticker.objects.filter(**{key_name: key_value})).exists():
+                    ticker = ticker.first()
+                    break
+
+            # Updating or creating
+            if ticker:
+                for field_name, field_value in ticker_info['ticker'].items():
+                    setattr(ticker, field_name, field_value)
+                ticker.save()
+            else:
+                ticker_info['ticker'].update(keys)
+                ticker = Ticker(**ticker_info['ticker'])
+                ticker.save()
+
             index_ticker = IndexTicker(index=self, raw_data=ticker_info['raw_data'], ticker=ticker,
                                        weight=ticker_info['ticker_weight'])
             index_tickers.append(index_ticker)
