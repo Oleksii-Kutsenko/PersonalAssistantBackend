@@ -17,6 +17,5 @@ class PortfolioPolicySerializer(serializers.ModelSerializer):
         Meta
         """
         model = PortfolioPolicy
-        fields = ('asset_to_equity_max_ratio', 'asset_to_equity_min_ratio',
-                  'debt_to_equity_max_ratio', 'id', 'max_dividend_payout_ratio',
-                  'minimum_annual_earnings_growth', 'pe_quantile')
+        fields = ('asset_to_equity_max_ratio', 'asset_to_equity_min_ratio', 'debt_to_equity_max_ratio', 'id',
+                  'max_dividend_payout_ratio', 'minimum_annual_earnings_growth', 'pe_quantile', 'portfolio')

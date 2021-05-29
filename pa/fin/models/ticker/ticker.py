@@ -74,7 +74,7 @@ class Ticker(TimeStampMixin):
         ]
 
     def __str__(self):
-        return f"{self.symbol}"
+        return f"{self.symbol}.{self.stock_exchange}"
 
     def net_income_statements(self, start_date):
         """
