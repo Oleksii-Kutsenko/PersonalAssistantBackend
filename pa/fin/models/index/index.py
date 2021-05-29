@@ -155,7 +155,7 @@ class IndexTicker(TimeStampMixin):
     M2M table between Index and Ticker models
     """
     index = models.ForeignKey(Index, on_delete=models.CASCADE, related_name='index')
-    raw_data = models.JSONField(default=dict())
+    raw_data = models.JSONField(default=dict)
     ticker = models.ForeignKey(Ticker, on_delete=models.CASCADE, related_name='ticker')
     weight = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=10,
                                  validators=[MinValueValidator(0.000001),
