@@ -1,6 +1,7 @@
 """
 Portfolio model and related models
 """
+from decimal import Decimal
 
 from django.db import models
 from django.db.models import ForeignKey, CASCADE, ManyToManyField, IntegerField, CharField, \
@@ -8,11 +9,30 @@ from django.db.models import ForeignKey, CASCADE, ManyToManyField, IntegerField,
 from django.db.models.functions import Cast
 from django.utils.translation import gettext_lazy as _
 
+from fin.external_api.exante import get_jwt, get_account_summary
 from fin.models.index import Index
 from fin.models.ticker import Ticker
 from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES, UpdatingStatus
 from fin.serializers.ticker import TickerSerializer
 from users.models import User
+
+
+class PortfolioTicker(TimeStampMixin):
+    """
+    Associated table for M2M relation between Portfolio model and Ticker model
+    """
+    portfolio = ForeignKey('Portfolio', on_delete=CASCADE, related_name='portfolio')
+    ticker = ForeignKey(Ticker, on_delete=CASCADE, related_name='portfolio_ticker')
+    amount = IntegerField()
+
+    class Meta:
+        """
+        Model meta class
+        """
+        indexes = [
+            models.Index(fields=['portfolio', ]),
+            models.Index(fields=['ticker', ]),
+        ]
 
 
 class Portfolio(TimeStampMixin):
@@ -52,6 +72,46 @@ class Portfolio(TimeStampMixin):
         ticker_diff = self.ticker_difference(adjusted_index_tickers, proper_portfolio_tickers)
         packed_ticker_diff = self.pack_tickers_difference(money, ticker_diff)
         return packed_ticker_diff
+
+    def import_from_exante(self):
+        """
+        Import portfolio from the EXANTE
+        """
+        mapper = {
+            'NYSE': 'New York Stock Exchange Inc.',
+            'NASDAQ': 'NASDAQ',
+            'XETRA': 'Xetra',
+            'EURONEXT': 'Nyse Euronext - Euronext Paris',
+        }
+
+        jwt = get_jwt()
+        account_summary = get_account_summary(jwt)
+
+        accounts = []
+        currencies = account_summary.pop('currencies')
+        for account in currencies:
+            accounts.append(Account(name=account.get('code'), currency=Account.Currency(account.get('code')),
+                                    portfolio=self, value=Decimal(account.get('value'))))
+        self.accounts.all().delete()
+        Account.objects.bulk_create(accounts)
+
+        portfolio_tickers = []
+        positions = account_summary.pop('positions')
+        for position in positions:
+            symbol, stock_exchange = position.get('symbolId').split('.')
+            if position.get('currency') != Account.Currency.USD:
+                price = Decimal(position.get('convertedValue')) / Decimal(position.get('quantity'))
+            else:
+                price = Decimal(position.get('price'))
+            ticker, _ = Ticker.objects.update_or_create(symbol=symbol, stock_exchange=mapper[stock_exchange],
+                                                        defaults={
+                                                            'price': price
+                                                        })
+
+            portfolio_tickers.append(PortfolioTicker(portfolio=self, ticker=ticker, amount=position.get('quantity')))
+
+        PortfolioTicker.objects.filter(portfolio=self).delete()
+        PortfolioTicker.objects.bulk_create(portfolio_tickers)
 
     @staticmethod
     def pack_tickers_difference(money, ticker_diff):
@@ -126,26 +186,8 @@ class Portfolio(TimeStampMixin):
         query = PortfolioTicker.objects.filter(portfolio=self).annotate(cost=cost)
         tickers_sum = query.aggregate(Sum('cost')).get('cost__sum')
         if tickers_sum:
-            return float(tickers_sum)
+            return Decimal(tickers_sum)
         return 0
-
-
-class PortfolioTicker(TimeStampMixin):
-    """
-    Associated table for M2M relation between Portfolio model and Ticker model
-    """
-    portfolio = ForeignKey(Portfolio, on_delete=CASCADE, related_name='portfolio')
-    ticker = ForeignKey(Ticker, on_delete=CASCADE, related_name='portfolio_ticker')
-    amount = IntegerField()
-
-    class Meta:
-        """
-        Model meta class
-        """
-        indexes = [
-            models.Index(fields=['portfolio', ]),
-            models.Index(fields=['ticker', ]),
-        ]
 
 
 class Account(TimeStampMixin):
@@ -157,9 +199,10 @@ class Account(TimeStampMixin):
         """
         Available currencies for account
         """
+        CAD = 'CAD', _('Canadian Dollar')
+        EUR = 'EUR', _("Euro")
         UAH = 'UAH', _("Ukrainian Hryvnia")
         USD = 'USD', _("United States Dollar")
-        EUR = 'EUR', _("Euro")
 
     name = CharField(max_length=100)
     currency = CharField(max_length=3, choices=Currency.choices)

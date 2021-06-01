@@ -81,7 +81,7 @@ class PortfolioTests(BaseTestCase):
         index = Index.objects.first()
 
         portfolio_query = PortfolioTicker.objects.filter(portfolio=portfolio)
-        adjusted_index = index.adjust(portfolio.total_tickers + step, AdjustMixin.default_adjust_options)
+        adjusted_index = index.adjust(float(portfolio.total_tickers + step), AdjustMixin.default_adjust_options)
         tickers_diff = Portfolio.ticker_difference(adjusted_index, portfolio_query)
 
         for i in range(0, 4):

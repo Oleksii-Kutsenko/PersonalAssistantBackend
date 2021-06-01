@@ -66,7 +66,6 @@ class Ticker(TimeStampMixin):
         """
         constraints = [
             models.CheckConstraint(check=models.Q(price__gt=0), name='ticker_price_non_negative'),
-            models.UniqueConstraint(fields=['stock_exchange', 'symbol'], name='unique_stock_ex_ticker_combination')
         ]
         indexes = [
             models.Index(fields=['company_name', ]),

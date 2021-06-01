@@ -154,6 +154,16 @@ class PortfolioViewSet(AdjustMixin, UpdateTickersMixin, viewsets.ModelViewSet):
 
         return Response(data={'tickers': adjusted_portfolio})
 
+    @action(detail=True)
+    def import_from_exante(self, request, *args, **kwargs):
+        """
+        Import portfolio from Exante
+        """
+        portfolio = self.get_object()
+        portfolio.import_from_exante()
+        serializer = DetailedPortfolioSerializer(portfolio)
+        return Response(serializer.data)
+
 
 class PortfolioPolicyViewSet(viewsets.ModelViewSet):
     """

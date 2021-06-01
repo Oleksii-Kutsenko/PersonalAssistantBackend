@@ -155,8 +155,7 @@ class Index(TimeStampMixin):
                 ticker.save()
             else:
                 ticker_info['ticker'].update(keys)
-                ticker = Ticker(**ticker_info['ticker'])
-                ticker.save()
+                ticker = Ticker.objects.create(**ticker_info['ticker'])
 
             index_ticker = IndexTicker(index=self, raw_data=ticker_info['raw_data'], ticker=ticker,
                                        weight=ticker_info['ticker_weight'])
@@ -175,6 +174,9 @@ class IndexTicker(TimeStampMixin):
     weight = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=10,
                                  validators=[MinValueValidator(0.000001),
                                              MaxValueValidator(1.000001)])
+
+    def __str__(self):
+        return f'{self.index}.{self.ticker}'
 
     class Meta:
         """
