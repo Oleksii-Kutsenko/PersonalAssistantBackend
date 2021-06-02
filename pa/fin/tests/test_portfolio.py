@@ -1,6 +1,7 @@
 """
 Portfolio Tests
 """
+import os
 
 from django.urls import reverse
 from django.utils import timezone
@@ -11,6 +12,7 @@ from fin.models.portfolio import Portfolio, PortfolioTicker
 from fin.models.ticker import Ticker
 from fin.models.utils import UpdatingStatus
 from fin.tests.base import BaseTestCase
+from fin.tests.factories.portfolio import PortfolioFactory
 from fin.tests.factories.portfolio_policy import PortfolioPolicyFactory
 from fin.views import AdjustMixin
 from users.models import User
@@ -64,6 +66,15 @@ class PortfolioTests(BaseTestCase):
             portfolio.save()
             response = self.client.get(url)
             self.assertEqual(response.data['status'], status.label)
+
+    def test_portfolio_importing(self):
+        portfolio = PortfolioFactory()
+        portfolio.exante_account_id = os.environ.get('ACCOUNT_ID')
+        portfolio.save()
+
+        portfolio.import_from_exante()
+        self.assertGreaterEqual(portfolio.accounts.count(), 1)
+        self.assertGreaterEqual(portfolio.tickers.count(), 1)
 
     def test_portfolio_index_queries_diff(self):
         """

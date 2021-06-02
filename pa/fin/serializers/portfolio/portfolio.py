@@ -61,7 +61,7 @@ class PortfolioSerializer(serializers.ModelSerializer):
         Serializer meta class
         """
         model = Portfolio
-        fields = ('id', 'name', 'user')
+        fields = ('exante_account_id', 'id', 'name', 'user')
 
 
 class DetailedPortfolioSerializer(PortfolioSerializer):

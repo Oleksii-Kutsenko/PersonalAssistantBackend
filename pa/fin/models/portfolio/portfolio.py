@@ -39,6 +39,7 @@ class Portfolio(TimeStampMixin):
     """
     Class that represents the portfolio
     """
+    exante_account_id = CharField(max_length=50)
     name = CharField(max_length=100)
     status = models.IntegerField(choices=UpdatingStatus.choices,
                                  default=UpdatingStatus.successfully_updated)
@@ -85,7 +86,7 @@ class Portfolio(TimeStampMixin):
         }
 
         jwt = get_jwt()
-        account_summary = get_account_summary(jwt)
+        account_summary = get_account_summary(self.exante_account_id, jwt)
 
         accounts = []
         currencies = account_summary.pop('currencies')
