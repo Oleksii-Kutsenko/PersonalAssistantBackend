@@ -2,6 +2,7 @@ beautifulsoup4==4.8.2
 celery==4.4.7
 Django==3.1.8
 django-allauth==0.44.0
+django-better-admin-arrayfield==1.4.2
 django-cors-headers==3.5.0
 django-filter==2.4.0
 django-query-builder==1.2.0

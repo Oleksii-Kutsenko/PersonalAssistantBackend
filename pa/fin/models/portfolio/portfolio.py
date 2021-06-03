@@ -11,6 +11,7 @@ from django.utils.translation import gettext_lazy as _
 
 from fin.external_api.exante import get_jwt, get_account_summary
 from fin.models.index import Index
+from fin.models.stock_exchange import StockExchange
 from fin.models.ticker import Ticker
 from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES, UpdatingStatus
 from fin.serializers.ticker import TickerSerializer
@@ -78,12 +79,7 @@ class Portfolio(TimeStampMixin):
         """
         Import portfolio from the EXANTE
         """
-        mapper = {
-            'NYSE': 'New York Stock Exchange Inc.',
-            'NASDAQ': 'NASDAQ',
-            'XETRA': 'Xetra',
-            'EURONEXT': 'Nyse Euronext - Euronext Paris',
-        }
+        stock_exchanges_mapper = StockExchange.get_stock_exchanges_mapper()
 
         jwt = get_jwt()
         account_summary = get_account_summary(self.exante_account_id, jwt)
@@ -104,7 +100,8 @@ class Portfolio(TimeStampMixin):
                 price = Decimal(position.get('convertedValue')) / Decimal(position.get('quantity'))
             else:
                 price = Decimal(position.get('price'))
-            ticker, _ = Ticker.objects.update_or_create(symbol=symbol, stock_exchange=mapper[stock_exchange],
+            ticker, _ = Ticker.objects.update_or_create(symbol=symbol,
+                                                        stock_exchange_id=stock_exchanges_mapper[stock_exchange],
                                                         defaults={
                                                             'price': price
                                                         })
@@ -139,16 +136,14 @@ class Portfolio(TimeStampMixin):
         """
         result = []
         for _, adjusted_ticker in adjusted_index_tickers.iterrows():
-            symbol = adjusted_ticker['ticker__symbol']
-            stock_exchange = adjusted_ticker['ticker__stock_exchange']
-            portfolio_ticker = portfolio_tickers.filter(ticker__symbol=symbol,
-                                                        ticker__stock_exchange=stock_exchange).first()
+            ticker_id = adjusted_ticker['ticker__id']
+            portfolio_ticker = portfolio_tickers.filter(ticker__id=ticker_id).first()
 
             if portfolio_ticker:
                 ticker = portfolio_ticker.ticker
                 amount = adjusted_ticker['amount'] - portfolio_ticker.amount
             else:
-                ticker = Ticker.objects.get(symbol=symbol, stock_exchange=stock_exchange)
+                ticker = Ticker.objects.get(id=ticker_id)
                 amount = adjusted_ticker['amount']
 
             if amount > 0:

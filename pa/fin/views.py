@@ -59,7 +59,7 @@ class AdjustMixin:
             'skip_countries': request.GET.getlist('skip-country[]', []),
             'skip_sectors': request.GET.getlist('skip-sector[]', []),
             'skip_industries': request.GET.getlist('skip-industry[]', []),
-            'skip_tickers': [json.loads(ticker) for ticker in request.GET.getlist('skip-ticker[]', [])],
+            'skip_tickers': request.GET.getlist('skip-ticker[]', []),
         }
         self.adjust_options.update(options)
 
