@@ -1,7 +1,6 @@
 """
 Views
 """
-import json
 import logging
 from datetime import timedelta
 

@@ -19,14 +19,44 @@ class IndexTests(BaseTestCase):
     """
     Tests for index amount
     """
+    fixtures = [
+        'fin/migrations/fixtures/stock_exchanges.json',
+    ]
 
     def setUp(self) -> None:
         self.user = User.objects.create(username='test_user', email='test_user@gmail.com')
         self.login(self.user)
 
+    def test_get_index_detailed(self):
+        """
+        Test detailed Index response structure
+        """
+        expected_keys = {'data_source_url', 'id', 'industries_breakdown', 'name', 'sectors_breakdown', 'status',
+                         'tickers_last_updated', 'updated'}
+        index = IndexFactory(data_source_url=Source.IHI)
+
+        url = reverse('index-detail', kwargs={'pk': index.id})
+        response = self.client.get(url)
+
+        self.assertEqual(set(response.json().keys()), expected_keys)
+
+    def test_get_index_list(self):
+        """
+        Test Index list response structure
+        """
+        expected_keys = {'id', 'data_source_url', 'name', 'status', 'tickers_last_updated', 'updated'}
+        IndexFactory(data_source_url=Source.SOXX)
+        IndexFactory(data_source_url=Source.IHI)
+
+        url = reverse('index-list')
+        response = self.client.get(url)
+
+        for index in response.json()['results']:
+            self.assertSetEqual(set(index.keys()), expected_keys)
+
     def test_import_index_from_csv(self):
         """
-        Tests
+        Tests importing index from csv
         """
         url = reverse('admin:import-csv')
         response = self.client.get(url)

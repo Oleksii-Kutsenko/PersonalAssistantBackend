@@ -6,7 +6,6 @@ import numpy as np
 import pandas as pd
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models, transaction
-from django.db.models import Q
 
 from fin.models.index.parsers import ISharesParser, Source, InvescoCSVParser, AmplifyParser
 from fin.models.ticker import Ticker
@@ -140,12 +139,24 @@ class Index(TimeStampMixin):
                                  'sedol': ticker_info['ticker'].pop('sedol', None)}.items()
                     if v is not None}
 
-            # Searching
+            # Searching by international identifiers
             ticker = None
             for key_name, key_value in keys.items():
-                if (ticker := Ticker.objects.filter(**{key_name: key_value})).exists():
-                    ticker = ticker.first()
+                if (ticker_qs := Ticker.objects.filter(**{key_name: key_value})).exists():
+                    ticker = ticker_qs.first()
                     break
+
+            # Searching by ticker and stock exchange
+            if ticker is None:
+                ticker_qs = Ticker.objects.filter(symbol=ticker_info['ticker']['symbol'])
+                if ticker_qs.count() == 1:
+                    ticker = ticker_qs.first()
+                elif ticker_qs.count() > 1:
+                    ticker_qs.filter(stock_exchange_id=ticker_info['ticker']['stock_exchange_id'])
+                    if ticker_qs.count() == 1:
+                        ticker = ticker_qs.first()
+                    else:
+                        raise NotImplementedError('Unexpected situation')
 
             # Updating or creating
             if ticker:
