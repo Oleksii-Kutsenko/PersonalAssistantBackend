@@ -1,3 +1,6 @@
+"""
+Exante API tests
+"""
 import os
 
 from jsonschema import validate, ValidationError
@@ -7,7 +10,14 @@ from fin.tests.base import BaseTestCase
 
 
 class ExanteTests(BaseTestCase):
+    """
+    Exante API test cases
+    """
+
     def test_get_account_summary(self):
+        """
+        Test Exante API response structure
+        """
         token = get_jwt()
         account_summary = get_account_summary(os.environ.get('ACCOUNT_ID'), token)
 

@@ -22,9 +22,12 @@ class PortfolioTests(BaseTestCase):
     """
     Tests for Portfolio class and related functionality
     """
-    fixtures = ['fin/tests/fixtures/ticker.json',
-                'fin/tests/fixtures/portfolio.json',
-                'fin/tests/fixtures/index.json']
+    fixtures = [
+        'fin/migrations/fixtures/stock_exchanges.json',
+        'fin/tests/fixtures/ticker.json',
+        'fin/tests/fixtures/portfolio.json',
+        'fin/tests/fixtures/index.json'
+    ]
 
     def setUp(self) -> None:
         self.user = User.objects.create(username='test_user', email='test_user@gmail.com')
@@ -68,6 +71,9 @@ class PortfolioTests(BaseTestCase):
             self.assertEqual(response.data['status'], status.label)
 
     def test_portfolio_importing(self):
+        """
+        Test portfolio importing from Exante Api
+        """
         portfolio = PortfolioFactory()
         portfolio.exante_account_id = os.environ.get('ACCOUNT_ID')
         portfolio.save()

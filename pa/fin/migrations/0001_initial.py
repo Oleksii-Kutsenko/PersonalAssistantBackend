@@ -11,8 +11,6 @@ import fin.models.ticker.ticker
 
 class Migration(migrations.Migration):
 
-    replaces = [('fin', '0001_initial'), ('fin', '0002_auto_20210529_1443'), ('fin', '0003_auto_20210529_1444'), ('fin', '0004_auto_20210601_1123'), ('fin', '0005_auto_20210601_1227'), ('fin', '0006_portfolio_exante_account_id'), ('fin', '0007_auto_20210602_0948'), ('fin', '0008_auto_20210602_1219'), ('fin', '0009_auto_20210602_1444'), ('fin', '0010_auto_20210603_1037'), ('fin', '0011_auto_20210603_1044')]
-
     initial = True
 
     dependencies = [
