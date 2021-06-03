@@ -63,14 +63,13 @@ class Index(TimeStampMixin):
         if tickers_query.count() == 0:
             raise Exception('Not enough data for adjusting')
 
-        for ticker in options['skip_tickers']:
-            tickers_query = tickers_query.exclude(Q(ticker__stock_exchange=ticker[0], ticker__symbol=ticker[1]))
+        tickers_query = tickers_query.exclude(ticker_id__in=options['skip_tickers'])
 
         # exclude tickers with highest PE ratio
 
-        dataset = tickers_query.values_list('ticker__stock_exchange', 'ticker__symbol', 'ticker__price', 'weight')
+        dataset = tickers_query.values_list('ticker__id', 'ticker__symbol', 'ticker__price', 'weight')
         tickers_df = pd.DataFrame(list(dataset),
-                                  columns=['ticker__stock_exchange', 'ticker__symbol', 'ticker__price', 'weight'])
+                                  columns=['ticker__id', 'ticker__symbol', 'ticker__price', 'weight'])
         tickers_df['ticker__price'] = tickers_df['ticker__price'].astype(float)
         tickers_df['weight'] = tickers_df['weight'].astype(float)
 

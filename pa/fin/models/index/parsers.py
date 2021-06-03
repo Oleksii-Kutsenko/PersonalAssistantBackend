@@ -12,6 +12,7 @@ import requests
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from fin.models.stock_exchange import StockExchange
 from fin.models.ticker import Ticker
 
 
@@ -61,12 +62,7 @@ class AmplifyParser(Parser):
     """
     Parser for Amplify ETFs
     """
-    exchanges = {
-        'GR': 'Xetra',
-        'JP': 'Tokyo Stock Exchange',
-        'LN': 'London Stock Exchange',
-        'NA': 'Euronext Amsterdam'
-    }
+    user_agent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:89.0) Gecko/20100101 Firefox/89.0'
 
     def __init__(self, source_url):
         self.source_url = source_url
@@ -74,16 +70,19 @@ class AmplifyParser(Parser):
     def parse(self):
         index_name = 'IBUY'
         cash_ticker = 'Cash&Other'
-        response = requests.get(self.source_url)
+        stock_exchanges_mapper = StockExchange.get_stock_exchanges_mapper()
+
+        response = requests.get(self.source_url, headers={'User-Agent': self.user_agent})
         csv_file = pd.read_csv(io.StringIO(response.text), thousands=',')
         ibuy_csv_rows = csv_file[(csv_file['Account'] == index_name) & (csv_file['StockTicker'] != cash_ticker)]
 
         parsed_json = []
         for _, row in ibuy_csv_rows.iterrows():
             split_ticker_row = row['StockTicker'].split(' ')
-            stock_exchange = Ticker.DEFAULT_VALUE
+
+            stock_exchange_id = None
             if len(split_ticker_row) > 1:
-                stock_exchange = self.exchanges[split_ticker_row[1]]
+                stock_exchange_id = stock_exchanges_mapper[split_ticker_row[1]]
             symbol = split_ticker_row[0]
 
             parsed_json.append({
@@ -94,10 +93,11 @@ class AmplifyParser(Parser):
                     'symbol': symbol,
                     'price': row['MarketValue'] / row['Shares'],
                     'market_cap': row['MarketValue'],
-                    'stock_exchange': stock_exchange
                 },
                 'ticker_weight': Decimal(row['Weightings'][:-1])
             })
+            if stock_exchange_id:
+                parsed_json[-1]['ticker']['stock_exchange_id'] = stock_exchange_id
 
         return parsed_json
 
@@ -125,8 +125,7 @@ class InvescoCSVParser(Parser):
                     'cusip': row['Security Identifier'],
                     'symbol': row['Holding Ticker'],
                     'price': float(row['MarketValue'].replace(',', '')) / int(row['Shares/Par Value'].replace(',', '')),
-                    'market_cap': row['MarketValue'].replace(',', ''),
-                    'stock_exchange': Ticker.DEFAULT_VALUE,
+                    'stock_exchange': None,
                     'sector': row['Sector']
                 },
                 'ticker_weight': row['Weight']
@@ -173,7 +172,8 @@ class ISharesParser(Parser):
         index_df = pd.read_csv(tickers_data, thousands=',')
         index_df = index_df[(index_df['Asset Class'] == equity_name) &
                             (index_df['Price'] > 0) &
-                            (index_df['Ticker'] != '-')]
+                            (index_df['Ticker'] != '-') &
+                            (index_df['Exchange'] != 'NO MARKET (E.G. UNLISTED)')]
 
         index_df.loc[(index_df.CUSIP == '-'), 'CUSIP'] = None
         index_df.loc[(index_df.CUSIP == '-'), 'ISIN'] = None
@@ -182,6 +182,8 @@ class ISharesParser(Parser):
         index_df['Market Value'] = index_df['Market Value'].astype('float64')
         total_cap = index_df['Market Value'].sum()
         index_df['weight'] = index_df['Market Value'] / total_cap * 100
+
+        stock_exchanges_mapper = StockExchange.get_stock_exchanges_mapper()
 
         for _, row in index_df.iterrows():
             parsed_json.append({
@@ -193,7 +195,7 @@ class ISharesParser(Parser):
                     'price': row['Price'],
                     'sector': row['Sector'],
                     'sedol': row['SEDOL'],
-                    'stock_exchange': row['Exchange'],
+                    'stock_exchange_id': stock_exchanges_mapper[row['Exchange']],
                     'symbol': row['Ticker'],
                 },
                 'ticker_weight': row['weight']

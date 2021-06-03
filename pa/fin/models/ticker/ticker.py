@@ -7,6 +7,7 @@ from django.db import models
 from django.db.models import Q
 from querybuilder.query import Query
 
+from fin.models.stock_exchange import StockExchange
 from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES
 
 
@@ -57,7 +58,7 @@ class Ticker(TimeStampMixin):
     price = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
     sector = models.CharField(max_length=50, default=DEFAULT_VALUE)
     sedol = models.CharField(max_length=7, null=True)
-    stock_exchange = models.CharField(max_length=100, default=DEFAULT_VALUE)
+    stock_exchange = models.ForeignKey(StockExchange, on_delete=models.CASCADE, null=True)
     symbol = models.CharField(max_length=100)
 
     class Meta:
