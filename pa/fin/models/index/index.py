@@ -7,7 +7,8 @@ import pandas as pd
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models, transaction
 
-from fin.models.index.parsers import ISharesParser, Source, InvescoCSVParser, AmplifyParser
+from fin.models.index.parsers import ISharesParser, InvescoCSVParser, AmplifyParser
+from fin.models.index.parsers.helpers import Source
 from fin.models.ticker import Ticker
 from fin.models.utils import TimeStampMixin, MAX_DIGITS, UpdatingStatus
 
@@ -121,55 +122,23 @@ class Index(TimeStampMixin):
         Update tickers prices and their weights
         """
         if self.parser.updatable:
-            tickers_parsed_json = self.parser.parse()
-            self.update_from_tickers_parsed_json(tickers_parsed_json)
+            parsed_index_tickers = self.parser.parse()
+            self.update_from_parsed_index_ticker(parsed_index_tickers)
 
-    def update_from_tickers_parsed_json(self, ticker_parsed_json):
+    def update_from_parsed_index_ticker(self, parsed_index_tickers):
         """
         Creates objects for the relation between the current index and tickers JSON
         """
         index_tickers = []
-        for ticker_info in ticker_parsed_json:
-            # Extracting the find keys
-            keys = {k: v
-                    for k, v in {'cusip': ticker_info['ticker'].pop('cusip', None),
-                                 'isin': ticker_info['ticker'].pop('isin', None),
-                                 'sedol': ticker_info['ticker'].pop('sedol', None)}.items()
-                    if v is not None}
+        for parsed_index_ticker in parsed_index_tickers:
+            ticker = parsed_index_ticker.ticker.get_ticker()
 
-            # Searching by international identifiers
-            ticker = None
-            for key_name, key_value in keys.items():
-                if (ticker_qs := Ticker.objects.filter(**{key_name: key_value})).exists():
-                    ticker = ticker_qs.first()
-                    break
-
-            # Searching by ticker and stock exchange
-            if ticker is None:
-                ticker_qs = Ticker.objects.filter(symbol=ticker_info['ticker']['symbol'])
-                if ticker_qs.count() == 1:
-                    ticker = ticker_qs.first()
-                elif ticker_qs.count() > 1:
-                    ticker_qs.filter(stock_exchange_id=ticker_info['ticker']['stock_exchange_id'])
-                    if ticker_qs.count() == 1:
-                        ticker = ticker_qs.first()
-                    else:
-                        raise NotImplementedError('Unexpected situation')
-
-            # Updating or creating
-            if ticker:
-                for field_name, field_value in ticker_info['ticker'].items():
-                    setattr(ticker, field_name, field_value)
-                ticker.save()
-            else:
-                ticker_info['ticker'].update(keys)
-                ticker = Ticker.objects.create(**ticker_info['ticker'])
-
-            index_ticker = IndexTicker(index=self, raw_data=ticker_info['raw_data'], ticker=ticker,
-                                       weight=ticker_info['ticker_weight'])
+            index_ticker = IndexTicker(index=self, raw_data=parsed_index_ticker.raw_data, ticker=ticker,
+                                       weight=parsed_index_ticker.weight)
             index_tickers.append(index_ticker)
+
         IndexTicker.objects.filter(index=self).delete()
-        IndexTicker.objects.bulk_create(index_tickers, batch_size=1000)
+        IndexTicker.objects.bulk_create(index_tickers, batch_size=500)
 
 
 class IndexTicker(TimeStampMixin):
