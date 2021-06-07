@@ -101,20 +101,7 @@ class Portfolio(TimeStampMixin):
             else:
                 price = Decimal(position.get('price'))
 
-            ticker = None
-            ticker_qs = Ticker.objects.filter(symbol=symbol)
-            if ticker_qs.count() == 1:
-                ticker = ticker_qs.first()
-                ticker.price = price
-                ticker.save()
-            elif ticker_qs.count() > 1:
-                ticker_qs = ticker_qs.filter(stock_exchange_id=stock_exchanges_mapper[stock_exchange])
-                if ticker_qs.count() == 1:
-                    ticker = ticker_qs.first()
-                    ticker.price = price
-                    ticker.save()
-                elif ticker_qs.count() > 1:
-                    raise NotImplementedError('Unexpected situation')
+            ticker = Ticker.find_by_symbol_and_stock_exchange_id(symbol, stock_exchanges_mapper[stock_exchange])
 
             if ticker is None:
                 ticker = Ticker.objects.create(symbol=symbol, stock_exchange_id=stock_exchanges_mapper[stock_exchange],
