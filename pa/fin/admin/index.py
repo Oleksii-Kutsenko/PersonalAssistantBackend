@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect
 from django.urls import path
 
 from fin.models.index import Index
-from fin.models.index.parsers import Source
+from fin.models.index.parsers.helpers import Source
 
 
 class CsvImportForm(Form):
@@ -45,8 +45,8 @@ class IndexAdmin(ModelAdmin):
                 csv_file = form.cleaned_data['csv_file'].read().decode('utf-8')
                 index, _ = Index.objects.get_or_create(data_source_url=form.cleaned_data['index'])
                 index.parser.csv_file = csv_file
-                tickers_parsed_json = index.parser.parse()
-                index.update_from_tickers_parsed_json(tickers_parsed_json)
+                parsed_index_tickers = index.parser.parse()
+                index.update_from_parsed_index_ticker(parsed_index_tickers)
                 self.message_user(request, 'Your csv file has been imported')
                 return redirect('..')
             self.message_user(request, 'Form is invalid', messages.ERROR)

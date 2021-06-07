@@ -67,6 +67,8 @@ class Ticker(TimeStampMixin):
         """
         constraints = [
             models.CheckConstraint(check=models.Q(price__gt=0), name='ticker_price_non_negative'),
+            models.UniqueConstraint(fields=['stock_exchange', 'symbol', 'cusip', 'isin', 'sedol'],
+                                    name='stock_exchange_symbol_unique')
         ]
         indexes = [
             models.Index(fields=['company_name', ]),
@@ -78,15 +80,6 @@ class Ticker(TimeStampMixin):
 
     def __str__(self):
         return f"{self.symbol}.{self.stock_exchange}"
-
-    def net_income_statements(self, start_date):
-        """
-        Returns net income ticker statements
-        """
-        return self.ticker_statements \
-            .filter(name=Statements.net_income,
-                    fiscal_date_ending__gte=start_date) \
-            .order_by('-fiscal_date_ending')
 
     def get_debt_statements(self, statement, value_alias):
         """
@@ -108,6 +101,34 @@ class Ticker(TimeStampMixin):
         return self.ticker_statements \
                    .filter(name=statement) \
                    .order_by(f'-{TickerStatement.fiscal_date_ending.field.name}')[:quarter]
+
+    def net_income_statements(self, start_date):
+        """
+        Returns net income ticker statements
+        """
+        return self.ticker_statements \
+            .filter(name=Statements.net_income,
+                    fiscal_date_ending__gte=start_date) \
+            .order_by('-fiscal_date_ending')
+
+    @classmethod
+    def find_by_symbol_and_stock_exchange_id(cls, symbol, stock_exchange_id):
+        """
+        Heuristically try find a ticker by unreliable fields
+        """
+        ticker_qs = cls.objects.filter(symbol=symbol)
+
+        if ticker_qs.count() == 1:
+            return ticker_qs.first()
+
+        if ticker_qs.count() > 1:
+            ticker_qs = ticker_qs.filter(stock_exchange_id=stock_exchange_id)
+            if ticker_qs.count() > 1:
+                raise NotImplementedError('Cannot identify the stock security, there are need some extra actions')
+            if ticker_qs.count() == 1:
+                return ticker_qs.first()
+
+        return None
 
 
 class Statements(models.TextChoices):

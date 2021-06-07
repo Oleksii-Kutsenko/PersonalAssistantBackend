@@ -100,11 +100,12 @@ class Portfolio(TimeStampMixin):
                 price = Decimal(position.get('convertedValue')) / Decimal(position.get('quantity'))
             else:
                 price = Decimal(position.get('price'))
-            ticker, _ = Ticker.objects.update_or_create(symbol=symbol,
-                                                        stock_exchange_id=stock_exchanges_mapper[stock_exchange],
-                                                        defaults={
-                                                            'price': price
-                                                        })
+
+            ticker = Ticker.find_by_symbol_and_stock_exchange_id(symbol, stock_exchanges_mapper[stock_exchange])
+
+            if ticker is None:
+                ticker = Ticker.objects.create(symbol=symbol, stock_exchange_id=stock_exchanges_mapper[stock_exchange],
+                                               price=price)
 
             portfolio_tickers.append(PortfolioTicker(portfolio=self, ticker=ticker, amount=position.get('quantity')))
 

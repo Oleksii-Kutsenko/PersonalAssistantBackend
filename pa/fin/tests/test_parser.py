@@ -20,10 +20,10 @@ class ParsersTests(BaseTestCase):
         Tests that AmplifyParser works properly
         """
         parser = AmplifyParser(Source.IBUY)
-        parsed_json = parser.parse()
+        parsed_index_tickers = parser.parse()
 
         coefficient_sum = 0
-        for ticker_info in parsed_json:
-            self.assertGreater(ticker_info['ticker']['price'], Decimal('0'))
-            coefficient_sum += ticker_info['ticker_weight']
+        for parsed_index_ticker in parsed_index_tickers:
+            self.assertGreater(parsed_index_ticker.ticker.price, Decimal('0'))
+            coefficient_sum += parsed_index_ticker.weight
         self.assertAlmostEqual(coefficient_sum / 100, 1, places=2)

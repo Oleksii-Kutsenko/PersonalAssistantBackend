@@ -8,7 +8,7 @@ from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
 from fin.models.index import Index
-from fin.models.index.parsers import Source
+from fin.models.index.parsers.helpers import Source
 from fin.models.utils import MAX_DIGITS, DECIMAL_PLACES, UpdatingStatus
 
 
