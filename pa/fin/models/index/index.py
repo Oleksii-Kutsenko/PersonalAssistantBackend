@@ -138,7 +138,7 @@ class Index(TimeStampMixin):
             index_tickers.append(index_ticker)
 
         IndexTicker.objects.filter(index=self).delete()
-        IndexTicker.objects.bulk_create(index_tickers, batch_size=500)
+        IndexTicker.objects.bulk_create(index_tickers, batch_size=300)
 
 
 class IndexTicker(TimeStampMixin):
@@ -159,6 +159,9 @@ class IndexTicker(TimeStampMixin):
         """
         Model indexes
         """
+        constraints = [
+            models.UniqueConstraint(fields=('index_id', 'ticker_id'), name='index_ticker_unique')
+        ]
         indexes = [
             models.Index(fields=['index', ]),
             models.Index(fields=['ticker', ]),

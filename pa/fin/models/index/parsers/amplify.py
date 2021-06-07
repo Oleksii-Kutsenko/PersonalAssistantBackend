@@ -30,7 +30,9 @@ class AmplifyTicker(TickerDataClass):
             return ticker_qs.first()
 
         if ticker := Ticker.find_by_symbol_and_stock_exchange_id(self.symbol, self.stock_exchange_id):
-            return ticker
+            if ticker.cusip == self.cusip:
+                return ticker
+
         return Ticker.objects.create(**asdict(self))
 
 

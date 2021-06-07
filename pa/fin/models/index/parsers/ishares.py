@@ -43,12 +43,14 @@ class ISharesTicker(TickerDataClass):
             }.items()
             if v is not None
         }
-        ticker_qs = Ticker.objects.filter(reduce(operator.or_, [Q(**{k: v}) for k, v in keys.items()]))
+        ticker_qs = Ticker.objects.filter(reduce(operator.and_, [Q(**{k: v}) for k, v in keys.items()]))
         if ticker_qs.count() == 1:
             return ticker_qs.first()
 
         if ticker := Ticker.find_by_symbol_and_stock_exchange_id(self.symbol, self.stock_exchange_id):
-            return ticker
+            if ticker.cusip == self.cusip or ticker.isin == self.isin or ticker.sedol == self.sedol:
+                return ticker
+
         return Ticker.objects.create(**asdict(self))
 
 
@@ -101,6 +103,7 @@ class ISharesParser(Parser):
         index_df = index_df[(index_df['Asset Class'] == equity_name) &
                             (index_df['Price'] > 0) &
                             (index_df['Ticker'] != '-') &
+                            (index_df['Exchange'] != '-') &
                             (index_df['Exchange'] != 'NO MARKET (E.G. UNLISTED)')]
 
         index_df.loc[(index_df.CUSIP == '-'), 'CUSIP'] = None
