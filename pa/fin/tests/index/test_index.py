@@ -22,6 +22,7 @@ class IndexTests(BaseTestCase):
         'fin/tests/fixtures/ishares_source_params.json',
         'fin/tests/fixtures/sources.json',
         'fin/tests/fixtures/stock_exchanges.json',
+        'fin/tests/fixtures/stock_exchanges_aliases.json',
     ]
 
     def setUp(self) -> None:
@@ -34,6 +35,7 @@ class IndexTests(BaseTestCase):
         """
         expected_keys = {'source', 'id', 'industries_breakdown', 'name', 'sectors_breakdown', 'status',
                          'tickers_last_updated', 'updated'}
+
         index = IndexFactory()
 
         url = reverse('index-detail', kwargs={'pk': index.id})

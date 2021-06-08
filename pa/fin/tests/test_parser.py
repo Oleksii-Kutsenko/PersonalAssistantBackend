@@ -15,6 +15,7 @@ class ParsersTests(BaseTestCase):
     fixtures = [
         'fin/tests/fixtures/sources.json',
         'fin/tests/fixtures/stock_exchanges.json',
+        'fin/tests/fixtures/stock_exchanges_aliases.json'
     ]
 
     def test_amplify_parser(self):

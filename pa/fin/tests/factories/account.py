@@ -3,7 +3,7 @@ Account Factory
 """
 import factory
 
-from fin.models.portfolio import Account
+from fin.models.account import Account
 from fin.tests.factories.portfolio import PortfolioFactory
 
 

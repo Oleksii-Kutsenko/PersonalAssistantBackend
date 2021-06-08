@@ -9,7 +9,7 @@ from decimal import Decimal
 import pandas as pd
 import requests
 
-from fin.models.stock_exchange import StockExchange
+from fin.models.stock_exchange import StockExchangeAlias
 from fin.models.ticker import Ticker
 from .helpers import Parser, TickerDataClass, ParsedIndexTicker
 
@@ -30,7 +30,7 @@ class AmplifyTicker(TickerDataClass):
             return ticker_qs.first()
 
         if ticker := Ticker.find_by_symbol_and_stock_exchange_id(self.symbol, self.stock_exchange_id):
-            if ticker.cusip == self.cusip:
+            if ticker.cusip is not None and ticker.cusip == self.cusip:
                 return ticker
 
         return Ticker.objects.create(**asdict(self))
@@ -56,7 +56,7 @@ class AmplifyParser(Parser):
     def parse(self):
         index_name = 'IBUY'
         cash_ticker = 'Cash&Other'
-        stock_exchanges_mapper = StockExchange.get_stock_exchanges_mapper()
+        stock_exchanges_mapper = dict(StockExchangeAlias.objects.values_list('alias', 'stock_exchange_id'))
 
         response = requests.get(self.source_url, headers={'User-Agent': self.user_agent})
         csv_file = pd.read_csv(io.StringIO(response.text), thousands=',')

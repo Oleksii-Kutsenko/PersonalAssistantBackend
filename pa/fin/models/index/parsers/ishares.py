@@ -13,7 +13,7 @@ import requests
 from django.db.models import Q
 
 from fin.models.index.parsers import Parser
-from fin.models.stock_exchange import StockExchange
+from fin.models.stock_exchange import StockExchangeAlias
 from fin.models.ticker import Ticker
 from .helpers import TickerDataClass, ParsedIndexTicker
 
@@ -48,7 +48,9 @@ class ISharesTicker(TickerDataClass):
             return ticker_qs.first()
 
         if ticker := Ticker.find_by_symbol_and_stock_exchange_id(self.symbol, self.stock_exchange_id):
-            if ticker.cusip == self.cusip or ticker.isin == self.isin or ticker.sedol == self.sedol:
+            if (ticker.cusip and ticker.cusip == self.cusip) or \
+                    (ticker.isin and ticker.isin == self.isin) or \
+                    (ticker.sedol and ticker.sedol == self.sedol):
                 return ticker
 
         return Ticker.objects.create(**asdict(self))
@@ -89,7 +91,8 @@ class ISharesParser(Parser):
                             (index_df['Price'] > 0) &
                             (index_df['Ticker'] != '-') &
                             (index_df['Exchange'] != '-') &
-                            (index_df['Exchange'] != 'NO MARKET (E.G. UNLISTED)')]
+                            (index_df['Exchange'] != 'NO MARKET (E.G. UNLISTED)') &
+                            (index_df['Exchange'] != 'Non-Nms Quotation Service (Nnqs)')]
 
         index_df.loc[(index_df.CUSIP == '-'), 'CUSIP'] = None
         index_df.loc[(index_df.CUSIP == '-'), 'ISIN'] = None
@@ -99,7 +102,7 @@ class ISharesParser(Parser):
         total_cap = index_df['Market Value'].sum()
         index_df['weight'] = index_df['Market Value'] / total_cap * 100
 
-        stock_exchanges_mapper = StockExchange.get_stock_exchanges_mapper()
+        stock_exchanges_mapper = dict(StockExchangeAlias.objects.values_list('alias', 'stock_exchange_id', ))
 
         ishares_index_tickers = []
         for _, row in index_df.iterrows():

@@ -29,6 +29,7 @@ class PortfolioTests(BaseTestCase):
         'fin/tests/fixtures/portfolio_ticker.json',
         'fin/tests/fixtures/sources.json',
         'fin/tests/fixtures/stock_exchanges.json',
+        'fin/tests/fixtures/stock_exchanges_aliases.json',
         'fin/tests/fixtures/tickers.json',
         'fin/tests/fixtures/users.json'
     ]

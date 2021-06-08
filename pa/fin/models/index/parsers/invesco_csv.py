@@ -32,7 +32,9 @@ class InvescoCSVTicker(TickerDataClass):
         if ticker_qs.count() > 1:
             raise NotImplementedError('Cannot identify the stock security, there are need some extra actions')
         if ticker_qs.count() == 1:
-            return ticker_qs.first()
+            ticker = ticker_qs.first()
+            if ticker.cusip is not None and ticker.cusip == self.cusip:
+                return ticker
         return Ticker.objects.create(**asdict(self))
 
 

@@ -33,7 +33,7 @@ class Source(models.Model):
     parser_name = models.CharField(choices=[(k, k) for k in parsers_mapper.keys()], max_length=50)
     name = models.CharField(max_length=100)
     updatable = models.BooleanField(default=True)
-    url = models.URLField()
+    url = models.URLField(unique=True)
 
     def __init__(self, *args, **kwargs):
         self._parser = None

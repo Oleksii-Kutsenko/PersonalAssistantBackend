@@ -16,7 +16,8 @@ from fin.serializers.portfolio.portfolio import PortfolioSerializer, AccountSeri
     DetailedPortfolioSerializer
 from .exceptions import BadRequest
 from .models.index import Index
-from .models.portfolio import Portfolio, Account
+from .models.portfolio import Portfolio
+from .models.account import Account
 from .models.portfolio.portfolio_policy import PortfolioPolicy
 from .models.utils import UpdatingStatus
 from .serializers.index import IndexSerializer, DetailIndexSerializer

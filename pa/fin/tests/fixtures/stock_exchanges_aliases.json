@@ -1,0 +1,538 @@
+[
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 1,
+    "fields": {
+      "alias": "NASDAQ",
+      "stock_exchange": 2
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 2,
+    "fields": {
+      "alias": "NYSE American",
+      "stock_exchange": 4
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 3,
+    "fields": {
+      "alias": "Nyse Mkt Llc",
+      "stock_exchange": 4
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 4,
+    "fields": {
+      "alias": "BATS Global Markets",
+      "stock_exchange": 5
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 5,
+    "fields": {
+      "alias": "Cboe BZX formerly known as BATS",
+      "stock_exchange": 5
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 6,
+    "fields": {
+      "alias": "London Stock Exchange",
+      "stock_exchange": 7
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 7,
+    "fields": {
+      "alias": "LN",
+      "stock_exchange": 7
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 8,
+    "fields": {
+      "alias": "NA",
+      "stock_exchange": 8
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 9,
+    "fields": {
+      "alias": "Euronext Amsterdam",
+      "stock_exchange": 8
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 10,
+    "fields": {
+      "alias": "Taiwan Stock Exchange",
+      "stock_exchange": 9
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 11,
+    "fields": {
+      "alias": "Hong Kong Exchanges And Clearing Ltd",
+      "stock_exchange": 10
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 12,
+    "fields": {
+      "alias": "SIX Swiss Exchange",
+      "stock_exchange": 11
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 13,
+    "fields": {
+      "alias": "Korea Exchange (Stock Market)",
+      "stock_exchange": 12
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 14,
+    "fields": {
+      "alias": "JP",
+      "stock_exchange": 6
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 15,
+    "fields": {
+      "alias": "Tokyo Stock Exchange",
+      "stock_exchange": 6
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 16,
+    "fields": {
+      "alias": "Toronto Stock Exchange",
+      "stock_exchange": 14
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 17,
+    "fields": {
+      "alias": "Asx - All Markets",
+      "stock_exchange": 15
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 18,
+    "fields": {
+      "alias": "Omx Nordic Exchange Copenhagen A/S",
+      "stock_exchange": 16
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 19,
+    "fields": {
+      "alias": "Johannesburg Stock Exchange",
+      "stock_exchange": 17
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 20,
+    "fields": {
+      "alias": "XBSP",
+      "stock_exchange": 18
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 21,
+    "fields": {
+      "alias": "National Stock Exchange Of India",
+      "stock_exchange": 19
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 22,
+    "fields": {
+      "alias": "NYSE",
+      "stock_exchange": 3
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 23,
+    "fields": {
+      "alias": "New York Stock Exchange Inc.",
+      "stock_exchange": 3
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 24,
+    "fields": {
+      "alias": "Borsa Italiana",
+      "stock_exchange": 20
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 25,
+    "fields": {
+      "alias": "Bolsa De Madrid",
+      "stock_exchange": 21
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 26,
+    "fields": {
+      "alias": "Nyse Euronext - Euronext Brussels",
+      "stock_exchange": 22
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 27,
+    "fields": {
+      "alias": "Standard-Classica-Forts",
+      "stock_exchange": 23
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 28,
+    "fields": {
+      "alias": "Nasdaq Omx Nordic",
+      "stock_exchange": 24
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 29,
+    "fields": {
+      "alias": "Irish Stock Exchange - All Market",
+      "stock_exchange": 25
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 30,
+    "fields": {
+      "alias": "Singapore Exchange",
+      "stock_exchange": 26
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 31,
+    "fields": {
+      "alias": "Saudi Stock Exchange",
+      "stock_exchange": 27
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 32,
+    "fields": {
+      "alias": "Nasdaq Omx Helsinki Ltd.",
+      "stock_exchange": 28
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 33,
+    "fields": {
+      "alias": "Shanghai Stock Exchange",
+      "stock_exchange": 29
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 34,
+    "fields": {
+      "alias": "Bolsa Mexicana De Valores",
+      "stock_exchange": 30
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 35,
+    "fields": {
+      "alias": "Indonesia Stock Exchange",
+      "stock_exchange": 31
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 36,
+    "fields": {
+      "alias": "Qatar Exchange",
+      "stock_exchange": 32
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 37,
+    "fields": {
+      "alias": "Oslo Bors Asa",
+      "stock_exchange": 33
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 38,
+    "fields": {
+      "alias": "Abu Dhabi Securities Exchange",
+      "stock_exchange": 34
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 39,
+    "fields": {
+      "alias": "Kuwait Stock Exchange",
+      "stock_exchange": 35
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 40,
+    "fields": {
+      "alias": "Bursa Malaysia",
+      "stock_exchange": 36
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 41,
+    "fields": {
+      "alias": "Nyse Euronext - Euronext Lisbon",
+      "stock_exchange": 37
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 42,
+    "fields": {
+      "alias": "Tel Aviv Stock Exchange",
+      "stock_exchange": 38
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 43,
+    "fields": {
+      "alias": "Stock Exchange Of Thailand",
+      "stock_exchange": 39
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 44,
+    "fields": {
+      "alias": "Budapest Stock Exchange",
+      "stock_exchange": 40
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 45,
+    "fields": {
+      "alias": "Shenzhen Stock Exchange",
+      "stock_exchange": 41
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 46,
+    "fields": {
+      "alias": "New Zealand Exchange Ltd",
+      "stock_exchange": 42
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 47,
+    "fields": {
+      "alias": "Wiener Boerse Ag",
+      "stock_exchange": 43
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 48,
+    "fields": {
+      "alias": "Warsaw Stock Exchange/Equities/Main Market",
+      "stock_exchange": 44
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 49,
+    "fields": {
+      "alias": "Dubai Financial Market",
+      "stock_exchange": 45
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 50,
+    "fields": {
+      "alias": "Philippine Stock Exchange Inc.",
+      "stock_exchange": 46
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 51,
+    "fields": {
+      "alias": "Korea Exchange (Kosdaq)",
+      "stock_exchange": 47
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 52,
+    "fields": {
+      "alias": "Santiago Stock Exchange",
+      "stock_exchange": 48
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 53,
+    "fields": {
+      "alias": "Gretai Securities Market",
+      "stock_exchange": 49
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 54,
+    "fields": {
+      "alias": "Prague Stock Exchange",
+      "stock_exchange": 50
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 55,
+    "fields": {
+      "alias": "Egyptian Exchange",
+      "stock_exchange": 51
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 56,
+    "fields": {
+      "alias": "Bolsa De Valores De Colombia",
+      "stock_exchange": 52
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 57,
+    "fields": {
+      "alias": "NGM",
+      "stock_exchange": 53
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 58,
+    "fields": {
+      "alias": "Athens Exchange S.A. Cash Market",
+      "stock_exchange": 54
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 59,
+    "fields": {
+      "alias": "Istanbul Stock Exchange",
+      "stock_exchange": 55
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 60,
+    "fields": {
+      "alias": "Karachi Stock Exchange (Guarantee) Limited",
+      "stock_exchange": 56
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 61,
+    "fields": {
+      "alias": "Xetra",
+      "stock_exchange": 1
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 62,
+    "fields": {
+      "alias": "xetra",
+      "stock_exchange": 1
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 63,
+    "fields": {
+      "alias": "GR",
+      "stock_exchange": 1
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 64,
+    "fields": {
+      "alias": "XETRA",
+      "stock_exchange": 1
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 65,
+    "fields": {
+      "alias": "Nyse Euronext - Euronext Paris",
+      "stock_exchange": 13
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 66,
+    "fields": {
+      "alias": "EPA",
+      "stock_exchange": 13
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 67,
+    "fields": {
+      "alias": "EURONEXT",
+      "stock_exchange": 13
+    }
+  }
+]
