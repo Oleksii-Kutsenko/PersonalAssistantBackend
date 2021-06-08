@@ -8,7 +8,6 @@ from django.urls import reverse
 from rest_framework.status import HTTP_200_OK
 
 from fin.models.index import Index
-from fin.models.index.parsers import Source
 from fin.tasks.update_tickers_statements import update_model_tickers_statements_task, LOCKED
 from fin.tests.base import BaseTestCase
 from fin.tests.factories.index import IndexFactory
@@ -20,7 +19,10 @@ class IndexTests(BaseTestCase):
     Tests for index amount
     """
     fixtures = [
-        'fin/migrations/fixtures/stock_exchanges.json',
+        'fin/tests/fixtures/ishares_source_params.json',
+        'fin/tests/fixtures/sources.json',
+        'fin/tests/fixtures/stock_exchanges.json',
+        'fin/tests/fixtures/stock_exchanges_aliases.json',
     ]
 
     def setUp(self) -> None:
@@ -31,9 +33,10 @@ class IndexTests(BaseTestCase):
         """
         Test detailed Index response structure
         """
-        expected_keys = {'data_source_url', 'id', 'industries_breakdown', 'name', 'sectors_breakdown', 'status',
+        expected_keys = {'source', 'id', 'industries_breakdown', 'name', 'sectors_breakdown', 'status',
                          'tickers_last_updated', 'updated'}
-        index = IndexFactory(data_source_url=Source.IHI)
+
+        index = IndexFactory()
 
         url = reverse('index-detail', kwargs={'pk': index.id})
         response = self.client.get(url)
@@ -44,9 +47,9 @@ class IndexTests(BaseTestCase):
         """
         Test Index list response structure
         """
-        expected_keys = {'id', 'data_source_url', 'name', 'status', 'tickers_last_updated', 'updated'}
-        IndexFactory(data_source_url=Source.SOXX)
-        IndexFactory(data_source_url=Source.IHI)
+        expected_keys = {'id', 'source', 'name', 'status', 'tickers_last_updated', 'updated'}
+        IndexFactory()
+        IndexFactory()
 
         url = reverse('index-list')
         response = self.client.get(url)
@@ -63,10 +66,10 @@ class IndexTests(BaseTestCase):
         self.assertEqual(response.status_code, HTTP_200_OK)
 
         index_choice = choice(response.context['form'].fields['index'].choices)[0]
-        with open(f'fin/tests/files/{Source(index_choice).label}.csv') as file:
+        with open('fin/tests/files/PBW.csv') as file:
             response = self.client.post(url, {'index': index_choice, 'csv_file': file}, follow=True)
             self.assertEqual(response.status_code, HTTP_200_OK)
-        self.assertEqual(Index.objects.filter(data_source_url=index_choice).count(), 1)
+        self.assertEqual(Index.objects.filter(source=index_choice).count(), 1)
 
     def test_index_creation(self):
         """
@@ -75,7 +78,7 @@ class IndexTests(BaseTestCase):
         url = reverse('index-list')
         index = IndexFactory.build()
 
-        response = self.client.post(url, {'data_source_url': index.data_source_url})
+        response = self.client.post(url, {'source': index.source})
         task_args = (Index.__name__, response.data.get('id'))
         task = update_model_tickers_statements_task.apply(args=task_args)
         while not task.ready():

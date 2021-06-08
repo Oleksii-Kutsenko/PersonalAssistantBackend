@@ -7,7 +7,8 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import SerializerMethodField
 
-from fin.models.portfolio import Portfolio, Account, PortfolioTicker
+from fin.models.portfolio import Portfolio, PortfolioTicker
+from fin.models.account import Account
 from fin.models.utils import MAX_DIGITS, DECIMAL_PLACES, UpdatingStatus
 from fin.serializers.ticker import TickerSerializer
 from fin.serializers.utils import FlattenMixin

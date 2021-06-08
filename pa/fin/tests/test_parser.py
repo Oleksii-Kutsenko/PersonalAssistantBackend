@@ -3,7 +3,8 @@ Tests for indexes parsers
 """
 from decimal import Decimal
 
-from fin.models.index.parsers import AmplifyParser, Source
+from fin.models.index import Source
+from fin.models.index.parsers import AmplifyParser
 from fin.tests.base import BaseTestCase
 
 
@@ -12,14 +13,17 @@ class ParsersTests(BaseTestCase):
     Index parsers test cases
     """
     fixtures = [
-        'fin/migrations/fixtures/stock_exchanges.json'
+        'fin/tests/fixtures/sources.json',
+        'fin/tests/fixtures/stock_exchanges.json',
+        'fin/tests/fixtures/stock_exchanges_aliases.json'
     ]
 
     def test_amplify_parser(self):
         """
         Tests that AmplifyParser works properly
         """
-        parser = AmplifyParser(Source.IBUY)
+        source = Source.objects.filter(parser_name=AmplifyParser.__name__).first()
+        parser = AmplifyParser(source)
         parsed_index_tickers = parser.parse()
 
         coefficient_sum = 0

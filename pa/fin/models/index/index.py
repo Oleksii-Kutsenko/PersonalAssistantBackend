@@ -7,8 +7,6 @@ import pandas as pd
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models, transaction
 
-from fin.models.index.parsers import ISharesParser, InvescoCSVParser, AmplifyParser
-from fin.models.index.parsers.helpers import Source
 from fin.models.ticker import Ticker
 from fin.models.utils import TimeStampMixin, MAX_DIGITS, UpdatingStatus
 
@@ -18,17 +16,7 @@ class Index(TimeStampMixin):
     Index model
     """
 
-    url_parsers = {
-        Source.IBUY.value: AmplifyParser(Source.IBUY.value),
-        Source.IHI.value: ISharesParser(Source.IHI.value),
-        Source.ITOT.value: ISharesParser(Source.ITOT.value),
-        Source.IXUS.value: ISharesParser(Source.IXUS.value),
-        Source.PBW.value: InvescoCSVParser(),
-        Source.RUSSEL3000.value: ISharesParser(Source.RUSSEL3000.value),
-        Source.SOXX.value: ISharesParser(Source.SOXX.value),
-    }
-
-    data_source_url = models.URLField(choices=Source.choices, unique=True)
+    source = models.ForeignKey('Source', on_delete=models.CASCADE)
     status = models.IntegerField(choices=UpdatingStatus.choices,
                                  default=UpdatingStatus.successfully_updated)
     tickers = models.ManyToManyField(Ticker, through='fin.IndexTicker')
@@ -38,15 +26,8 @@ class Index(TimeStampMixin):
         Index model indexes
         """
         indexes = [
-            models.Index(fields=['data_source_url', ]),
+            models.Index(fields=['source', ]),
         ]
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.parser = self.url_parsers[self.data_source_url]
-
-    def __str__(self):
-        return str(dict(Source.choices)[self.data_source_url])
 
     @transaction.atomic
     def adjust(self, money, options):
@@ -121,8 +102,8 @@ class Index(TimeStampMixin):
         """
         Update tickers prices and their weights
         """
-        if self.parser.updatable:
-            parsed_index_tickers = self.parser.parse()
+        if self.source.updatable:
+            parsed_index_tickers = self.source.parser.parse()
             self.update_from_parsed_index_ticker(parsed_index_tickers)
 
     def update_from_parsed_index_ticker(self, parsed_index_tickers):
@@ -138,7 +119,7 @@ class Index(TimeStampMixin):
             index_tickers.append(index_ticker)
 
         IndexTicker.objects.filter(index=self).delete()
-        IndexTicker.objects.bulk_create(index_tickers, batch_size=500)
+        IndexTicker.objects.bulk_create(index_tickers, batch_size=300)
 
 
 class IndexTicker(TimeStampMixin):
@@ -159,6 +140,9 @@ class IndexTicker(TimeStampMixin):
         """
         Model indexes
         """
+        constraints = [
+            models.UniqueConstraint(fields=('index_id', 'ticker_id'), name='index_ticker_unique')
+        ]
         indexes = [
             models.Index(fields=['index', ]),
             models.Index(fields=['ticker', ]),

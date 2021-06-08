@@ -153,8 +153,7 @@ class TickerStatement(TimeStampMixin):
     name = models.CharField(choices=Statements.choices, max_length=50)
     fiscal_date_ending = models.DateField()
     value = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
-    ticker = models.ForeignKey(Ticker, on_delete=models.CASCADE, null=False,
-                               related_name='ticker_statements')
+    ticker = models.ForeignKey(Ticker, on_delete=models.CASCADE, null=False, related_name='ticker_statements')
 
     class Meta:
         """

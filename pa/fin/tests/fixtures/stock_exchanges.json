@@ -1,0 +1,394 @@
+[
+  {
+    "model": "fin.stockexchange",
+    "pk": 1,
+    "fields": {
+      "name": "XETRA"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 2,
+    "fields": {
+      "name": "NASDAQ"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 3,
+    "fields": {
+      "name": "NYSE"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 4,
+    "fields": {
+      "name": "NYSE American"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 5,
+    "fields": {
+      "name": "BATS Global Markets"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 6,
+    "fields": {
+      "name": "Tokyo Stock Exchange"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 7,
+    "fields": {
+      "name": "London Stock Exchange"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 8,
+    "fields": {
+      "name": "Euronext Amsterdam"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 9,
+    "fields": {
+      "name": "Taiwan Stock Exchange"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 10,
+    "fields": {
+      "name": "Hong Kong Exchanges And Clearing Ltd"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 11,
+    "fields": {
+      "name": "SIX Swiss Exchange"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 12,
+    "fields": {
+      "name": "Korea Exchange (Stock Market)"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 13,
+    "fields": {
+      "name": "Nyse Euronext - Euronext Paris"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 14,
+    "fields": {
+      "name": "Toronto Stock Exchange"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 15,
+    "fields": {
+      "name": "Asx - All Markets"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 16,
+    "fields": {
+      "name": "Omx Nordic Exchange Copenhagen A/S"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 17,
+    "fields": {
+      "name": "Johannesburg Stock Exchange"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 18,
+    "fields": {
+      "name": "XBSP"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 19,
+    "fields": {
+      "name": "National Stock Exchange Of India"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 20,
+    "fields": {
+      "name": "Borsa Italiana"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 21,
+    "fields": {
+      "name": "Bolsa De Madrid"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 22,
+    "fields": {
+      "name": "Nyse Euronext - Euronext Brussels"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 23,
+    "fields": {
+      "name": "Standard-Classica-Forts"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 24,
+    "fields": {
+      "name": "Nasdaq Omx Nordic"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 25,
+    "fields": {
+      "name": "Irish Stock Exchange - All Market"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 26,
+    "fields": {
+      "name": "Singapore Exchange"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 27,
+    "fields": {
+      "name": "Saudi Stock Exchange"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 28,
+    "fields": {
+      "name": "Nasdaq Omx Helsinki Ltd."
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 29,
+    "fields": {
+      "name": "Shanghai Stock Exchange"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 30,
+    "fields": {
+      "name": "Bolsa Mexicana De Valores"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 31,
+    "fields": {
+      "name": "Indonesia Stock Exchange"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 32,
+    "fields": {
+      "name": "Qatar Exchange"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 33,
+    "fields": {
+      "name": "Oslo Bors Asa"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 34,
+    "fields": {
+      "name": "Abu Dhabi Securities Exchange"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 35,
+    "fields": {
+      "name": "Kuwait Stock Exchange"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 36,
+    "fields": {
+      "name": "Bursa Malaysia"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 37,
+    "fields": {
+      "name": "Nyse Euronext - Euronext Lisbon"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 38,
+    "fields": {
+      "name": "Tel Aviv Stock Exchange"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 39,
+    "fields": {
+      "name": "Stock Exchange Of Thailand"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 40,
+    "fields": {
+      "name": "Budapest Stock Exchange"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 41,
+    "fields": {
+      "name": "Shenzhen Stock Exchange"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 42,
+    "fields": {
+      "name": "New Zealand Exchange Ltd"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 43,
+    "fields": {
+      "name": "Wiener Boerse Ag"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 44,
+    "fields": {
+      "name": "Warsaw Stock Exchange/Equities/Main Market"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 45,
+    "fields": {
+      "name": "Dubai Financial Market"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 46,
+    "fields": {
+      "name": "Philippine Stock Exchange Inc."
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 47,
+    "fields": {
+      "name": "Korea Exchange (Kosdaq)"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 48,
+    "fields": {
+      "name": "Santiago Stock Exchange"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 49,
+    "fields": {
+      "name": "Gretai Securities Market"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 50,
+    "fields": {
+      "name": "Prague Stock Exchange"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 51,
+    "fields": {
+      "name": "Egyptian Exchange"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 52,
+    "fields": {
+      "name": "Bolsa De Valores De Colombia"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 53,
+    "fields": {
+      "name": "NGM"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 54,
+    "fields": {
+      "name": "Athens Exchange S.A. Cash Market"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 55,
+    "fields": {
+      "name": "Istanbul Stock Exchange"
+    }
+  },
+  {
+    "model": "fin.stockexchange",
+    "pk": 56,
+    "fields": {
+      "name": "Karachi Stock Exchange (Guarantee) Limited"
+    }
+  }
+]

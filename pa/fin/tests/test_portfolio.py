@@ -23,10 +23,15 @@ class PortfolioTests(BaseTestCase):
     Tests for Portfolio class and related functionality
     """
     fixtures = [
-        'fin/migrations/fixtures/stock_exchanges.json',
-        'fin/tests/fixtures/ticker.json',
+        'fin/tests/fixtures/index.json',
+        'fin/tests/fixtures/index_ticker.json',
         'fin/tests/fixtures/portfolio.json',
-        'fin/tests/fixtures/index.json'
+        'fin/tests/fixtures/portfolio_ticker.json',
+        'fin/tests/fixtures/sources.json',
+        'fin/tests/fixtures/stock_exchanges.json',
+        'fin/tests/fixtures/stock_exchanges_aliases.json',
+        'fin/tests/fixtures/tickers.json',
+        'fin/tests/fixtures/users.json'
     ]
 
     def setUp(self) -> None:
@@ -43,13 +48,13 @@ class PortfolioTests(BaseTestCase):
         """
         expected_tickers = {
             'AAPL': 1,
-            'INTC': 1,
-            'SIRI': 2
+            'BAC': 1,
+            'GE': 1
         }
         portfolio_policy = PortfolioPolicyFactory()
         portfolio = portfolio_policy.portfolio
-        index = Index.objects.get(data_source_url='https://www.ishares.com/us/products/239724/'
-                                                  'ishares-core-sp-total-us-stock-market-etf/1467271812596.ajax')
+        index = Index.objects.get(source__url='https://www.ishares.com/us/products/239724/'
+                                              'ishares-core-sp-total-us-stock-market-etf/1467271812596.ajax')
         url = reverse('portfolios-adjust', kwargs={'pk': portfolio.id, 'index_id': index.id})
 
         response = self.client.get(url, {'money': 200})
@@ -87,10 +92,20 @@ class PortfolioTests(BaseTestCase):
         Test function that subtract existed portfolio from index
         """
         expected_result = [
-            PortfolioTicker(ticker=Ticker.objects.get(symbol='AAPL'), amount=11),
-            PortfolioTicker(ticker=Ticker.objects.get(symbol='TSLA'), amount=1),
-            PortfolioTicker(ticker=Ticker.objects.get(symbol='PYPL'), amount=1),
-            PortfolioTicker(ticker=Ticker.objects.get(symbol='INTC'), amount=4)
+            PortfolioTicker(ticker=Ticker.objects.get(symbol='AAPL'), amount=3),
+            PortfolioTicker(ticker=Ticker.objects.get(symbol='MSFT'), amount=1),
+            PortfolioTicker(ticker=Ticker.objects.get(symbol='BAC'), amount=1),
+            PortfolioTicker(ticker=Ticker.objects.get(symbol='CMCSA'), amount=1),
+            PortfolioTicker(ticker=Ticker.objects.get(symbol='XOM'), amount=1),
+            PortfolioTicker(ticker=Ticker.objects.get(symbol='VZ'), amount=1),
+            PortfolioTicker(ticker=Ticker.objects.get(symbol='INTC'), amount=1),
+            PortfolioTicker(ticker=Ticker.objects.get(symbol='CSCO'), amount=1),
+            PortfolioTicker(ticker=Ticker.objects.get(symbol='KO'), amount=1),
+            PortfolioTicker(ticker=Ticker.objects.get(symbol='PFE'), amount=1),
+            PortfolioTicker(ticker=Ticker.objects.get(symbol='T'), amount=1),
+            PortfolioTicker(ticker=Ticker.objects.get(symbol='WFC'), amount=1),
+            PortfolioTicker(ticker=Ticker.objects.get(symbol='GE'), amount=1),
+            PortfolioTicker(ticker=Ticker.objects.get(symbol='F'), amount=1),
         ]
         step = 200
 
