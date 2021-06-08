@@ -15,7 +15,7 @@ from django.db.models import Q
 from fin.models.index.parsers import Parser
 from fin.models.stock_exchange import StockExchange
 from fin.models.ticker import Ticker
-from .helpers import Source, TickerDataClass, ParsedIndexTicker
+from .helpers import TickerDataClass, ParsedIndexTicker
 
 
 # pylint: disable=too-many-instance-attributes
@@ -68,33 +68,18 @@ class ISharesParser(Parser):
     """
     Parser for IShares indexes
     """
-    index_params = {
-        Source.IHI.value: {'fileType': 'csv',
-                           'fileName': 'IHI_holdings',
-                           'dataType': 'fund'},
-        Source.ITOT.value: {'fileType': 'csv',
-                            'fileName': 'ITOT_holdings',
-                            'dataType': 'fund'},
-        Source.IXUS.value: {'fileType': 'csv',
-                            'fileName': 'IXUS_holdings',
-                            'dataType': 'fund'},
-        Source.RUSSEL3000.value: {'fileType': 'csv',
-                                  'fileName': 'IWV_holdings',
-                                  'dataType': 'fund'},
-        Source.SOXX.value: {'fileType': 'csv',
-                            'fileName': 'SOXX_holdings',
-                            'dataType': 'fund'}
-    }
 
-    def __init__(self, source_url):
-        self.source_url = source_url
-        self.params = self.index_params[source_url]
+    def __init__(self, source):
+        self.source_url = source.url
+        self.params = source.isharessourceparams
 
     def parse(self):
         equity_name = 'Equity'
         tickers_data_start_word = 'Ticker'
 
-        response = requests.get(self.source_url, params=self.params)
+        response = requests.get(self.source_url, params={'fileType': self.params.file_type,
+                                                         'fileName': self.params.file_name,
+                                                         'dataType': self.params.data_type})
 
         tickers_data_start_index = response.text.find(tickers_data_start_word)
         tickers_data = StringIO(response.text[tickers_data_start_index:])

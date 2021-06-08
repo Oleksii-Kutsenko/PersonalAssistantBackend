@@ -50,7 +50,7 @@ class InvescoCSVParser(Parser):
     """
     updatable = False
 
-    def __init__(self):
+    def __init__(self, _):
         self.csv_file = None
 
     def parse(self):

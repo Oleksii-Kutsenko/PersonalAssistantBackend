@@ -1,0 +1,35 @@
+[
+  {
+    "model": "fin.portfolioticker",
+    "pk": 392,
+    "fields": {
+      "created": "2021-06-03T16:00:23.846Z",
+      "updated": "2021-06-03T16:00:23.846Z",
+      "portfolio": 1,
+      "ticker": 51882,
+      "amount": 1
+    }
+  },
+  {
+    "model": "fin.portfolioticker",
+    "pk": 394,
+    "fields": {
+      "created": "2021-06-03T16:00:23.846Z",
+      "updated": "2021-06-03T16:00:23.846Z",
+      "portfolio": 1,
+      "ticker": 51890,
+      "amount": 3
+    }
+  },
+  {
+    "model": "fin.portfolioticker",
+    "pk": 401,
+    "fields": {
+      "created": "2021-06-03T16:00:23.846Z",
+      "updated": "2021-06-03T16:00:23.846Z",
+      "portfolio": 1,
+      "ticker": 51913,
+      "amount": 4
+    }
+  }
+]

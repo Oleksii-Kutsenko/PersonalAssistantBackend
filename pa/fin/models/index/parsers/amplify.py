@@ -50,8 +50,8 @@ class AmplifyParser(Parser):
     """
     user_agent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:89.0) Gecko/20100101 Firefox/89.0'
 
-    def __init__(self, source_url):
-        self.source_url = source_url
+    def __init__(self, source):
+        self.source_url = source.url
 
     def parse(self):
         index_name = 'IBUY'

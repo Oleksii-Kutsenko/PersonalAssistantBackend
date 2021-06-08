@@ -4,7 +4,7 @@ Index Factory
 import factory
 from factory.fuzzy import FuzzyChoice
 
-from fin.models.index import Index
+from fin.models.index import Index, Source
 
 
 class IndexFactory(factory.DjangoModelFactory):
@@ -18,5 +18,4 @@ class IndexFactory(factory.DjangoModelFactory):
         """
         model = Index
 
-    data_source_url = FuzzyChoice(choices=[index for index, parser in Index.url_parsers.items()
-                                           if parser.updatable])
+    source = FuzzyChoice(choices=Source.objects.filter(updatable=True).all())

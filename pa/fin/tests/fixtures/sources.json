@@ -1,0 +1,72 @@
+[
+  {
+    "model": "fin.source",
+    "pk": 1,
+    "fields": {
+      "parser_name": "AmplifyParser",
+      "name": "IBUY",
+      "updatable": true,
+      "url": "https://amplifyetfs.com/Data/Feeds/ForesideAmplify.40XL.XL_Holdings.csv"
+    }
+  },
+  {
+    "model": "fin.source",
+    "pk": 2,
+    "fields": {
+      "parser_name": "ISharesParser",
+      "name": "IHI",
+      "updatable": true,
+      "url": "https://www.ishares.com/us/products/239516/ishares-us-medical-devices-etf/1467271812596.ajax"
+    }
+  },
+  {
+    "model": "fin.source",
+    "pk": 3,
+    "fields": {
+      "parser_name": "ISharesParser",
+      "name": "ITOT",
+      "updatable": true,
+      "url": "https://www.ishares.com/us/products/239724/ishares-core-sp-total-us-stock-market-etf/1467271812596.ajax"
+    }
+  },
+  {
+    "model": "fin.source",
+    "pk": 4,
+    "fields": {
+      "parser_name": "ISharesParser",
+      "name": "IXUS",
+      "updatable": true,
+      "url": "https://www.ishares.com/us/products/244048/ishares-core-msci-total-international-stock-etf/1467271812596.ajax"
+    }
+  },
+  {
+    "model": "fin.source",
+    "pk": 5,
+    "fields": {
+      "parser_name": "InvescoCSVParser",
+      "name": "PBW",
+      "updatable": false,
+      "url": "http://invescopowershares.com/products/overview.aspx?ticker=PBW"
+    }
+  },
+  {
+    "model": "fin.source",
+    "pk": 6,
+    "fields": {
+      "parser_name": "ISharesParser",
+      "name": "RUSSEL3000",
+      "updatable": true,
+      "url": "https://www.ishares.com/us/products/239714/ishares-russell-3000-etf/1467271812596.ajax"
+    }
+  },
+  {
+    "model": "fin.source",
+    "pk": 7,
+    "fields": {
+      "parser_name": "ISharesParser",
+      "name": "SOXX",
+      "updatable": true,
+      "url": "https://www.ishares.com/us/products/239705/ishares-phlx-semiconductor-etf/1467271812596.ajax"
+    }
+  }
+]
