@@ -42,3 +42,15 @@ Inside the docker django container:
 pylint --rcfile=./.pylintrc fin/* pa/* users/*
 pytest --cov-report html --cov=./
 ```
+
+### DB Dump
+
+```bash
+docker exec -t db pg_dump pa -U pa_user > dump_`date +%d-%m-%Y"_"%H_%M_%S`.sql
+```
+
+### DB Restore
+
+```bash
+cat your_dump.sql | docker exec -i db psql -U pa_user
+```

@@ -36,6 +36,8 @@ class Index(TimeStampMixin):
         """
 
         tickers_query = IndexTicker.objects.filter(index=self) \
+            .exclude(ticker__id__in=options['skip_tickers']) \
+            .exclude(ticker__stock_exchange__available=False) \
             .exclude(ticker__country__in=options['skip_countries']) \
             .exclude(ticker__sector__in=options['skip_sectors']) \
             .exclude(ticker__industry__in=options['skip_industries']) \
@@ -43,8 +45,6 @@ class Index(TimeStampMixin):
 
         if tickers_query.count() == 0:
             raise Exception('Not enough data for adjusting')
-
-        tickers_query = tickers_query.exclude(ticker__id__in=options['skip_tickers'])
 
         dataset = tickers_query.values_list('ticker__id', 'ticker__symbol', 'ticker__price', 'weight')
         tickers_df = pd.DataFrame(list(dataset),

@@ -11,6 +11,8 @@ class StockExchangeAdmin(admin.ModelAdmin, DynamicArrayMixin):
     """
     Adds Stock Exchange model to the admin panel
     """
+    list_display = ('name', 'available',)
+    list_filter = ('available',)
 
 
 admin.site.register(StockExchange, StockExchangeAdmin)

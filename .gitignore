@@ -20,3 +20,5 @@ celerybeat-schedule.db
 # certs
 localhost.crt
 localhost.key
+
+dumps
