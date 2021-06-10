@@ -92,20 +92,12 @@ class PortfolioTests(BaseTestCase):
         Test function that subtract existed portfolio from index
         """
         expected_result = [
-            PortfolioTicker(ticker=Ticker.objects.get(symbol='AAPL'), amount=3),
-            PortfolioTicker(ticker=Ticker.objects.get(symbol='MSFT'), amount=1),
-            PortfolioTicker(ticker=Ticker.objects.get(symbol='BAC'), amount=1),
-            PortfolioTicker(ticker=Ticker.objects.get(symbol='CMCSA'), amount=1),
-            PortfolioTicker(ticker=Ticker.objects.get(symbol='XOM'), amount=1),
-            PortfolioTicker(ticker=Ticker.objects.get(symbol='VZ'), amount=1),
-            PortfolioTicker(ticker=Ticker.objects.get(symbol='INTC'), amount=1),
-            PortfolioTicker(ticker=Ticker.objects.get(symbol='CSCO'), amount=1),
-            PortfolioTicker(ticker=Ticker.objects.get(symbol='KO'), amount=1),
-            PortfolioTicker(ticker=Ticker.objects.get(symbol='PFE'), amount=1),
-            PortfolioTicker(ticker=Ticker.objects.get(symbol='T'), amount=1),
-            PortfolioTicker(ticker=Ticker.objects.get(symbol='WFC'), amount=1),
-            PortfolioTicker(ticker=Ticker.objects.get(symbol='GE'), amount=1),
-            PortfolioTicker(ticker=Ticker.objects.get(symbol='F'), amount=1),
+            (31818, 2),
+            (119995, 1),
+            (31832, 1),
+            (31846, 1),
+            (31847, 1),
+            (31885, 1)
         ]
         step = 200
 
@@ -114,11 +106,11 @@ class PortfolioTests(BaseTestCase):
 
         portfolio_query = PortfolioTicker.objects.filter(portfolio=portfolio)
         adjusted_index = index.adjust(float(portfolio.total_tickers + step), AdjustMixin.default_adjust_options)
-        tickers_diff = Portfolio.ticker_difference(adjusted_index, portfolio_query)
+        tickers_diff = Portfolio.tickers_difference(adjusted_index, portfolio_query)
 
         for i in range(0, 4):
-            self.assertEqual(expected_result[i].ticker.symbol, tickers_diff[i].get('symbol'))
-            self.assertEqual(expected_result[i].amount, tickers_diff[i].get('amount'))
+            self.assertEqual(expected_result[i][0], tickers_diff.iloc[i].id)
+            self.assertEqual(expected_result[i][1], tickers_diff.iloc[i].amount)
 
     def test_portfolio_breakdowns_calculation(self):
         """

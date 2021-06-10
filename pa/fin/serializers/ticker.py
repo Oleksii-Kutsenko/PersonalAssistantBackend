@@ -228,6 +228,29 @@ class TickerSerializer(serializers.ModelSerializer):
         Serializer meta class
         """
         model = Ticker
-        fields = ['annual_earnings_growth', 'company_name', 'country', 'debt', 'id', 'industry', 'pe',
-                  'price', 'returns_ratios', 'sector', 'shares_dilution', 'stock_exchange', 'symbol', 'updated']
+        fields = ('annual_earnings_growth', 'company_name', 'country', 'debt', 'id', 'industry', 'pe',
+                  'price', 'returns_ratios', 'sector', 'shares_dilution', 'stock_exchange', 'symbol', 'updated')
         depth = 1
+
+
+class AdjustedTickerSerializer(serializers.BaseSerializer):
+    """
+    Serializer class for the results of adjusting algorithm
+    """
+
+    def create(self, validated_data):
+        raise NotImplementedError
+
+    def update(self, instance, validated_data):
+        raise NotImplementedError
+
+    def to_internal_value(self, data):
+        pass
+
+    def to_representation(self, instance):
+        pass
+
+    ticker = TickerSerializer()
+    amount = serializers.IntegerField()
+    cost = serializers.FloatField()
+    weight = serializers.FloatField()
