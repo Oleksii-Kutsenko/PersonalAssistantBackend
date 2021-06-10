@@ -29,6 +29,9 @@ class Index(TimeStampMixin):
             models.Index(fields=['source', ]),
         ]
 
+    def __str__(self):
+        return self.source.name
+
     @transaction.atomic
     def adjust(self, money, options):
         """
@@ -46,40 +49,39 @@ class Index(TimeStampMixin):
         if tickers_query.count() == 0:
             raise Exception('Not enough data for adjusting')
 
-        dataset = tickers_query.values_list('ticker__id', 'ticker__symbol', 'ticker__price', 'weight')
-        tickers_df = pd.DataFrame(list(dataset),
-                                  columns=['ticker__id', 'ticker__symbol', 'ticker__price', 'weight'])
-        tickers_df['ticker__price'] = tickers_df['ticker__price'].astype(float)
-        tickers_df['weight'] = tickers_df['weight'].astype(float)
+        dataset = list(tickers_query.values_list('ticker__id', 'ticker__price', 'weight'))
+        tickers_df = pd.DataFrame(dataset, columns=['id', 'price', 'weight'])
 
-        coefficient = 100 / tickers_df['weight'].sum()
-        tickers_df.iloc[:, 3] *= coefficient
+        tickers_df.id = tickers_df.id.astype(object)
+        tickers_df.price = tickers_df.price.astype(float)
+        tickers_df.weight = tickers_df.weight.astype(float)
 
+        coefficient = 1 / tickers_df.weight.sum()
+        tickers_df.iloc[:, 2] *= coefficient
+
+        step = 100
         adjusted_money_amount = money
-        step = money * 0.1
         while True:
-            tickers_df['amount'] = (tickers_df['weight'] / 100) * adjusted_money_amount \
-                                   / tickers_df['ticker__price']
-            tickers_df['amount'] = tickers_df['amount'].round()
-
-            tickers_df['cost'] = tickers_df['amount'] * tickers_df['ticker__price']
-            if tickers_df[tickers_df['cost'] > (money * 0.1)]['cost'].sum() > money:
-                break
             adjusted_money_amount += step
+            self.evaluate_dataframe(adjusted_money_amount, tickers_df)
 
-        # tickers_df = tickers_df[tickers_df['cost'] > 200]
-        adjusted_money_amount -= step
-        tickers_df['amount'] = tickers_df['weight'] / 100 * adjusted_money_amount / tickers_df[
-            'ticker__price']
-        tickers_df['amount'] = tickers_df['amount'].round()
+            if tickers_df.cost.sum() > money:
+                adjusted_money_amount -= step
+                self.evaluate_dataframe(adjusted_money_amount, tickers_df)
 
-        tickers_df['cost'] = tickers_df['amount'] * tickers_df['ticker__price']
+                break
+
         tickers_df = tickers_df[tickers_df.cost != 0]
-
-        coefficient = 100 / tickers_df['weight'].sum()
-        tickers_df.iloc[:, 3] *= coefficient
-
         return tickers_df
+
+    @staticmethod
+    def evaluate_dataframe(money, tickers_df):
+        """
+        Adjust the dataframe by given amount of money
+        """
+        tickers_df['amount'] = tickers_df.weight * money / tickers_df.price
+        tickers_df.amount = tickers_df.amount.round()
+        tickers_df['cost'] = tickers_df.amount * tickers_df.price
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         super().save(force_insert=False, force_update=False, using=None, update_fields=None)

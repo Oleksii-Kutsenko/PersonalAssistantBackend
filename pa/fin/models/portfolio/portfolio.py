@@ -73,10 +73,15 @@ class Portfolio(TimeStampMixin):
         proper_portfolio_tickers_sum = proper_portfolio_tickers.annotate(cost=cost) \
                                            .aggregate(Sum('cost')).get('cost__sum') or 0
 
-        adjusted_index_tickers = index.adjust(float(proper_portfolio_tickers_sum) + money, options)
-        ticker_diff = self.ticker_difference(adjusted_index_tickers, proper_portfolio_tickers)
-        packed_ticker_diff = self.pack_tickers_difference(money, ticker_diff)
-        return packed_ticker_diff
+        tickers_df = index.adjust(float(proper_portfolio_tickers_sum) + money, options)
+        tickers_diff_df = self.tickers_difference(tickers_df, proper_portfolio_tickers)
+        packed_ticker_diff = self.pack_tickers_difference(money, tickers_diff_df)
+
+        tickers_qs = Ticker.objects.filter(id__in=packed_ticker_diff.keys())
+        response = TickerSerializer(tickers_qs, many=True).data
+        for ticker in response:
+            ticker.update(packed_ticker_diff[ticker['id']])
+        return response
 
     def import_from_exante(self):
         """
@@ -116,49 +121,43 @@ class Portfolio(TimeStampMixin):
         PortfolioTicker.objects.bulk_create(portfolio_tickers)
 
     @staticmethod
-    def pack_tickers_difference(money, ticker_diff):
+    def pack_tickers_difference(money, tickers_diff_df):
         """
         Tries to pack the tickers difference so that the tickers sum is less than the money
         parameter
         """
-        result = []
-        for ticker in ticker_diff:
-            amount = money // float(ticker['price'])
-            if amount == 0:
+        result = {}
+        min_price = tickers_diff_df.price.min()
+        for _, ticker_df_row in tickers_diff_df.iterrows():
+            max_amount = money // float(ticker_df_row.price)
+
+            if max_amount == 0:
                 continue
-            if amount < ticker['amount']:
-                ticker['amount'] = amount
-            ticker['cost'] = ticker['amount'] * float(ticker['price'])
-            money -= ticker['cost']
-            result.append(ticker)
+            if max_amount < ticker_df_row.amount:
+                ticker_df_row.amount = max_amount
+            ticker_df_row.cost = ticker_df_row.amount * ticker_df_row.price
+
+            result[ticker_df_row.id] = {'amount': ticker_df_row.amount,
+                                        'cost': ticker_df_row.cost}
+
+            money -= ticker_df_row.cost
+            if money < min_price:
+                break
+
         return result
 
     @staticmethod
-    def ticker_difference(adjusted_index_tickers, portfolio_tickers):
+    def tickers_difference(tickers_df, portfolio_tickers):
         """
         Excludes tickers already present in the portfolio from the adjusted index tickers
         """
-        result = []
-        for _, adjusted_ticker in adjusted_index_tickers.iterrows():
-            ticker_id = adjusted_ticker['ticker__id']
-            portfolio_ticker = portfolio_tickers.filter(ticker__id=ticker_id).first()
+        matched_portfolio_tickers = portfolio_tickers.filter(ticker__id__in=tickers_df.id.values)
+        for matched_ticker in matched_portfolio_tickers:
+            condition = tickers_df.id == matched_ticker.ticker.id
+            tickers_df.loc[condition, 'amount'] -= matched_ticker.amount
 
-            if portfolio_ticker:
-                ticker = portfolio_ticker.ticker
-                amount = adjusted_ticker['amount'] - portfolio_ticker.amount
-            else:
-                ticker = Ticker.objects.get(id=ticker_id)
-                amount = adjusted_ticker['amount']
-
-            if amount > 0:
-                result.append({
-                    **TickerSerializer(ticker).data,
-                    'amount': amount,
-                    'cost': float(ticker.price) * amount,
-                    'weight': adjusted_ticker['weight']
-                })
-
-        return result
+        tickers_df = tickers_df[tickers_df.amount > 0]
+        return tickers_df
 
     @property
     def total(self):
