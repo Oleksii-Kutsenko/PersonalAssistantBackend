@@ -59,7 +59,7 @@ class Portfolio(TimeStampMixin):
             models.Index(fields=['user', ]),
         ]
 
-    def adjust(self, index_id, money, options):
+    def adjust(self, index_id, extra_money, options):
         """
         The function that tries to make the portfolio more similar to some Index
         """
@@ -67,15 +67,14 @@ class Portfolio(TimeStampMixin):
         cost = Cast(F('amount') * F('ticker__price'), decimal_field)
         index = Index.objects.get(pk=index_id)
 
-        proper_portfolio_tickers = PortfolioTicker.objects \
+        portfolio_tickers = PortfolioTicker.objects \
             .filter(portfolio=self) \
             .filter(ticker__symbol__in=index.tickers.values_list('symbol', flat=True))
-        proper_portfolio_tickers_sum = proper_portfolio_tickers.annotate(cost=cost) \
-                                           .aggregate(Sum('cost')).get('cost__sum') or 0
+        portfolio_tickers_sum = portfolio_tickers.annotate(cost=cost).aggregate(Sum('cost')).get('cost__sum') or 0
 
-        tickers_df = index.adjust(float(proper_portfolio_tickers_sum) + money, options)
-        tickers_diff_df = self.tickers_difference(tickers_df, proper_portfolio_tickers)
-        packed_ticker_diff = self.pack_tickers_difference(money, tickers_diff_df)
+        tickers_df = index.adjust(float(portfolio_tickers_sum), extra_money, options)
+        tickers_diff_df = self.tickers_difference(tickers_df, portfolio_tickers)
+        packed_ticker_diff = self.pack_tickers_difference(extra_money, tickers_diff_df)
 
         tickers_qs = Ticker.objects.filter(id__in=packed_ticker_diff.keys())
         response = TickerSerializer(tickers_qs, many=True).data

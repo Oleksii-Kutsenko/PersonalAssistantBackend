@@ -33,7 +33,7 @@ class Index(TimeStampMixin):
         return self.source.name
 
     @transaction.atomic
-    def adjust(self, money, options):
+    def adjust(self, invested_money: float, extra_money: float, options):
         """
         Calculate index adjusted by the amount of money
         """
@@ -44,6 +44,7 @@ class Index(TimeStampMixin):
             .exclude(ticker__country__in=options['skip_countries']) \
             .exclude(ticker__sector__in=options['skip_sectors']) \
             .exclude(ticker__industry__in=options['skip_industries']) \
+            .exclude(ticker__price__gt=extra_money) \
             .order_by('-weight')
 
         if tickers_query.count() == 0:
@@ -60,12 +61,13 @@ class Index(TimeStampMixin):
         tickers_df.iloc[:, 2] *= coefficient
 
         step = 100
-        adjusted_money_amount = money
+        max_tickers_cost = invested_money + extra_money
+        adjusted_money_amount = invested_money + extra_money
         while True:
             adjusted_money_amount += step
             self.evaluate_dataframe(adjusted_money_amount, tickers_df)
 
-            if tickers_df.cost.sum() > money:
+            if tickers_df.cost.sum() > max_tickers_cost:
                 adjusted_money_amount -= step
                 self.evaluate_dataframe(adjusted_money_amount, tickers_df)
 

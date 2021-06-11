@@ -9,7 +9,6 @@ from rest_framework.status import HTTP_406_NOT_ACCEPTABLE, HTTP_202_ACCEPTED, HT
 
 from fin.models.index.index import Index
 from fin.models.portfolio import Portfolio, PortfolioTicker
-from fin.models.ticker import Ticker
 from fin.models.utils import UpdatingStatus
 from fin.tests.base import BaseTestCase
 from fin.tests.factories.portfolio import PortfolioFactory
@@ -93,8 +92,9 @@ class PortfolioTests(BaseTestCase):
         """
         expected_result = [
             (31818, 2),
-            (119995, 1),
             (31832, 1),
+            (31837, 1),
+            (31838, 1),
             (31846, 1),
             (31847, 1),
             (31885, 1)
@@ -105,7 +105,7 @@ class PortfolioTests(BaseTestCase):
         index = Index.objects.first()
 
         portfolio_query = PortfolioTicker.objects.filter(portfolio=portfolio)
-        adjusted_index = index.adjust(float(portfolio.total_tickers + step), AdjustMixin.default_adjust_options)
+        adjusted_index = index.adjust(float(portfolio.total_tickers), step, AdjustMixin.default_adjust_options)
         tickers_diff = Portfolio.tickers_difference(adjusted_index, portfolio_query)
 
         for i in range(0, 4):
