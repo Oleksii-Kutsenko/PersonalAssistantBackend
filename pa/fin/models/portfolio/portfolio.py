@@ -135,7 +135,7 @@ class Portfolio(TimeStampMixin):
                 continue
             if max_amount < ticker_df_row.amount:
                 ticker_df_row.amount = max_amount
-            ticker_df_row.cost = ticker_df_row.amount * ticker_df_row.price
+            ticker_df_row.cost = round(ticker_df_row.amount * ticker_df_row.price, 2)
 
             result[ticker_df_row.id] = {'amount': ticker_df_row.amount,
                                         'cost': ticker_df_row.cost}
