@@ -2,90 +2,26 @@
 Views
 """
 import logging
-from datetime import timedelta
 
-from django.db.models import Min
-from django.utils import timezone
 from rest_framework import filters, viewsets
+from rest_framework import mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.status import HTTP_406_NOT_ACCEPTABLE, HTTP_200_OK, \
-    HTTP_202_ACCEPTED
 
 from fin.serializers.portfolio.portfolio import PortfolioSerializer, AccountSerializer, \
-    DetailedPortfolioSerializer
+    DetailedPortfolioSerializer, ExanteImportSerializer
 from .exceptions import BadRequest
-from .models.index import Index
-from .models.portfolio import Portfolio
+from .mixins import UpdateTickersMixin, AdjustMixin
 from .models.account import Account
+from .models.index import Index
+from .models.portfolio import Portfolio, ExanteSettings
 from .models.portfolio.portfolio_policy import PortfolioPolicy
-from .models.utils import UpdatingStatus
 from .serializers.index import IndexSerializer, DetailIndexSerializer
+from .serializers.portfolio.exante_settings import ExanteSettingsSerializer
 from .serializers.portfolio.portfolio_policy import PortfolioPolicySerializer
 from .tasks.update_tickers_statements import update_model_tickers_statements_task
 
 logger = logging.getLogger(__name__)
-
-
-# pylint: disable=unused-argument
-class AdjustMixin:
-    """
-    Extracts required params for adjusting functionality from request
-    """
-    default_adjust_options = {
-        'skip_countries': [],
-        'skip_sectors': [],
-        'skip_industries': [],
-        'skip_tickers': [],
-    }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.money = None
-        self.adjust_options = self.default_adjust_options
-
-    def initial(self, request, *args, **kwargs):
-        """
-        Overriding the DRF View method that executes inside every View/Viewset
-        """
-        super().initial(request, *args, **kwargs)
-        money = request.GET.get('money')
-        try:
-            self.money = float(money)
-        except (TypeError, ValueError):
-            self.money = None
-
-        options = {
-            'skip_countries': request.GET.getlist('skip-country[]', []),
-            'skip_sectors': request.GET.getlist('skip-sector[]', []),
-            'skip_industries': request.GET.getlist('skip-industry[]', []),
-            'skip_tickers': request.GET.getlist('skip-ticker[]', []),
-        }
-        self.adjust_options.update(options)
-
-
-class UpdateTickersMixin:
-    """
-    Mixin of ticker updating for models with tickers
-    """
-    acceptable_tickers_updated_period = timedelta(hours=1)
-
-    @action(detail=True, methods=['put'], url_path='tickers')
-    def update_tickers(self, request, *args, **kwargs):
-        """
-        Runs the task of updating tickers for models with tickers.
-        """
-        obj_id = kwargs.get('pk')
-        obj = self.model.objects.get(pk=obj_id)
-        if obj.status == UpdatingStatus.updating:
-            return Response(status=HTTP_406_NOT_ACCEPTABLE)
-
-        last_time_tickers_updated = obj.tickers.aggregate(Min('updated')).get('updated__min')
-        tickers_can_updated_time = timezone.now() - self.acceptable_tickers_updated_period
-        if tickers_can_updated_time >= last_time_tickers_updated:
-            update_model_tickers_statements_task.delay(self.model.__name__, obj_id)
-            return Response(status=HTTP_202_ACCEPTED)
-        return Response(status=HTTP_200_OK)
 
 
 class AccountViewSet(viewsets.ReadOnlyModelViewSet):
@@ -97,6 +33,17 @@ class AccountViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = AccountSerializer
     filter_backends = [filters.OrderingFilter]
     ordering_fields = '__all__'
+
+
+class ExanteSettingsViewSet(mixins.CreateModelMixin,
+                            mixins.RetrieveModelMixin,
+                            mixins.UpdateModelMixin,
+                            viewsets.GenericViewSet):
+    """
+    External interface for ExanteSettings model
+    """
+    queryset = ExanteSettings.objects.all()
+    serializer_class = ExanteSettingsSerializer
 
 
 class IndexViewSet(UpdateTickersMixin, viewsets.ModelViewSet):
@@ -137,6 +84,8 @@ class PortfolioViewSet(AdjustMixin, UpdateTickersMixin, viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'retrieve':
             return DetailedPortfolioSerializer
+        if self.action == 'import_from_exante':
+            return ExanteImportSerializer
         return PortfolioSerializer
 
     @action(detail=True, url_path='adjust/indices/(?P<index_id>[^/.]+)')
@@ -154,13 +103,18 @@ class PortfolioViewSet(AdjustMixin, UpdateTickersMixin, viewsets.ModelViewSet):
 
         return Response(data={'tickers': adjusted_portfolio})
 
-    @action(detail=True)
+    @action(detail=True, methods=['PUT'])
     def import_from_exante(self, request, *args, **kwargs):
         """
         Import portfolio from Exante
         """
         portfolio = self.get_object()
-        portfolio.import_from_exante()
+
+        serializer = self.get_serializer(data=request.data, instance=portfolio)
+        serializer.is_valid(raise_exception=True)
+
+        portfolio.import_from_exante(serializer.validated_data.pop('secret_key'))
+
         serializer = DetailedPortfolioSerializer(portfolio)
         return Response(serializer.data)
 

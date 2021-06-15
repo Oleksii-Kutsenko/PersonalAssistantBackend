@@ -13,7 +13,7 @@ from fin.models.utils import UpdatingStatus
 from fin.tests.base import BaseTestCase
 from fin.tests.factories.portfolio import PortfolioFactory
 from fin.tests.factories.portfolio_policy import PortfolioPolicyFactory
-from fin.views import AdjustMixin
+from fin.mixins import AdjustMixin
 from users.models import User
 
 

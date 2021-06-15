@@ -4,11 +4,9 @@ Portfolio model and related models
 from decimal import Decimal
 
 from django.db import models
-from django.db.models import ForeignKey, CASCADE, ManyToManyField, IntegerField, CharField, \
-    DecimalField, F, Sum
+from django.db.models import ForeignKey, CASCADE, IntegerField, DecimalField, F, Sum
 from django.db.models.functions import Cast
 
-from fin.external_api.exante import get_jwt, get_account_summary
 from fin.models.account import Account
 from fin.models.index import Index
 from fin.models.stock_exchange import StockExchangeAlias
@@ -43,11 +41,9 @@ class Portfolio(TimeStampMixin):
     """
     Class that represents the portfolio
     """
-    exante_account_id = CharField(max_length=50)
-    name = CharField(max_length=100)
-    status = models.IntegerField(choices=UpdatingStatus.choices,
-                                 default=UpdatingStatus.successfully_updated)
-    tickers = ManyToManyField(Ticker, through='fin.PortfolioTicker')
+    name = models.CharField(max_length=100)
+    status = models.IntegerField(choices=UpdatingStatus.choices, default=UpdatingStatus.successfully_updated)
+    tickers = models.ManyToManyField(Ticker, through='fin.PortfolioTicker')
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
 
     class Meta:
@@ -82,14 +78,14 @@ class Portfolio(TimeStampMixin):
             ticker.update(packed_ticker_diff[ticker['id']])
         return response
 
-    def import_from_exante(self):
+    def import_from_exante(self, secret_key):
         """
         Import portfolio from the EXANTE
         """
         stock_exchanges_mapper = dict(StockExchangeAlias.objects.values_list('alias', 'stock_exchange_id', ))
 
-        jwt = get_jwt()
-        account_summary = get_account_summary(self.exante_account_id, jwt)
+        jwt = self.exantesettings.get_jwt(secret_key)
+        account_summary = self.exantesettings.get_account_summary(jwt)
 
         accounts = []
         currencies = account_summary.pop('currencies')
