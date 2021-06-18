@@ -1,3 +1,6 @@
+"""
+ExanteSettings model and related models
+"""
 import datetime
 import time
 
@@ -7,6 +10,9 @@ from django.db import models
 
 
 class ExanteSettings(models.Model):
+    """
+    Model that represents parameters for the access the Exante Api
+    """
     exante_account_id = models.CharField(max_length=50)
     iss = models.CharField(max_length=50)
     sub = models.CharField(max_length=50)

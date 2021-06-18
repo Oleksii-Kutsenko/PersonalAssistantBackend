@@ -30,18 +30,21 @@ class AccountSerializer(serializers.ModelSerializer):
 
 
 class ExanteImportSerializer(serializers.Serializer):
+    """
+    Serializer for the importing portfolio from Exante
+    """
     secret_key = serializers.CharField(write_only=True)
 
     def create(self, validated_data):
         raise NotImplementedError
 
-    def validate(self, data):
+    def validate(self, attrs):
         """
         Check that portfolio has set exante settings
         """
         if not hasattr(self.instance, 'exantesettings'):
             raise ValidationError('Please set the exante portfolio settings to have ability import portfolio.')
-        return super().validate(data)
+        return super().validate(attrs)
 
     def update(self, instance, validated_data):
         raise NotImplementedError

@@ -82,12 +82,19 @@ class PortfolioViewSet(AdjustMixin, UpdateTickersMixin, viewsets.ModelViewSet):
         return queryset
 
     def get_serializer_class(self):
-        if self.action == 'retrieve':
-            return DetailedPortfolioSerializer
-        if self.action == 'import_from_exante':
-            return ExanteImportSerializer
-        return PortfolioSerializer
+        if self.action == 'metadata':
+            if self.action_map == {'put': 'import_from_exante'}:
+                return ExanteImportSerializer
+            return PortfolioSerializer
+        else:
+            if self.action == 'retrieve':
+                return DetailedPortfolioSerializer
+        
+            if self.action == 'import_from_exante':
+                return ExanteImportSerializer
+            return PortfolioSerializer
 
+    # pylint: disable=unused-argument
     @action(detail=True, url_path='adjust/indices/(?P<index_id>[^/.]+)')
     def adjust(self, request, *args, **kwargs):
         """
@@ -117,6 +124,7 @@ class PortfolioViewSet(AdjustMixin, UpdateTickersMixin, viewsets.ModelViewSet):
 
         serializer = DetailedPortfolioSerializer(portfolio)
         return Response(serializer.data)
+    # pylint: enable=unused-argument
 
 
 class PortfolioPolicyViewSet(viewsets.ModelViewSet):
