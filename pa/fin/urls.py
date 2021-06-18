@@ -10,6 +10,7 @@ from fin import views
 
 router = routers.DefaultRouter()
 router.register(r'accounts', views.AccountViewSet)
+router.register(r'exante-settings', views.ExanteSettingsViewSet)
 router.register(r'indices', views.IndexViewSet)
 router.register(r'portfolios', views.PortfolioViewSet, basename='portfolios')
 router.register(r'portfolio-policies', views.PortfolioPolicyViewSet, basename='portfolio-policies')

@@ -7,9 +7,10 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import SerializerMethodField
 
-from fin.models.portfolio import Portfolio, PortfolioTicker
 from fin.models.account import Account
+from fin.models.portfolio import Portfolio, PortfolioTicker
 from fin.models.utils import MAX_DIGITS, DECIMAL_PLACES, UpdatingStatus
+from fin.serializers.portfolio.exante_settings import ExanteSettingsSerializer
 from fin.serializers.ticker import TickerSerializer
 from fin.serializers.utils import FlattenMixin
 
@@ -26,6 +27,27 @@ class AccountSerializer(serializers.ModelSerializer):
         """
         model = Account
         fields = ('id', 'name', 'currency', 'portfolio', 'value')
+
+
+class ExanteImportSerializer(serializers.Serializer):
+    """
+    Serializer for the importing portfolio from Exante
+    """
+    secret_key = serializers.CharField(write_only=True)
+
+    def create(self, validated_data):
+        raise NotImplementedError
+
+    def validate(self, attrs):
+        """
+        Check that portfolio has set exante settings
+        """
+        if not hasattr(self.instance, 'exantesettings'):
+            raise ValidationError('Please set the exante portfolio settings to have ability import portfolio.')
+        return super().validate(attrs)
+
+    def update(self, instance, validated_data):
+        raise NotImplementedError
 
 
 # pylint: disable=no-self-use
@@ -56,13 +78,14 @@ class PortfolioSerializer(serializers.ModelSerializer):
     Serializer for Portfolio model
     """
     id = serializers.IntegerField(read_only=True)
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         """
         Serializer meta class
         """
         model = Portfolio
-        fields = ('exante_account_id', 'id', 'name', 'user')
+        fields = ('id', 'name', 'user',)
 
 
 class DetailedPortfolioSerializer(PortfolioSerializer):
@@ -70,6 +93,7 @@ class DetailedPortfolioSerializer(PortfolioSerializer):
     The portfolio serializer contains all fields of model
     """
     accounts = AccountSerializer(many=True, read_only=True)
+    exantesettings = ExanteSettingsSerializer()
     industries_breakdown = SerializerMethodField(read_only=True)
     sectors_breakdown = SerializerMethodField(read_only=True)
     status = SerializerMethodField(read_only=True)
@@ -157,7 +181,7 @@ class DetailedPortfolioSerializer(PortfolioSerializer):
         Meta
         """
         model = PortfolioSerializer.Meta.model
-        fields = ('accounts', 'industries_breakdown', 'portfolio_policy', 'sectors_breakdown',
-                  'status', 'tickers', 'tickers_last_updated', 'total', 'total_accounts',
+        fields = ('accounts', 'exantesettings', 'industries_breakdown', 'portfolio_policy',
+                  'sectors_breakdown', 'status', 'tickers', 'tickers_last_updated', 'total', 'total_accounts',
                   'total_tickers') + PortfolioSerializer.Meta.fields
         depth = 1

@@ -7,13 +7,13 @@ from django.urls import reverse
 from django.utils import timezone
 from rest_framework.status import HTTP_406_NOT_ACCEPTABLE, HTTP_202_ACCEPTED, HTTP_200_OK
 
+from fin.mixins import AdjustMixin
 from fin.models.index.index import Index
 from fin.models.portfolio import Portfolio, PortfolioTicker
 from fin.models.utils import UpdatingStatus
 from fin.tests.base import BaseTestCase
 from fin.tests.factories.portfolio import PortfolioFactory
 from fin.tests.factories.portfolio_policy import PortfolioPolicyFactory
-from fin.views import AdjustMixin
 from users.models import User
 
 
