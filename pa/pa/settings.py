@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'corsheaders',
-    'django_better_admin_arrayfield',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
