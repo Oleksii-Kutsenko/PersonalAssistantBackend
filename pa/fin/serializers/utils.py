@@ -1,11 +1,13 @@
-"""
-Mixin for flattening nested object, get from
-https://stackoverflow.com/questions/21381700/django-rest-framework-how-do-you-flatten-nested-data
-"""
+from rest_framework import serializers
 
 
 class FlattenMixin:
-    """Flatens the specified related objects in this representation"""
+    """
+    Mixin for flattening nested object, get from
+    https://stackoverflow.com/questions/21381700/django-rest-framework-how-do-you-flatten-nested-data
+
+    Flatens the specified related objects in this representation
+    """
 
     def to_representation(self, obj):
         """
@@ -26,3 +28,9 @@ class FlattenMixin:
             for key in objrep:
                 rep[key] = objrep[key]
         return rep
+
+
+class PrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
+    def __init__(self, **kwargs):
+        self.view_name = kwargs.pop('view_name')
+        super().__init__(**kwargs)

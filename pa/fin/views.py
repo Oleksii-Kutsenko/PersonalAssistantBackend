@@ -13,12 +13,13 @@ from fin.serializers.portfolio.portfolio import PortfolioSerializer, AccountSeri
 from .exceptions import BadRequest
 from .mixins import UpdateTickersMixin, AdjustMixin
 from .models.account import Account
-from .models.index import Index
+from .models.index import Index, Source
 from .models.portfolio import Portfolio, ExanteSettings
 from .models.portfolio.portfolio_policy import PortfolioPolicy
 from .serializers.index import IndexSerializer, DetailIndexSerializer
 from .serializers.portfolio.exante_settings import ExanteSettingsSerializer
 from .serializers.portfolio.portfolio_policy import PortfolioPolicySerializer
+from .serializers.source import SourceSerializer
 from .tasks.update_tickers_statements import update_model_tickers_statements_task
 
 logger = logging.getLogger(__name__)
@@ -89,7 +90,7 @@ class PortfolioViewSet(AdjustMixin, UpdateTickersMixin, viewsets.ModelViewSet):
         else:
             if self.action == 'retrieve':
                 return DetailedPortfolioSerializer
-        
+
             if self.action == 'import_from_exante':
                 return ExanteImportSerializer
             return PortfolioSerializer
@@ -136,3 +137,8 @@ class PortfolioPolicyViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = PortfolioPolicy.objects.filter(portfolio__user_id=self.request.user).order_by('-id').all()
         return queryset
+
+
+class SourceViewSet(viewsets.ModelViewSet):
+    queryset = Source.objects.all()
+    serializer_class = SourceSerializer

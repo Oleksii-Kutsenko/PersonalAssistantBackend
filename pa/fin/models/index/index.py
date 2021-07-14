@@ -16,9 +16,8 @@ class Index(TimeStampMixin):
     Index model
     """
 
-    source = models.ForeignKey('Source', on_delete=models.CASCADE)
-    status = models.IntegerField(choices=UpdatingStatus.choices,
-                                 default=UpdatingStatus.successfully_updated)
+    source = models.OneToOneField('Source', on_delete=models.CASCADE)
+    status = models.IntegerField(choices=UpdatingStatus.choices, default=UpdatingStatus.successfully_updated)
     tickers = models.ManyToManyField(Ticker, through='fin.IndexTicker')
 
     class Meta:
