@@ -1,3 +1,6 @@
+"""
+Mixins for the fin app
+"""
 from datetime import timedelta
 
 from django.db.models import Min
@@ -16,6 +19,7 @@ class UpdateTickersMixin:
     """
     acceptable_tickers_updated_period = timedelta(hours=1)
 
+    # pylint: disable=unused-argument
     @action(detail=True, methods=['put'], url_path='tickers')
     def update_tickers(self, request, *args, **kwargs):
         """
@@ -32,6 +36,7 @@ class UpdateTickersMixin:
             update_model_tickers_statements_task.delay(self.model.__name__, obj_id)
             return Response(status=HTTP_202_ACCEPTED)
         return Response(status=HTTP_200_OK)
+    # pylint: enable=unused-argument
 
 
 class AdjustMixin:

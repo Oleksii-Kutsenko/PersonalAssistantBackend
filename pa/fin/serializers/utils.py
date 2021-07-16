@@ -1,3 +1,6 @@
+"""
+Utilities for the serializers
+"""
 from rest_framework import serializers
 
 
@@ -31,6 +34,9 @@ class FlattenMixin:
 
 
 class PrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
+    """
+    PrimaryKeyRelatedField with view name of the entities lookup
+    """
     def __init__(self, **kwargs):
         self.view_name = kwargs.pop('view_name')
         super().__init__(**kwargs)

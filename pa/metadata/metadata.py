@@ -8,10 +8,6 @@ from rest_framework.metadata import SimpleMetadata
 from fin.serializers.utils import PrimaryKeyRelatedField
 
 
-def get_entity_url():
-    pass
-
-
 class Metadata(SimpleMetadata):
     def get_field_info(self, field):
         """

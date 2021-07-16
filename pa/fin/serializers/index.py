@@ -6,6 +6,7 @@ from django.db.models import DecimalField, Count, Min
 from django.db.models.functions import Cast
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
+from rest_framework.validators import UniqueValidator
 
 from fin.models.index import Index, Source
 from fin.models.utils import MAX_DIGITS, DECIMAL_PLACES, UpdatingStatus
@@ -18,7 +19,9 @@ class IndexSerializer(serializers.ModelSerializer):
     Serialization class for the relation between indexes and tickers
     """
     name = serializers.SerializerMethodField()
-    source = PrimaryKeyRelatedField(queryset=Source.objects.filter(index__isnull=True), view_name='sources-list')
+    source = PrimaryKeyRelatedField(queryset=Source.objects.all(),
+                                    validators=[UniqueValidator(Index.objects.all())],
+                                    view_name='sources-list')
     status = SerializerMethodField(read_only=True)
     tickers_last_updated = SerializerMethodField(read_only=True)
 
