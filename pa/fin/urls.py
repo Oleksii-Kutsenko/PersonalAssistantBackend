@@ -14,6 +14,7 @@ router.register(r'exante-settings', views.ExanteSettingsViewSet)
 router.register(r'indices', views.IndexViewSet)
 router.register(r'portfolios', views.PortfolioViewSet, basename='portfolios')
 router.register(r'portfolio-policies', views.PortfolioPolicyViewSet, basename='portfolio-policies')
+router.register(r'sources', views.SourceViewSet, basename='sources')
 
 SchemaView = get_schema_view(
     openapi.Info(

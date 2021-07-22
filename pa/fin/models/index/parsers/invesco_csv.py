@@ -8,9 +8,9 @@ from io import StringIO
 
 import pandas as pd
 
-from fin.models.index.parsers import Parser, TickerDataClass
 from fin.models.ticker import Ticker
 from .helpers import ParsedIndexTicker
+from .helpers import Parser, TickerDataClass
 
 
 @dataclass

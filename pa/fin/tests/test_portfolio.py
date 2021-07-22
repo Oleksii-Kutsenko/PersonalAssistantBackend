@@ -12,6 +12,7 @@ from fin.models.index.index import Index
 from fin.models.portfolio import Portfolio, PortfolioTicker
 from fin.models.utils import UpdatingStatus
 from fin.tests.base import BaseTestCase
+from fin.tests.factories.exante_settings import ExanteSettingsFactory
 from fin.tests.factories.portfolio import PortfolioFactory
 from fin.tests.factories.portfolio_policy import PortfolioPolicyFactory
 from users.models import User
@@ -79,10 +80,16 @@ class PortfolioTests(BaseTestCase):
         Test portfolio importing from Exante Api
         """
         portfolio = PortfolioFactory()
-        portfolio.exante_account_id = os.environ.get('ACCOUNT_ID')
-        portfolio.save()
+        ExanteSettingsFactory(
+            exante_account_id=os.environ.get('ACCOUNT_ID'),
+            iss=os.environ.get('ISS'),
+            sub=os.environ.get('SUB'),
+            portfolio=portfolio
+        )
 
-        portfolio.import_from_exante()
+        secret_key = os.environ.get('KEY')
+        portfolio.import_from_exante(secret_key)
+
         self.assertGreaterEqual(portfolio.accounts.count(), 1)
         self.assertGreaterEqual(portfolio.tickers.count(), 1)
 

@@ -12,10 +12,9 @@ import pandas as pd
 import requests
 from django.db.models import Q
 
-from fin.models.index.parsers import Parser
 from fin.models.stock_exchange import StockExchangeAlias
 from fin.models.ticker import Ticker
-from .helpers import TickerDataClass, ParsedIndexTicker
+from .helpers import TickerDataClass, ParsedIndexTicker, Parser
 
 
 # pylint: disable=too-many-instance-attributes
@@ -47,11 +46,13 @@ class ISharesTicker(TickerDataClass):
         if ticker_qs.count() == 1:
             return ticker_qs.first()
 
+        # pylint: disable=too-many-boolean-expressions
         if ticker := Ticker.find_by_symbol_and_stock_exchange_id(self.symbol, self.stock_exchange_id):
             if (ticker.cusip and ticker.cusip == self.cusip) or \
                     (ticker.isin and ticker.isin == self.isin) or \
                     (ticker.sedol and ticker.sedol == self.sedol):
                 return ticker
+        # pylint: enable=too-many-boolean-expressions
 
         return Ticker.objects.create(**asdict(self))
 

@@ -3,7 +3,7 @@ Admin stuff for Index model
 """
 from django.contrib import admin, messages
 from django.contrib.admin import ModelAdmin
-from django.forms import Form, FileField, ChoiceField
+from django.forms import Form, FileField, ChoiceField, ModelChoiceField
 from django.shortcuts import render, redirect
 from django.urls import path
 
@@ -14,10 +14,7 @@ class CsvImportForm(Form):
     """
     Form for creation Index model from CSV file
     """
-    non_updatable_indexes = [(index.id, index.source.name)
-                             for index in Index.objects.all()
-                             if not index.source.updatable]
-    index = ChoiceField(choices=non_updatable_indexes)
+    index = ModelChoiceField(queryset=Index.objects.filter(source__updatable=False))
     csv_file = FileField()
 
 
