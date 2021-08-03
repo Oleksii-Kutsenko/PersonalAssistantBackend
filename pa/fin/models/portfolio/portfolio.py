@@ -65,7 +65,7 @@ class Portfolio(TimeStampMixin):
 
         portfolio_tickers = PortfolioTicker.objects \
             .filter(portfolio=self) \
-            .filter(ticker__symbol__in=index.tickers.values_list('symbol', flat=True))
+            .filter(ticker__id__in=index.tickers.values_list('id', flat=True))
         portfolio_tickers_sum = portfolio_tickers.annotate(cost=cost).aggregate(Sum('cost')).get('cost__sum') or 0
 
         tickers_df = index.adjust(float(portfolio_tickers_sum), extra_money, options)
@@ -98,9 +98,12 @@ class Portfolio(TimeStampMixin):
         portfolio_tickers = []
         positions = account_summary.pop('positions')
         for position in positions:
+            if not (quantity := Decimal(position.get('quantity'))):  # exante bug
+                continue
+
             symbol, stock_exchange = position.get('symbolId').split('.')
             if position.get('currency') != Account.Currency.USD:
-                price = Decimal(position.get('convertedValue')) / Decimal(position.get('quantity'))
+                price = Decimal(position.get('convertedValue')) / quantity
             else:
                 price = Decimal(position.get('price'))
 
@@ -110,7 +113,7 @@ class Portfolio(TimeStampMixin):
                 ticker = Ticker.objects.create(symbol=symbol, stock_exchange_id=stock_exchanges_mapper[stock_exchange],
                                                price=price)
 
-            portfolio_tickers.append(PortfolioTicker(portfolio=self, ticker=ticker, amount=position.get('quantity')))
+            portfolio_tickers.append(PortfolioTicker(portfolio=self, ticker=ticker, amount=quantity))
 
         PortfolioTicker.objects.filter(portfolio=self).delete()
         PortfolioTicker.objects.bulk_create(portfolio_tickers)

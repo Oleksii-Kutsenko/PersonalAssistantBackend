@@ -18,7 +18,9 @@ class Account(TimeStampMixin):
         Available currencies for account
         """
         CAD = 'CAD', _('Canadian Dollar')
+        CHF = 'CHF', _('Swiss franc')
         EUR = 'EUR', _("Euro")
+        GBP = 'GBP', _('Pound sterling')
         UAH = 'UAH', _("Ukrainian Hryvnia")
         USD = 'USD', _("United States Dollar")
 
