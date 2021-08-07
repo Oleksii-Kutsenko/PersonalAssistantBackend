@@ -19,6 +19,9 @@ class ISharesSourceParams(models.Model):
     def __str__(self):
         return str(self.source)
 
+    class Meta:
+        verbose_name = 'IShares Source Parameter'
+
 
 class Source(models.Model):
     """
