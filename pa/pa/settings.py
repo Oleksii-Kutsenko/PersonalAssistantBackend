@@ -93,6 +93,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'pa.wsgi.application'
 
+# Django ORM
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 DATABASES = {

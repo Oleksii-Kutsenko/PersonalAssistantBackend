@@ -55,7 +55,7 @@ class Ticker(TimeStampMixin):
     isin = models.CharField(max_length=12, null=True)
     market_cap = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES, null=True)
     pe = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES, null=True)
-    price = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
+    price = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=10)
     sector = models.CharField(max_length=50, default=DEFAULT_VALUE)
     sedol = models.CharField(max_length=7, null=True)
     stock_exchange = models.ForeignKey(StockExchange, on_delete=models.CASCADE, null=True)

@@ -40,9 +40,9 @@ class ISharesTicker(TickerDataClass):
                 'isin': self.isin,
                 'sedol': self.sedol
             }.items()
-            if v is not None
+            if v is not None or v != ''
         }
-        ticker_qs = Ticker.objects.filter(reduce(operator.and_, [Q(**{k: v}) for k, v in keys.items()]))
+        ticker_qs = Ticker.objects.filter(reduce(operator.or_, [Q(**{k: v}) for k, v in keys.items()]))
         if ticker_qs.count() == 1:
             return ticker_qs.first()
 

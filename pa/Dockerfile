@@ -16,6 +16,11 @@ RUN apt-get install -yqq --no-install-recommends libffi-dev libssl-dev
 # python
 RUN apt-get install -yqq --no-install-recommends python3 python3-pip
 
+# selenium
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+RUN apt install ./google-chrome-stable_current_amd64.deb
+RUN apt install -yqq --no-install-recommends libnss3-dev
+
 ADD ./requirements.txt /usr/src/app/requirements.txt
 ADD ./dev-requirements.txt /usr/src/app/dev-requirements.txt
 

@@ -107,9 +107,9 @@ class Index(TimeStampMixin):
         """
         if self.source.updatable:
             parsed_index_tickers = self.source.parser.parse()
-            self.update_from_parsed_index_ticker(parsed_index_tickers)
+            self.update_from_parsed_index_tickers(parsed_index_tickers)
 
-    def update_from_parsed_index_ticker(self, parsed_index_tickers):
+    def update_from_parsed_index_tickers(self, parsed_index_tickers):
         """
         Creates objects for the relation between the current index and tickers JSON
         """

@@ -4,7 +4,7 @@ Data Source and related models
 from django.db import models
 from django.utils.functional import cached_property
 
-from fin.models.index.parsers import AmplifyParser, InvescoCSVParser, ISharesParser
+from fin.models.index.parsers import AmplifyParser, InvescoCSVParser, ISharesParser, VanguardParser
 
 
 class ISharesSourceParams(models.Model):
@@ -30,7 +30,8 @@ class Source(models.Model):
     parsers_mapper = {
         'AmplifyParser': AmplifyParser,
         'InvescoCSVParser': InvescoCSVParser,
-        'ISharesParser': ISharesParser
+        'ISharesParser': ISharesParser,
+        'VanguardParser': VanguardParser
     }
 
     parser_name = models.CharField(choices=[(k, k) for k in parsers_mapper.keys()], max_length=50)

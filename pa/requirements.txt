@@ -1,3 +1,4 @@
+asgiref~=3.4.1
 beautifulsoup4==4.8.2
 celery==4.4.7
 Django==3.2.5
@@ -22,3 +23,5 @@ python-dateutil~=2.8.1
 redis==3.5.3
 requests~=2.25.1
 scikit-learn==0.23.2
+selenium==3.141.0
+selenium-wire==4.4.0
