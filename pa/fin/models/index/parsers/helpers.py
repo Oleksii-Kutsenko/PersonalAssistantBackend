@@ -13,9 +13,15 @@ class Parser(ABC):
     updatable = True
 
     @abstractmethod
+    def load_data(self):
+        """
+        Fetch raw data
+        """
+
+    @abstractmethod
     def parse(self):
         """
-        Fetch raw data and create data classes with it
+        Create data classes
         """
 
 

@@ -88,18 +88,6 @@ class Index(TimeStampMixin):
         super().save(force_insert=False, force_update=False, using=None, update_fields=None)
         self.update()
 
-    def threshold_pe_ratio(self, pe_quantile):
-        """
-        Calculates maximum acceptable pe value for the companies those to be taken to the adjusting
-        calculation
-        """
-        index_pe_list = IndexTicker.objects.filter(index=self, ticker__pe__isnull=False) \
-            .values_list('ticker__pe', flat=True) \
-            .order_by('ticker__pe')
-        if index_pe_list:
-            return np.percentile(index_pe_list, pe_quantile)
-        return 0
-
     @transaction.atomic
     def update(self):
         """

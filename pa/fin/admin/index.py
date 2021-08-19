@@ -3,7 +3,7 @@ Admin stuff for Index model
 """
 from django.contrib import admin, messages
 from django.contrib.admin import ModelAdmin
-from django.forms import Form, FileField, ChoiceField, ModelChoiceField
+from django.forms import Form, FileField, ModelChoiceField
 from django.shortcuts import render, redirect
 from django.urls import path
 
@@ -41,19 +41,19 @@ class IndexAdmin(ModelAdmin):
                 csv_file = form.cleaned_data['csv_file'].read().decode('utf-8')
                 index, _ = Index.objects.get_or_create(source__name=form.cleaned_data['index'])
                 index.source.parser.csv_file = csv_file
+
                 parsed_index_tickers = index.source.parser.parse()
                 index.update_from_parsed_index_tickers(parsed_index_tickers)
+
                 self.message_user(request, 'Your csv file has been imported')
                 return redirect('..')
+
             self.message_user(request, 'Form is invalid', messages.ERROR)
-            return render(
-                request, 'csv_form.html', {'form': form}
-            )
+            return render(request, 'csv_form.html', {'form': form})
+
         form = CsvImportForm()
         payload = {'form': form}
-        return render(
-            request, 'csv_form.html', payload
-        )
+        return render(request, 'csv_form.html', payload)
 
 
 admin.site.register(Index, IndexAdmin)
