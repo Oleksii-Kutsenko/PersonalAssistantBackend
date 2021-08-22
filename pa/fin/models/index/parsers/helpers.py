@@ -37,6 +37,26 @@ class TickerDataClass(ABC):
         """
 
 
+class KeysTickerDataClassMixin:
+    """
+    Mixin for function inheritance
+    """
+
+    def get_keys(self):
+        """
+        Returns keys for database searching
+        """
+        return {
+            k: v
+            for k, v in {
+                'cusip': self.cusip,
+                'isin': self.isin,
+                'sedol': self.sedol
+            }.items()
+            if v is not None and v != ''
+        }
+
+
 @dataclass
 class ParsedIndexTicker:
     """

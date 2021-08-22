@@ -4,37 +4,17 @@ Portfolio model and related models
 from decimal import Decimal
 
 from django.db import models
-from django.db.models import ForeignKey, CASCADE, IntegerField, DecimalField, F, Sum
+from django.db.models import DecimalField, F, Sum
 from django.db.models.functions import Cast
 
 from fin.models.account import Account
 from fin.models.index import Index
+from fin.models.portfolio.portfolio_ticker import PortfolioTicker
 from fin.models.stock_exchange import StockExchangeAlias
 from fin.models.ticker import Ticker
 from fin.models.utils import TimeStampMixin, MAX_DIGITS, DECIMAL_PLACES, UpdatingStatus
 from fin.serializers.ticker import TickerSerializer
 from users.models import User
-
-
-class PortfolioTicker(TimeStampMixin):
-    """
-    Associated table for M2M relation between Portfolio model and Ticker model
-    """
-    portfolio = ForeignKey('Portfolio', on_delete=CASCADE, related_name='portfolio')
-    ticker = ForeignKey(Ticker, on_delete=CASCADE, related_name='portfolio_ticker')
-    amount = IntegerField()
-
-    class Meta:
-        """
-        Model meta class
-        """
-        constraints = [
-            models.UniqueConstraint(fields=['portfolio_id', 'ticker_id'], name='portfolio_id_ticker_id_unique')
-        ]
-        indexes = [
-            models.Index(fields=['portfolio', ]),
-            models.Index(fields=['ticker', ]),
-        ]
 
 
 class Portfolio(TimeStampMixin):
@@ -82,39 +62,15 @@ class Portfolio(TimeStampMixin):
         """
         Import portfolio from the EXANTE
         """
-        stock_exchanges_mapper = dict(StockExchangeAlias.objects.values_list('alias', 'stock_exchange_id', ))
-
         jwt = self.exantesettings.get_jwt(secret_key)
         account_summary = self.exantesettings.get_account_summary(jwt)
+        exante_portfolio_importer = ExantePortfolioImporter(account_summary, jwt, self)
 
-        accounts = []
-        currencies = account_summary.pop('currencies')
-        for account in currencies:
-            accounts.append(Account(name=account.get('code'), currency=Account.Currency(account.get('code')),
-                                    portfolio=self, value=Decimal(account.get('value'))))
+        accounts = exante_portfolio_importer.get_accounts()
         self.accounts.all().delete()
         Account.objects.bulk_create(accounts)
 
-        portfolio_tickers = []
-        positions = account_summary.pop('positions')
-        for position in positions:
-            if not (quantity := Decimal(position.get('quantity'))):  # exante bug
-                continue
-
-            symbol, stock_exchange = position.get('symbolId').split('.')
-            if position.get('currency') != Account.Currency.USD:
-                price = Decimal(position.get('convertedValue')) / quantity
-            else:
-                price = Decimal(position.get('price'))
-
-            ticker = Ticker.find_by_symbol_and_stock_exchange_id(symbol, stock_exchanges_mapper[stock_exchange])
-
-            if ticker is None:
-                ticker = Ticker.objects.create(symbol=symbol, stock_exchange_id=stock_exchanges_mapper[stock_exchange],
-                                               price=price)
-
-            portfolio_tickers.append(PortfolioTicker(portfolio=self, ticker=ticker, amount=quantity))
-
+        portfolio_tickers = exante_portfolio_importer.get_portfolio_tickers()
         PortfolioTicker.objects.filter(portfolio=self).delete()
         PortfolioTicker.objects.bulk_create(portfolio_tickers)
 
@@ -185,3 +141,54 @@ class Portfolio(TimeStampMixin):
         if tickers_sum:
             return Decimal(tickers_sum)
         return 0
+
+
+class ExantePortfolioImporter:
+    """
+    Class for importing portfolio from EXANTE API data
+    """
+    def __init__(self, account_summary, jwt, portfolio):
+        self.account_summary = account_summary
+        self.jwt = jwt
+        self.portfolio = portfolio
+
+    def get_accounts(self):
+        """
+        Creates Account objects from EXANTE API data
+        """
+        accounts = []
+        currencies = self.account_summary.get('currencies')
+        for account in currencies:
+            accounts.append(Account(currency=Account.Currency(account.get('code')),
+                                    name=account.get('code'),
+                                    portfolio=self.portfolio,
+                                    value=Decimal(account.get('value'))))
+        return accounts
+
+    def get_portfolio_tickers(self):
+        """
+        Creates PortfolioTicker objects from EXANTE API data
+        """
+        portfolio_tickers = []
+        positions = self.account_summary.get('positions')
+        stock_exchanges_mapper = dict(StockExchangeAlias.objects.values_list('alias', 'stock_exchange_id'))
+
+        for position in positions:
+            if not (quantity := Decimal(position.get('quantity'))):  # exante bug
+                continue
+
+            symbol, stock_exchange = position.get('symbolId').split('.')
+            if position.get('currency') != Account.Currency.USD:
+                price = Decimal(position.get('convertedValue')) / quantity
+            else:
+                price = Decimal(position.get('price'))
+
+            ticker = Ticker.find_by_symbol_and_stock_exchange_id(symbol, stock_exchanges_mapper[stock_exchange])
+
+            if ticker is None:
+                ticker = Ticker.objects.create(stock_exchange_id=stock_exchanges_mapper[stock_exchange],
+                                               symbol=symbol,
+                                               price=price)
+
+            portfolio_tickers.append(PortfolioTicker(portfolio=self.portfolio, ticker=ticker, amount=quantity))
+        return portfolio_tickers

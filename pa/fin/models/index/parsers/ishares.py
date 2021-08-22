@@ -14,12 +14,12 @@ from django.db.models import Q
 
 from fin.models.stock_exchange import StockExchangeAlias
 from fin.models.ticker import Ticker
-from .helpers import TickerDataClass, ParsedIndexTicker, Parser
+from .helpers import TickerDataClass, ParsedIndexTicker, Parser, KeysTickerDataClassMixin
 
 
 # pylint: disable=too-many-instance-attributes
 @dataclass
-class ISharesTicker(TickerDataClass):
+class ISharesTicker(TickerDataClass, KeysTickerDataClassMixin):
     """
     Class represents IShares raw ticker data
     """
@@ -33,15 +33,7 @@ class ISharesTicker(TickerDataClass):
     symbol: str
 
     def get_ticker(self):
-        keys = {
-            k: v
-            for k, v in {
-                'cusip': self.cusip,
-                'isin': self.isin,
-                'sedol': self.sedol
-            }.items()
-            if v is not None or v != ''
-        }
+        keys = self.get_keys()
         ticker_qs = Ticker.objects.filter(reduce(operator.or_, [Q(**{k: v}) for k, v in keys.items()]))
         if ticker_qs.count() == 1:
             return ticker_qs.first()

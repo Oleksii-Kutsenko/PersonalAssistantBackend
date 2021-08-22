@@ -1,3 +1,6 @@
+"""
+Parser for Vanguard ETFs and related classes
+"""
 import collections
 import operator
 from dataclasses import dataclass, asdict
@@ -8,11 +11,14 @@ import pandas as pd
 from django.db.models import Q
 
 from fin.models.ticker import Ticker
-from .helpers import TickerDataClass, ParsedIndexTicker, Parser
+from .helpers import TickerDataClass, ParsedIndexTicker, Parser, KeysTickerDataClassMixin
 
 
 @dataclass
-class VanguardTicker(TickerDataClass):
+class VanguardTicker(TickerDataClass, KeysTickerDataClassMixin):
+    """
+    Class represents Vanguard raw ticker data
+    """
     company_name: str
     cusip: str
     isin: str
@@ -21,41 +27,42 @@ class VanguardTicker(TickerDataClass):
     symbol: str
 
     def get_ticker(self):
-        keys = {
-            k: v
-            for k, v in {
-                'cusip': self.cusip,
-                'isin': self.isin,
-                'sedol': self.sedol
-            }.items()
-            if v is not None and v != ''
-        }
+        keys = self.get_keys()
         ticker_qs = Ticker.objects.filter(reduce(operator.or_, [Q(**{k: v}) for k, v in keys.items()]))
+
         if ticker_qs.count() == 0:
             return Ticker.objects.create(**asdict(self))
-        elif ticker_qs.count() == 1:
+
+        if ticker_qs.count() == 1:
             ticker = ticker_qs.first()
             ticker.price = self.price
             ticker.save()
             return ticker
-        else:
-            ticker_qs = ticker_qs.filter(symbol=self.symbol)
-            if ticker_qs.count() == 0:
-                return Ticker.objects.create(**asdict(self))
-            elif ticker_qs.count() == 1:
-                ticker = ticker_qs.first()
-                ticker.price = self.price
-                ticker.save()
-                return ticker
-            raise NotImplementedError(f'Duplicated ticker - {asdict(self)}')
+
+        ticker_qs = ticker_qs.filter(symbol=self.symbol)
+        if ticker_qs.count() == 0:
+            raise NotImplementedError(f'Need further investigation - {asdict(self)}')
+
+        if ticker_qs.count() == 1:
+            ticker = ticker_qs.first()
+            ticker.price = self.price
+            ticker.save()
+            return ticker
+        raise NotImplementedError(f'Duplicated ticker - {asdict(self)}')
 
 
 @dataclass
 class VanguardIndexTicker(ParsedIndexTicker):
+    """
+    ParsedIndexTicker with VanguardTicker
+    """
     ticker: VanguardTicker
 
 
 class VanguardParser(Parser):
+    """
+    Parser for Vanguard indexes
+    """
     updatable = False
 
     def __init__(self, _):
@@ -99,6 +106,9 @@ class VanguardParser(Parser):
 
     @staticmethod
     def resolve_duplicates(vanguard_index_tickers):
+        """
+        Vanguard Index Tickers contains same companies with different tickers, so we combine them
+        """
         duplicates = {}
         isin_s = [index_ticker.ticker.isin for index_ticker in vanguard_index_tickers]
         duplicates_isin_s = [item for item, count in collections.Counter(isin_s).items() if count > 1]
@@ -111,7 +121,7 @@ class VanguardParser(Parser):
                     duplicates[vanguard_index_ticker.ticker.isin] = [vanguard_index_ticker]
             else:
                 filtered_index_tickers.append(vanguard_index_ticker)
-        for key, value in duplicates.items():
+        for _, value in duplicates.items():
             calculated_weight = sum([duplicate.weight for duplicate in value])
             value[0].weight = calculated_weight
             filtered_index_tickers.append(value[0])

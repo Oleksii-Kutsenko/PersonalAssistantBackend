@@ -24,11 +24,6 @@ class Account(TimeStampMixin):
         UAH = 'UAH', _("Ukrainian Hryvnia")
         USD = 'USD', _("United States Dollar")
 
-    name = CharField(max_length=100)
-    currency = CharField(max_length=3, choices=Currency.choices)
-    portfolio = ForeignKey('Portfolio', related_name='accounts', on_delete=models.CASCADE, null=False)
-    value = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES, default=0)
-
     class Meta:
         """
         Model meta class
@@ -40,3 +35,8 @@ class Account(TimeStampMixin):
             models.Index(fields=['name', ]),
             models.Index(fields=['currency', ]),
         ]
+
+    currency = CharField(max_length=3, choices=Currency.choices)
+    name = CharField(max_length=100)
+    portfolio = ForeignKey('Portfolio', related_name='accounts', on_delete=models.CASCADE, null=False)
+    value = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES, default=0)

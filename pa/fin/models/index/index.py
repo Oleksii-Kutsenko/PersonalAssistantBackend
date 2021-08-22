@@ -2,7 +2,6 @@
 Classes that helps operate with indexes and tickers
 """
 
-import numpy as np
 import pandas as pd
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models, transaction
