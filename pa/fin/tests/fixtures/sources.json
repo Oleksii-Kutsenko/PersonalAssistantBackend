@@ -31,16 +31,6 @@
   },
   {
     "model": "fin.source",
-    "pk": 4,
-    "fields": {
-      "parser_name": "ISharesParser",
-      "name": "IXUS",
-      "updatable": true,
-      "url": "https://www.ishares.com/us/products/244048/ishares-core-msci-total-international-stock-etf/1467271812596.ajax"
-    }
-  },
-  {
-    "model": "fin.source",
     "pk": 5,
     "fields": {
       "parser_name": "InvescoCSVParser",

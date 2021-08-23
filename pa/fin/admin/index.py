@@ -38,8 +38,9 @@ class IndexAdmin(ModelAdmin):
         if request.method == 'POST':
             form = CsvImportForm(request.POST, request.FILES)
             if form.is_valid():
+                index = form.cleaned_data['index']
                 csv_file = form.cleaned_data['csv_file'].read().decode('utf-8')
-                index, _ = Index.objects.get_or_create(source__name=form.cleaned_data['index'])
+
                 index.source.parser.csv_file = csv_file
 
                 parsed_index_tickers = index.source.parser.parse()
