@@ -13,16 +13,8 @@ from fin.models.utils import MAX_DIGITS, DECIMAL_PLACES, UpdatingStatus
 from fin.serializers.utils import PrimaryKeyRelatedField
 
 
-# pylint: disable=no-self-use
-class IndexSerializer(serializers.ModelSerializer):
-    """
-    Serialization class for the relation between indexes and tickers
-    """
+class BaseIndexSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
-    source = PrimaryKeyRelatedField(queryset=Source.objects.all(),
-                                    validators=[UniqueValidator(Index.objects.all())],
-                                    view_name='sources-list')
-    status = SerializerMethodField(read_only=True)
     tickers_last_updated = SerializerMethodField(read_only=True)
 
     def get_name(self, obj):
@@ -31,12 +23,6 @@ class IndexSerializer(serializers.ModelSerializer):
         """
         return obj.source.name
 
-    def get_status(self, obj):
-        """
-        Returns Updating Status
-        """
-        return UpdatingStatus(obj.status).label
-
     def get_tickers_last_updated(self, obj):
         """
         Returns portfolio tickers last updated time
@@ -44,15 +30,37 @@ class IndexSerializer(serializers.ModelSerializer):
         return obj.tickers.aggregate(Min('updated')).get('updated__min')
 
     class Meta:
-        """
-        Serializer meta class
-        """
         model = Index
         fields = ('id', 'source', 'name', 'status', 'tickers_last_updated', 'updated')
         read_only_fields = ('id', 'name', 'status', 'updated')
 
 
-class DetailIndexSerializer(IndexSerializer):
+# pylint: disable=no-self-use
+class IndexSerializer(BaseIndexSerializer):
+    """
+    Serialization class for the relation between indexes and tickers
+    """
+    source = PrimaryKeyRelatedField(queryset=Source.objects.all(),
+                                    validators=[UniqueValidator(Index.objects.all())],
+                                    view_name='sources-list')
+    status = SerializerMethodField(read_only=True)
+
+    def get_status(self, obj):
+        """
+        Returns Updating Status
+        """
+        return UpdatingStatus(obj.status).label
+
+    class Meta:
+        """
+        Serializer meta class
+        """
+        model = BaseIndexSerializer.Meta.model
+        fields = BaseIndexSerializer.Meta.fields
+        read_only_fields = BaseIndexSerializer.Meta.read_only_fields
+
+
+class DetailIndexSerializer(BaseIndexSerializer):
     """
     Serializer that includes industries/sectors breakdown
     """
@@ -85,6 +93,6 @@ class DetailIndexSerializer(IndexSerializer):
         """
         Meta
         """
-
-        model = IndexSerializer.Meta.model
-        fields = IndexSerializer.Meta.fields + ('industries_breakdown', 'sectors_breakdown')
+        model = BaseIndexSerializer.Meta.model
+        fields = BaseIndexSerializer.Meta.fields + ('industries_breakdown', 'sectors_breakdown')
+        read_only_fields = BaseIndexSerializer.Meta.read_only_fields

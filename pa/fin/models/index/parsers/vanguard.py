@@ -1,7 +1,6 @@
 """
 Parser for Vanguard ETFs and related classes
 """
-import collections
 import operator
 from dataclasses import dataclass, asdict
 from decimal import Decimal
@@ -11,7 +10,7 @@ import pandas as pd
 from django.db.models import Q
 
 from fin.models.ticker import Ticker
-from .helpers import TickerDataClass, ParsedIndexTicker, Parser, KeysTickerDataClassMixin
+from .helpers import TickerDataClass, ParsedIndexTicker, Parser, KeysTickerDataClassMixin, ResolveDuplicatesMixin
 
 
 @dataclass
@@ -59,7 +58,7 @@ class VanguardIndexTicker(ParsedIndexTicker):
     ticker: VanguardTicker
 
 
-class VanguardParser(Parser):
+class VanguardParser(Parser, ResolveDuplicatesMixin):
     """
     Parser for Vanguard indexes
     """
@@ -102,27 +101,4 @@ class VanguardParser(Parser):
             ))
 
         filtered_index_tickers = self.resolve_duplicates(vanguard_index_tickers)
-        return filtered_index_tickers
-
-    @staticmethod
-    def resolve_duplicates(vanguard_index_tickers):
-        """
-        Vanguard Index Tickers contains same companies with different tickers, so we combine them
-        """
-        duplicates = {}
-        isin_s = [index_ticker.ticker.isin for index_ticker in vanguard_index_tickers]
-        duplicates_isin_s = [item for item, count in collections.Counter(isin_s).items() if count > 1]
-        filtered_index_tickers = []
-        for vanguard_index_ticker in vanguard_index_tickers:
-            if vanguard_index_ticker.ticker.isin in duplicates_isin_s:
-                if duplicates.get(vanguard_index_ticker.ticker.isin):
-                    duplicates[vanguard_index_ticker.ticker.isin].append(vanguard_index_ticker)
-                else:
-                    duplicates[vanguard_index_ticker.ticker.isin] = [vanguard_index_ticker]
-            else:
-                filtered_index_tickers.append(vanguard_index_ticker)
-        for _, value in duplicates.items():
-            calculated_weight = sum([duplicate.weight for duplicate in value])
-            value[0].weight = calculated_weight
-            filtered_index_tickers.append(value[0])
         return filtered_index_tickers

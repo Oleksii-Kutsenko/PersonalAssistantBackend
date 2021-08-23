@@ -14,7 +14,7 @@ from django.db.models import Q
 
 from fin.models.stock_exchange import StockExchangeAlias
 from fin.models.ticker import Ticker
-from .helpers import TickerDataClass, ParsedIndexTicker, Parser, KeysTickerDataClassMixin
+from .helpers import TickerDataClass, ParsedIndexTicker, Parser, KeysTickerDataClassMixin, ResolveDuplicatesMixin
 
 
 # pylint: disable=too-many-instance-attributes
@@ -59,7 +59,7 @@ class ISharesIndexTicker(ParsedIndexTicker):
     ticker: ISharesTicker
 
 
-class ISharesParser(Parser):
+class ISharesParser(Parser, ResolveDuplicatesMixin):
     """
     Parser for IShares indexes
     """
@@ -86,6 +86,7 @@ class ISharesParser(Parser):
         index_df = index_df[(index_df['Asset Class'] == equity_name) &
                             (index_df['Price'] > 0) &
                             (index_df['Ticker'] != '-') &
+                            (index_df['Type'] == 'Equity') &
                             (index_df['Exchange'] != '-') &
                             (index_df['Exchange'] != 'NO MARKET (E.G. UNLISTED)') &
                             (index_df['Exchange'] != 'Non-Nms Quotation Service (Nnqs)')]
@@ -118,4 +119,5 @@ class ISharesParser(Parser):
                 weight=row.weight
             ))
 
-        return ishares_index_tickers
+        filtered_index_tickers = self.resolve_duplicates(ishares_index_tickers)
+        return filtered_index_tickers
