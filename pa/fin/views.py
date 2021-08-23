@@ -59,7 +59,7 @@ class IndexViewSet(UpdateTickersMixin, viewsets.ModelViewSet):
     ordering_fields = '__all__'
 
     def get_serializer_class(self):
-        if self.action == 'retrieve':
+        if self.action == 'retrieve' or self.action == 'update':
             return DetailIndexSerializer
         return IndexSerializer
 
