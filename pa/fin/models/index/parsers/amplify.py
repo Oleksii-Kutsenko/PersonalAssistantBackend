@@ -51,15 +51,21 @@ class AmplifyParser(Parser):
     user_agent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:89.0) Gecko/20100101 Firefox/89.0'
 
     def __init__(self, source):
+        self.raw_data = None
         self.source_url = source.url
+
+        self.load_data()
+
+    def load_data(self):
+        response = requests.get(self.source_url, headers={'User-Agent': self.user_agent})
+        self.raw_data = io.StringIO(response.text)
 
     def parse(self):
         index_name = 'IBUY'
         cash_ticker = 'Cash&Other'
         stock_exchanges_mapper = dict(StockExchangeAlias.objects.values_list('alias', 'stock_exchange_id'))
 
-        response = requests.get(self.source_url, headers={'User-Agent': self.user_agent})
-        csv_file = pd.read_csv(io.StringIO(response.text), thousands=',')
+        csv_file = pd.read_csv(self.raw_data, thousands=',')
         ibuy_csv_rows = csv_file[(csv_file['Account'] == index_name) & (csv_file['StockTicker'] != cash_ticker)]
 
         amplify_index_tickers = []

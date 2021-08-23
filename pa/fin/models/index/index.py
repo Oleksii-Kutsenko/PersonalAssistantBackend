@@ -2,7 +2,6 @@
 Classes that helps operate with indexes and tickers
 """
 
-import numpy as np
 import pandas as pd
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models, transaction
@@ -88,18 +87,6 @@ class Index(TimeStampMixin):
         super().save(force_insert=False, force_update=False, using=None, update_fields=None)
         self.update()
 
-    def threshold_pe_ratio(self, pe_quantile):
-        """
-        Calculates maximum acceptable pe value for the companies those to be taken to the adjusting
-        calculation
-        """
-        index_pe_list = IndexTicker.objects.filter(index=self, ticker__pe__isnull=False) \
-            .values_list('ticker__pe', flat=True) \
-            .order_by('ticker__pe')
-        if index_pe_list:
-            return np.percentile(index_pe_list, pe_quantile)
-        return 0
-
     @transaction.atomic
     def update(self):
         """
@@ -107,9 +94,9 @@ class Index(TimeStampMixin):
         """
         if self.source.updatable:
             parsed_index_tickers = self.source.parser.parse()
-            self.update_from_parsed_index_ticker(parsed_index_tickers)
+            self.update_from_parsed_index_tickers(parsed_index_tickers)
 
-    def update_from_parsed_index_ticker(self, parsed_index_tickers):
+    def update_from_parsed_index_tickers(self, parsed_index_tickers):
         """
         Creates objects for the relation between the current index and tickers JSON
         """

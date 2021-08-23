@@ -7,7 +7,7 @@ from time import sleep
 from django.urls import reverse
 from rest_framework.status import HTTP_200_OK
 
-from fin.models.index import Index
+from fin.models.index import Index, Source
 from fin.tasks.update_tickers_statements import update_model_tickers_statements_task, LOCKED
 from fin.tests.base import BaseTestCase
 from fin.tests.factories.index import IndexFactory
@@ -48,8 +48,10 @@ class IndexTests(BaseTestCase):
         Test Index list response structure
         """
         expected_keys = {'id', 'source', 'name', 'status', 'tickers_last_updated', 'updated'}
-        IndexFactory()
-        IndexFactory()
+
+        index = IndexFactory()
+        sources = Source.objects.exclude(id=index.source.id)
+        IndexFactory(source=choice(sources))
 
         url = reverse('index-list')
         response = self.client.get(url)
@@ -61,15 +63,18 @@ class IndexTests(BaseTestCase):
         """
         Tests importing index from csv
         """
+        index = IndexFactory(source=Source.objects.filter(updatable=False).first())
+
         url = reverse('admin:import-csv')
         response = self.client.get(url)
         self.assertEqual(response.status_code, HTTP_200_OK)
 
-        index_choice = choice(response.context['form'].fields['index'].choices)[0]
         with open('fin/tests/files/PBW.csv') as file:
-            response = self.client.post(url, {'index': index_choice, 'csv_file': file}, follow=True)
+            response = self.client.post(url, {'index': index.id, 'csv_file': file}, follow=True)
             self.assertEqual(response.status_code, HTTP_200_OK)
-        self.assertEqual(Index.objects.filter(source=index_choice).count(), 1)
+
+        self.assertTrue(Index.objects.filter(id=index.id).exists())
+        self.assertEqual(Index.objects.first().tickers.count(), 3)
 
     def test_index_creation(self):
         """
@@ -90,7 +95,7 @@ class IndexTests(BaseTestCase):
         """
         Tests if viewset use right serializer
         """
-        index = IndexFactory()
+        index = IndexFactory(source=Source.objects.get(name='IBUY'))
         index_list_url = reverse('index-list')
         detailed_index_url = reverse('index-detail', kwargs={'pk': index.id})
         list_response = self.client.get(index_list_url)

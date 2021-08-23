@@ -14,12 +14,12 @@ from django.db.models import Q
 
 from fin.models.stock_exchange import StockExchangeAlias
 from fin.models.ticker import Ticker
-from .helpers import TickerDataClass, ParsedIndexTicker, Parser
+from .helpers import TickerDataClass, ParsedIndexTicker, Parser, KeysTickerDataClassMixin
 
 
 # pylint: disable=too-many-instance-attributes
 @dataclass
-class ISharesTicker(TickerDataClass):
+class ISharesTicker(TickerDataClass, KeysTickerDataClassMixin):
     """
     Class represents IShares raw ticker data
     """
@@ -33,16 +33,8 @@ class ISharesTicker(TickerDataClass):
     symbol: str
 
     def get_ticker(self):
-        keys = {
-            k: v
-            for k, v in {
-                'cusip': self.cusip,
-                'isin': self.isin,
-                'sedol': self.sedol
-            }.items()
-            if v is not None
-        }
-        ticker_qs = Ticker.objects.filter(reduce(operator.and_, [Q(**{k: v}) for k, v in keys.items()]))
+        keys = self.get_keys()
+        ticker_qs = Ticker.objects.filter(reduce(operator.or_, [Q(**{k: v}) for k, v in keys.items()]))
         if ticker_qs.count() == 1:
             return ticker_qs.first()
 
@@ -73,21 +65,24 @@ class ISharesParser(Parser):
     """
 
     def __init__(self, source):
+        self.raw_data = None
         self.source_url = source.url
         self.params = source.isharessourceparams
 
-    def parse(self):
-        equity_name = 'Equity'
-        tickers_data_start_word = 'Ticker'
+        self.load_data()
 
+    def load_data(self):
+        tickers_data_start_word = 'Ticker'
         response = requests.get(self.source_url, params={'fileType': self.params.file_type,
                                                          'fileName': self.params.file_name,
                                                          'dataType': self.params.data_type})
-
         tickers_data_start_index = response.text.find(tickers_data_start_word)
-        tickers_data = StringIO(response.text[tickers_data_start_index:])
+        self.raw_data = StringIO(response.text[tickers_data_start_index:])
 
-        index_df = pd.read_csv(tickers_data, thousands=',')
+    def parse(self):
+        equity_name = 'Equity'
+
+        index_df = pd.read_csv(self.raw_data, thousands=',')
         index_df = index_df[(index_df['Asset Class'] == equity_name) &
                             (index_df['Price'] > 0) &
                             (index_df['Ticker'] != '-') &

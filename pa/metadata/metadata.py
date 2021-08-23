@@ -9,6 +9,9 @@ from fin.serializers.utils import PrimaryKeyRelatedField
 
 
 class Metadata(SimpleMetadata):
+    """
+    Expanded version of SimpleMetadata with look-up url
+    """
     def get_field_info(self, field):
         """
         Given an instance of a serializer field, return a dictionary

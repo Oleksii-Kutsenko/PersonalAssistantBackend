@@ -55,6 +55,9 @@ class InvescoCSVParser(Parser):
     def __init__(self, _):
         self.csv_file = None
 
+    def load_data(self):
+        raise NotImplementedError
+
     def parse(self):
         cash_identifier = 'CASHUSD00'
 

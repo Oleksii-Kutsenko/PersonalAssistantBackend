@@ -534,5 +534,21 @@
       "alias": "EURONEXT",
       "stock_exchange": 13
     }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 68,
+    "fields": {
+      "alias": "LSE",
+      "stock_exchange": 7
+    }
+  },
+  {
+    "model": "fin.stockexchangealias",
+    "pk": 69,
+    "fields": {
+      "alias": "SIX",
+      "stock_exchange": 11
+    }
   }
 ]
