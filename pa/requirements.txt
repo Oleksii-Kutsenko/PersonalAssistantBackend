@@ -1,7 +1,7 @@
 asgiref~=3.4.1
 beautifulsoup4==4.8.2
 celery==4.4.7
-Django==3.2.5
+Django==3.2.16
 django-allauth==0.44.0
 django-cors-headers==3.5.0
 django-filter==2.4.0
