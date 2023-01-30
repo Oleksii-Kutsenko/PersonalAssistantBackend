@@ -21,32 +21,51 @@ class Portfolio(TimeStampMixin):
     """
     Class that represents the portfolio
     """
+
     name = models.CharField(max_length=100)
-    status = models.IntegerField(choices=UpdatingStatus.choices, default=UpdatingStatus.successfully_updated)
-    tickers = models.ManyToManyField(Ticker, through='fin.PortfolioTicker')
+    status = models.IntegerField(
+        choices=UpdatingStatus.choices, default=UpdatingStatus.successfully_updated
+    )
+    tickers = models.ManyToManyField(Ticker, through="fin.PortfolioTicker")
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
 
     class Meta:
         """
         Model meta class
         """
+
         indexes = [
-            models.Index(fields=['name', ]),
-            models.Index(fields=['user', ]),
+            models.Index(
+                fields=[
+                    "name",
+                ]
+            ),
+            models.Index(
+                fields=[
+                    "user",
+                ]
+            ),
         ]
 
     def adjust(self, index_id, extra_money, options):
         """
         The function that tries to make the portfolio more similar to some Index
         """
-        decimal_field = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
-        cost = Cast(F('amount') * F('ticker__price'), decimal_field)
+        decimal_field = DecimalField(
+            max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES
+        )
+        cost = Cast(F("amount") * F("ticker__price"), decimal_field)
         index = Index.objects.get(pk=index_id)
 
-        portfolio_tickers = PortfolioTicker.objects \
-            .filter(portfolio=self) \
-            .filter(ticker__id__in=index.tickers.values_list('id', flat=True))
-        portfolio_tickers_sum = portfolio_tickers.annotate(cost=cost).aggregate(Sum('cost')).get('cost__sum') or 0
+        portfolio_tickers = PortfolioTicker.objects.filter(portfolio=self).filter(
+            ticker__id__in=index.tickers.values_list("id", flat=True)
+        )
+        portfolio_tickers_sum = (
+            portfolio_tickers.annotate(cost=cost)
+            .aggregate(Sum("cost"))
+            .get("cost__sum")
+            or 0
+        )
 
         tickers_df = index.adjust(float(portfolio_tickers_sum), extra_money, options)
         tickers_diff_df = self.tickers_difference(tickers_df, portfolio_tickers)
@@ -55,7 +74,7 @@ class Portfolio(TimeStampMixin):
         tickers_qs = Ticker.objects.filter(id__in=packed_ticker_diff.keys())
         response = TickerSerializer(tickers_qs, many=True).data
         for ticker in response:
-            ticker.update(packed_ticker_diff[ticker['id']])
+            ticker.update(packed_ticker_diff[ticker["id"]])
         return response
 
     def import_from_exante(self, secret_key):
@@ -91,8 +110,10 @@ class Portfolio(TimeStampMixin):
                 ticker_df_row.amount = max_amount
             ticker_df_row.cost = round(ticker_df_row.amount * ticker_df_row.price, 2)
 
-            result[ticker_df_row.id] = {'amount': ticker_df_row.amount,
-                                        'cost': ticker_df_row.cost}
+            result[ticker_df_row.id] = {
+                "amount": ticker_df_row.amount,
+                "cost": ticker_df_row.cost,
+            }
 
             money -= ticker_df_row.cost
             if money < min_price:
@@ -105,10 +126,12 @@ class Portfolio(TimeStampMixin):
         """
         Excludes tickers already present in the portfolio from the adjusted index tickers
         """
-        matched_portfolio_tickers = portfolio_tickers.filter(ticker__id__in=tickers_df.id.values)
+        matched_portfolio_tickers = portfolio_tickers.filter(
+            ticker__id__in=tickers_df.id.values
+        )
         for matched_ticker in matched_portfolio_tickers:
             condition = tickers_df.id == matched_ticker.ticker.id
-            tickers_df.loc[condition, 'amount'] -= matched_ticker.amount
+            tickers_df.loc[condition, "amount"] -= matched_ticker.amount
 
         tickers_df = tickers_df[tickers_df.amount > 0]
         return tickers_df
@@ -125,8 +148,11 @@ class Portfolio(TimeStampMixin):
         """
         Total sum of the portfolio accounts cost
         """
-        accounts_sum = Account.objects.filter(portfolio=self) \
-            .aggregate(Sum('value')).get('value__sum')
+        accounts_sum = (
+            Account.objects.filter(portfolio=self)
+            .aggregate(Sum("value"))
+            .get("value__sum")
+        )
         return accounts_sum or 0
 
     @property
@@ -134,10 +160,12 @@ class Portfolio(TimeStampMixin):
         """
         Total sum of the portfolio tickers cost
         """
-        decimal_field = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
-        cost = Cast(F('amount') * F('ticker__price'), decimal_field)
+        decimal_field = DecimalField(
+            max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES
+        )
+        cost = Cast(F("amount") * F("ticker__price"), decimal_field)
         query = PortfolioTicker.objects.filter(portfolio=self).annotate(cost=cost)
-        tickers_sum = query.aggregate(Sum('cost')).get('cost__sum')
+        tickers_sum = query.aggregate(Sum("cost")).get("cost__sum")
         if tickers_sum:
             return Decimal(tickers_sum)
         return 0
@@ -147,6 +175,7 @@ class ExantePortfolioImporter:
     """
     Class for importing portfolio from EXANTE API data
     """
+
     def __init__(self, account_summary, jwt, portfolio):
         self.account_summary = account_summary
         self.jwt = jwt
@@ -157,12 +186,16 @@ class ExantePortfolioImporter:
         Creates Account objects from EXANTE API data
         """
         accounts = []
-        currencies = self.account_summary.get('currencies')
+        currencies = self.account_summary.get("currencies")
         for account in currencies:
-            accounts.append(Account(currency=Account.Currency(account.get('code')),
-                                    name=account.get('code'),
-                                    portfolio=self.portfolio,
-                                    value=Decimal(account.get('value'))))
+            accounts.append(
+                Account(
+                    currency=Account.Currency(account.get("code")),
+                    name=account.get("code"),
+                    portfolio=self.portfolio,
+                    value=Decimal(account.get("value")),
+                )
+            )
         return accounts
 
     def get_portfolio_tickers(self):
@@ -170,25 +203,35 @@ class ExantePortfolioImporter:
         Creates PortfolioTicker objects from EXANTE API data
         """
         portfolio_tickers = []
-        positions = self.account_summary.get('positions')
-        stock_exchanges_mapper = dict(StockExchangeAlias.objects.values_list('alias', 'stock_exchange_id'))
+        positions = self.account_summary.get("positions")
+        stock_exchanges_mapper = dict(
+            StockExchangeAlias.objects.values_list("alias", "stock_exchange_id")
+        )
 
         for position in positions:
-            if not (quantity := Decimal(position.get('quantity'))):  # exante bug
+            if not (quantity := Decimal(position.get("quantity"))):  # exante bug
                 continue
 
-            symbol, stock_exchange = position.get('symbolId').split('.')
-            if position.get('currency') != Account.Currency.USD:
-                price = Decimal(position.get('convertedValue')) / quantity
+            symbol, stock_exchange = position.get("symbolId").split(".")
+            if position.get("currency") != Account.Currency.USD:
+                price = Decimal(position.get("convertedValue")) / quantity
             else:
-                price = Decimal(position.get('price'))
+                price = Decimal(position.get("price"))
 
-            ticker = Ticker.find_by_symbol_and_stock_exchange_id(symbol, stock_exchanges_mapper[stock_exchange])
+            ticker = Ticker.find_by_symbol_and_stock_exchange_id(
+                symbol, stock_exchanges_mapper[stock_exchange]
+            )
 
             if ticker is None:
-                ticker = Ticker.objects.create(stock_exchange_id=stock_exchanges_mapper[stock_exchange],
-                                               symbol=symbol,
-                                               price=price)
+                ticker = Ticker.objects.create(
+                    stock_exchange_id=stock_exchanges_mapper[stock_exchange],
+                    symbol=symbol,
+                    price=price,
+                )
 
-            portfolio_tickers.append(PortfolioTicker(portfolio=self.portfolio, ticker=ticker, amount=quantity))
+            portfolio_tickers.append(
+                PortfolioTicker(
+                    portfolio=self.portfolio, ticker=ticker, amount=quantity
+                )
+            )
         return portfolio_tickers

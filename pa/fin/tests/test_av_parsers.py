@@ -14,10 +14,12 @@ class AVParsersTests(BaseTestCase):
     Tests for parsers Alpha Vantage responses
     """
 
-    fixtures = ['fin/tests/fixtures/ticker.json']
+    fixtures = ["fin/tests/fixtures/ticker.json"]
 
     def setUp(self) -> None:
-        self.user = User.objects.create(username='test_user', email='test_user@gmail.com')
+        self.user = User.objects.create(
+            username="test_user", email="test_user@gmail.com"
+        )
         self.login(self.user)
 
     def test_parse_time_series_monthly(self):
@@ -25,9 +27,9 @@ class AVParsersTests(BaseTestCase):
         Tests that parse_time_series_monthly returns correct TickerStatements and they displays
         inside TickerSerializer
         """
-        ticker = Ticker.objects.get(symbol='AAPL')
+        ticker = Ticker.objects.get(symbol="AAPL")
 
-        portfolio = Portfolio.objects.create(name='test_portfolio', user=self.user)
+        portfolio = Portfolio.objects.create(name="test_portfolio", user=self.user)
         portfolio.save()
 
         portfolio_ticker = PortfolioTicker(portfolio=portfolio, ticker=ticker, amount=1)
@@ -38,7 +40,7 @@ class AVParsersTests(BaseTestCase):
                 "1. Information": "Monthly Adjusted Prices and Volumes",
                 "2. Symbol": "AAPL",
                 "3. Last Refreshed": "2020-08-19",
-                "4. Time Zone": "US/Eastern"
+                "4. Time Zone": "US/Eastern",
             },
             "Monthly Adjusted Time Series": {
                 "2020-08-19": {
@@ -48,7 +50,7 @@ class AVParsersTests(BaseTestCase):
                     "4. close": "462.8300",
                     "5. adjusted close": "462.8300",
                     "6. volume": "578551329",
-                    "7. dividend amount": "0.8200"
+                    "7. dividend amount": "0.8200",
                 },
                 "2020-07-31": {
                     "1. open": "365.1200",
@@ -57,7 +59,7 @@ class AVParsersTests(BaseTestCase):
                     "4. close": "425.0400",
                     "5. adjusted close": "424.2573",
                     "6. volume": "755087646",
-                    "7. dividend amount": "0.0000"
+                    "7. dividend amount": "0.0000",
                 },
                 "2020-06-30": {
                     "1. open": "317.7500",
@@ -66,7 +68,7 @@ class AVParsersTests(BaseTestCase):
                     "4. close": "364.8000",
                     "5. adjusted close": "364.1282",
                     "6. volume": "810739319",
-                    "7. dividend amount": "0.0000"
+                    "7. dividend amount": "0.0000",
                 },
                 "2000-01-01": {
                     "1. open": "317.7500",
@@ -75,13 +77,13 @@ class AVParsersTests(BaseTestCase):
                     "4. close": "364.8000",
                     "5. adjusted close": "None",
                     "6. volume": "810739319",
-                    "7. dividend amount": "0.0000"
-                }
-            }
+                    "7. dividend amount": "0.0000",
+                },
+            },
         }
         expected_length = len(ticker_time_series["Monthly Adjusted Time Series"].keys())
         tickers_statements = parse_time_series_monthly(ticker, ticker_time_series)
         TickerStatement.objects.bulk_create(tickers_statements)
 
-        tickers_statements = ticker.ticker_statements.order_by('-fiscal_date_ending')
+        tickers_statements = ticker.ticker_statements.order_by("-fiscal_date_ending")
         assert len(tickers_statements) == expected_length

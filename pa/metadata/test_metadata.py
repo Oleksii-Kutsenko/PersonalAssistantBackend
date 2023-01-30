@@ -11,10 +11,10 @@ class MetadataTestCases(TestCase):
         """
         Tests that metadata contains url field
         """
-        test_view_name = 'sources-list'
+        test_view_name = "sources-list"
         test_field = PrimaryKeyRelatedField(queryset=[], view_name=test_view_name)
 
         metadata = Metadata()
         json_metadata = metadata.get_field_info(test_field)
 
-        self.assertEqual(reverse(test_view_name), json_metadata['url'])
+        self.assertEqual(reverse(test_view_name), json_metadata["url"])

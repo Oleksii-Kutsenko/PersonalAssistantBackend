@@ -15,8 +15,11 @@ class TickersTests(BaseTestCase):
     """
     Tests for Ticker class and related functionality
     """
-    fixtures = ['fin/tests/fixtures/empty_ticker.json',
-                'fin/tests/fixtures/aapl_ticker_statements.json']
+
+    fixtures = [
+        "fin/tests/fixtures/empty_ticker.json",
+        "fin/tests/fixtures/aapl_ticker_statements.json",
+    ]
 
     def test_annual_earnings_growth_calculation(self):
         """
@@ -28,7 +31,9 @@ class TickersTests(BaseTestCase):
         serializer = TickerSerializer()
         annual_earnings_growth = serializer.get_annual_earnings_growth(ticker)
 
-        self.assertAlmostEqual(annual_earnings_growth, expected_annual_earnings_growth, places=2)
+        self.assertAlmostEqual(
+            annual_earnings_growth, expected_annual_earnings_growth, places=2
+        )
 
     def test_shares_dilution_calculation(self):
         """
@@ -37,19 +42,25 @@ class TickersTests(BaseTestCase):
         expected_dilution_rate = 100
 
         ticker = Ticker.objects.first()
-        TickerStatementFactory(name=Statements.outstanding_shares,
-                               fiscal_date_ending=date.today(),
-                               value=4,
-                               ticker=ticker).save()
-        TickerStatementFactory(name=Statements.outstanding_shares,
-                               fiscal_date_ending=date.today() - relativedelta(years=2, days=1),
-                               value=1,
-                               ticker=ticker).save()
+        TickerStatementFactory(
+            name=Statements.outstanding_shares,
+            fiscal_date_ending=date.today(),
+            value=4,
+            ticker=ticker,
+        ).save()
+        TickerStatementFactory(
+            name=Statements.outstanding_shares,
+            fiscal_date_ending=date.today() - relativedelta(years=2, days=1),
+            value=1,
+            ticker=ticker,
+        ).save()
         last_year = date.today() - relativedelta(years=1)
-        last_year_shares_amount = TickerStatementFactory(name=Statements.outstanding_shares,
-                                                         fiscal_date_ending=last_year,
-                                                         value=2,
-                                                         ticker=ticker)
+        last_year_shares_amount = TickerStatementFactory(
+            name=Statements.outstanding_shares,
+            fiscal_date_ending=last_year,
+            value=2,
+            ticker=ticker,
+        )
         last_year_shares_amount.save()
 
         serializer = TickerSerializer()
@@ -74,20 +85,24 @@ class TickersTests(BaseTestCase):
         self.assertEqual(ratios, None)
 
         for i in range(0, 4):
-            TickerStatementFactory(name=Statements.total_shareholder_equity,
-                                   fiscal_date_ending=date.today() - relativedelta(months=i * 3),
-                                   value=65000000000,
-                                   ticker=ticker).save()
-            TickerStatementFactory(name=Statements.total_assets,
-                                   fiscal_date_ending=date.today() - relativedelta(months=i * 3),
-                                   value=323000000000,
-                                   ticker=ticker).save()
+            TickerStatementFactory(
+                name=Statements.total_shareholder_equity,
+                fiscal_date_ending=date.today() - relativedelta(months=i * 3),
+                value=65000000000,
+                ticker=ticker,
+            ).save()
+            TickerStatementFactory(
+                name=Statements.total_assets,
+                fiscal_date_ending=date.today() - relativedelta(months=i * 3),
+                value=323000000000,
+                ticker=ticker,
+            ).save()
 
         serializer = TickerSerializer()
         ratios = serializer.get_returns_ratios(ticker)
 
-        self.assertEqual(round(ratios['roa']), expected_roa)
-        self.assertEqual(round(ratios['roe']), expected_roe)
+        self.assertEqual(round(ratios["roa"]), expected_roa)
+        self.assertEqual(round(ratios["roe"]), expected_roe)
 
     def test_outdated_tickers_manager(self):
         """

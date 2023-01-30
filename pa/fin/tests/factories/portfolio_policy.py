@@ -16,6 +16,7 @@ class PortfolioPolicyFactory(factory.DjangoModelFactory):
         """
         Meta
         """
+
         model = PortfolioPolicy
 
     portfolio = factory.SubFactory(PortfolioFactory)

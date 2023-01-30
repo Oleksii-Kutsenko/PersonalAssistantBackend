@@ -16,6 +16,7 @@ class AccountFactory(factory.DjangoModelFactory):
         """
         Meta
         """
+
         model = Account
 
     portfolio = factory.SubFactory(PortfolioFactory)

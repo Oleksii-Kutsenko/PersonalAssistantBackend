@@ -27,12 +27,12 @@ class BaseIndexSerializer(serializers.ModelSerializer):
         """
         Returns portfolio tickers last updated time
         """
-        return obj.tickers.aggregate(Min('updated')).get('updated__min')
+        return obj.tickers.aggregate(Min("updated")).get("updated__min")
 
     class Meta:
         model = Index
-        fields = ('id', 'source', 'name', 'status', 'tickers_last_updated', 'updated')
-        read_only_fields = ('id', 'name', 'status', 'updated')
+        fields = ("id", "source", "name", "status", "tickers_last_updated", "updated")
+        read_only_fields = ("id", "name", "status", "updated")
 
 
 # pylint: disable=no-self-use
@@ -40,9 +40,12 @@ class IndexSerializer(BaseIndexSerializer):
     """
     Serialization class for the relation between indexes and tickers
     """
-    source = PrimaryKeyRelatedField(queryset=Source.objects.all(),
-                                    validators=[UniqueValidator(Index.objects.all())],
-                                    view_name='sources-list')
+
+    source = PrimaryKeyRelatedField(
+        queryset=Source.objects.all(),
+        validators=[UniqueValidator(Index.objects.all())],
+        view_name="sources-list",
+    )
     status = SerializerMethodField(read_only=True)
 
     def get_status(self, obj):
@@ -55,6 +58,7 @@ class IndexSerializer(BaseIndexSerializer):
         """
         Serializer meta class
         """
+
         model = BaseIndexSerializer.Meta.model
         fields = BaseIndexSerializer.Meta.fields
         read_only_fields = BaseIndexSerializer.Meta.read_only_fields
@@ -64,6 +68,7 @@ class DetailIndexSerializer(BaseIndexSerializer):
     """
     Serializer that includes industries/sectors breakdown
     """
+
     industries_breakdown = SerializerMethodField(read_only=True)
     sectors_breakdown = SerializerMethodField(read_only=True)
 
@@ -71,28 +76,38 @@ class DetailIndexSerializer(BaseIndexSerializer):
         """
         Returns list of industries and their percentage in the portfolio
         """
-        decimal_field = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
+        decimal_field = DecimalField(
+            max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES
+        )
 
         count = float(obj.tickers.count())
-        query = obj.tickers.values('industry') \
-            .annotate(percentage=Cast(Count('industry') / count * float(100), decimal_field))
+        query = obj.tickers.values("industry").annotate(
+            percentage=Cast(Count("industry") / count * float(100), decimal_field)
+        )
         return query
 
     def get_sectors_breakdown(self, obj):
         """
         Returns list of sectors and their percentage in the portfolio
         """
-        decimal_field = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
+        decimal_field = DecimalField(
+            max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES
+        )
 
         count = float(obj.tickers.count())
-        query = obj.tickers.values('sector') \
-            .annotate(percentage=Cast(Count('sector') / count * float(100), decimal_field))
+        query = obj.tickers.values("sector").annotate(
+            percentage=Cast(Count("sector") / count * float(100), decimal_field)
+        )
         return query
 
     class Meta:
         """
         Meta
         """
+
         model = BaseIndexSerializer.Meta.model
-        fields = BaseIndexSerializer.Meta.fields + ('industries_breakdown', 'sectors_breakdown')
+        fields = BaseIndexSerializer.Meta.fields + (
+            "industries_breakdown",
+            "sectors_breakdown",
+        )
         read_only_fields = BaseIndexSerializer.Meta.read_only_fields

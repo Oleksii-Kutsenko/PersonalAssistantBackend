@@ -6,5 +6,6 @@ class BadRequest(APIException):
     """
     BadRequest exception
     """
+
     status_code = 400
-    default_code = 'bad_request'
+    default_code = "bad_request"

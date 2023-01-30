@@ -19,11 +19,11 @@ class KeysTickerDataClassMixin:
         return {
             k: v
             for k, v in {
-                'cusip': self.cusip,
-                'isin': self.isin,
-                'sedol': self.sedol
+                "cusip": self.cusip,
+                "isin": self.isin,
+                "sedol": self.sedol,
             }.items()
-            if v is not None and v != ''
+            if v is not None and v != ""
         }
 
 
@@ -31,6 +31,7 @@ class Parser(ABC):
     """
     Parser basic class
     """
+
     updatable = True
 
     @abstractmethod
@@ -51,6 +52,7 @@ class ParsedIndexTicker:
     """
     Dataclass that represent raw IndexTicker relation
     """
+
     raw_data: dict
     ticker: None
     weight: Decimal
@@ -61,7 +63,9 @@ class ResolveDuplicatesMixin:
     def resolve_duplicates(ishares_index_tickers):
         duplicates = {}
         isin_s = [index_ticker.ticker.isin for index_ticker in ishares_index_tickers]
-        duplicates_isin_s = [item for item, count in collections.Counter(isin_s).items() if count > 1]
+        duplicates_isin_s = [
+            item for item, count in collections.Counter(isin_s).items() if count > 1
+        ]
 
         filtered_index_tickers = []
         for index_ticker in ishares_index_tickers:

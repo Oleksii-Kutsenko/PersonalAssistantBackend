@@ -14,7 +14,9 @@ class PortfolioPolicyTests(BaseTestCase):
     """
 
     def setUp(self) -> None:
-        self.user = User.objects.create(username='test_user', email='test_user@gmail.com')
+        self.user = User.objects.create(
+            username="test_user", email="test_user@gmail.com"
+        )
         self.login(self.user)
 
     def test_portfolio_policy(self):
@@ -26,11 +28,13 @@ class PortfolioPolicyTests(BaseTestCase):
         portfolio_policy.portfolio.save()
         portfolio_policy.save()
 
-        url = reverse('portfolio-policies-list')
+        url = reverse("portfolio-policies-list")
         response = self.client.get(url)
-        self.assertEqual(response.data['count'], 1)
+        self.assertEqual(response.data["count"], 1)
 
-        new_user = User.objects.create(username='test_user_2', email='test_user_2@gmail.com')
+        new_user = User.objects.create(
+            username="test_user_2", email="test_user_2@gmail.com"
+        )
         self.login(new_user)
         response = self.client.get(url)
-        self.assertEqual(response.data['count'], 0)
+        self.assertEqual(response.data["count"], 0)

@@ -11,10 +11,17 @@ class UserAdmin(BaseUserAdmin):
     """
     Admin panel for User model
     """
+
     add_fieldsets = BaseUserAdmin.add_fieldsets + (
-        (None, {
-            'fields': ('first_name', 'last_name',)
-        }),
+        (
+            None,
+            {
+                "fields": (
+                    "first_name",
+                    "last_name",
+                )
+            },
+        ),
     )
 
 

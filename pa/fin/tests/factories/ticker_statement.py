@@ -15,4 +15,5 @@ class TickerStatementFactory(factory.DjangoModelFactory):
         """
         Factory meta class
         """
+
         model = TickerStatement

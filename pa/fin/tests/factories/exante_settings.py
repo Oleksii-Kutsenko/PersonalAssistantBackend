@@ -15,4 +15,5 @@ class ExanteSettingsFactory(factory.DjangoModelFactory):
         """
         Meta
         """
+
         model = ExanteSettings

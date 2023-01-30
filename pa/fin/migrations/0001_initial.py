@@ -18,279 +18,593 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Index',
+            name="Index",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('updated', models.DateTimeField(auto_now=True)),
-                ('status', models.IntegerField(choices=[(0, 'Successfully Updated'), (1, 'Updating'), (2, 'Update Failed')], default=0)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("updated", models.DateTimeField(auto_now=True)),
+                (
+                    "status",
+                    models.IntegerField(
+                        choices=[
+                            (0, "Successfully Updated"),
+                            (1, "Updating"),
+                            (2, "Update Failed"),
+                        ],
+                        default=0,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Portfolio',
+            name="Portfolio",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('updated', models.DateTimeField(auto_now=True)),
-                ('name', models.CharField(max_length=100)),
-                ('status', models.IntegerField(choices=[(0, 'Successfully Updated'), (1, 'Updating'), (2, 'Update Failed')], default=0)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("updated", models.DateTimeField(auto_now=True)),
+                ("name", models.CharField(max_length=100)),
+                (
+                    "status",
+                    models.IntegerField(
+                        choices=[
+                            (0, "Successfully Updated"),
+                            (1, "Updating"),
+                            (2, "Update Failed"),
+                        ],
+                        default=0,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Source',
+            name="Source",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('parser_name', models.CharField(choices=[('AmplifyParser', 'AmplifyParser'), ('InvescoCSVParser', 'InvescoCSVParser'), ('ISharesParser', 'ISharesParser')], max_length=50)),
-                ('name', models.CharField(max_length=100)),
-                ('updatable', models.BooleanField(default=True)),
-                ('url', models.URLField(unique=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "parser_name",
+                    models.CharField(
+                        choices=[
+                            ("AmplifyParser", "AmplifyParser"),
+                            ("InvescoCSVParser", "InvescoCSVParser"),
+                            ("ISharesParser", "ISharesParser"),
+                        ],
+                        max_length=50,
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
+                ("updatable", models.BooleanField(default=True)),
+                ("url", models.URLField(unique=True)),
             ],
         ),
         migrations.CreateModel(
-            name='StockExchange',
+            name="StockExchange",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('available', models.BooleanField(default=True)),
-                ('name', models.CharField(max_length=100, unique=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("available", models.BooleanField(default=True)),
+                ("name", models.CharField(max_length=100, unique=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Ticker',
+            name="Ticker",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('updated', models.DateTimeField(auto_now=True)),
-                ('company_name', models.CharField(default='Unknown', max_length=100)),
-                ('country', models.CharField(default='Unknown', max_length=50)),
-                ('cusip', models.CharField(max_length=9, null=True)),
-                ('industry', models.CharField(default='Unknown', max_length=50)),
-                ('isin', models.CharField(max_length=12, null=True)),
-                ('market_cap', models.DecimalField(decimal_places=2, max_digits=19, null=True)),
-                ('pe', models.DecimalField(decimal_places=2, max_digits=19, null=True)),
-                ('price', models.DecimalField(decimal_places=2, max_digits=19)),
-                ('sector', models.CharField(default='Unknown', max_length=50)),
-                ('sedol', models.CharField(max_length=7, null=True)),
-                ('symbol', models.CharField(max_length=100)),
-                ('stock_exchange', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='fin.stockexchange')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("updated", models.DateTimeField(auto_now=True)),
+                ("company_name", models.CharField(default="Unknown", max_length=100)),
+                ("country", models.CharField(default="Unknown", max_length=50)),
+                ("cusip", models.CharField(max_length=9, null=True)),
+                ("industry", models.CharField(default="Unknown", max_length=50)),
+                ("isin", models.CharField(max_length=12, null=True)),
+                (
+                    "market_cap",
+                    models.DecimalField(decimal_places=2, max_digits=19, null=True),
+                ),
+                ("pe", models.DecimalField(decimal_places=2, max_digits=19, null=True)),
+                ("price", models.DecimalField(decimal_places=2, max_digits=19)),
+                ("sector", models.CharField(default="Unknown", max_length=50)),
+                ("sedol", models.CharField(max_length=7, null=True)),
+                ("symbol", models.CharField(max_length=100)),
+                (
+                    "stock_exchange",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="fin.stockexchange",
+                    ),
+                ),
             ],
             managers=[
-                ('objects', django.db.models.manager.Manager()),
-                ('outdated_tickers', fin.models.ticker.ticker.OutdatedTickersManager()),
+                ("objects", django.db.models.manager.Manager()),
+                ("outdated_tickers", fin.models.ticker.ticker.OutdatedTickersManager()),
             ],
         ),
         migrations.CreateModel(
-            name='StockExchangeAlias',
+            name="StockExchangeAlias",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('alias', models.CharField(max_length=50)),
-                ('stock_exchange', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='fin.stockexchange')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("alias", models.CharField(max_length=50)),
+                (
+                    "stock_exchange",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="fin.stockexchange",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='PortfolioTicker',
+            name="PortfolioTicker",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('updated', models.DateTimeField(auto_now=True)),
-                ('amount', models.IntegerField()),
-                ('portfolio', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='portfolio', to='fin.portfolio')),
-                ('ticker', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='portfolio_ticker', to='fin.ticker')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("updated", models.DateTimeField(auto_now=True)),
+                ("amount", models.IntegerField()),
+                (
+                    "portfolio",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="portfolio",
+                        to="fin.portfolio",
+                    ),
+                ),
+                (
+                    "ticker",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="portfolio_ticker",
+                        to="fin.ticker",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='PortfolioPolicy',
+            name="PortfolioPolicy",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('updated', models.DateTimeField(auto_now=True)),
-                ('asset_to_equity_max_ratio', models.DecimalField(decimal_places=2, default=0, max_digits=19)),
-                ('asset_to_equity_min_ratio', models.DecimalField(decimal_places=2, default=0, max_digits=19)),
-                ('debt_to_equity_max_ratio', models.DecimalField(decimal_places=2, default=0, max_digits=19)),
-                ('max_dividend_payout_ratio', models.DecimalField(decimal_places=2, default=0, max_digits=19)),
-                ('minimum_annual_earnings_growth', models.DecimalField(decimal_places=2, default=0, max_digits=19)),
-                ('pe_quantile', models.IntegerField(default=50)),
-                ('portfolio', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='portfolio_policy', to='fin.portfolio')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("updated", models.DateTimeField(auto_now=True)),
+                (
+                    "asset_to_equity_max_ratio",
+                    models.DecimalField(decimal_places=2, default=0, max_digits=19),
+                ),
+                (
+                    "asset_to_equity_min_ratio",
+                    models.DecimalField(decimal_places=2, default=0, max_digits=19),
+                ),
+                (
+                    "debt_to_equity_max_ratio",
+                    models.DecimalField(decimal_places=2, default=0, max_digits=19),
+                ),
+                (
+                    "max_dividend_payout_ratio",
+                    models.DecimalField(decimal_places=2, default=0, max_digits=19),
+                ),
+                (
+                    "minimum_annual_earnings_growth",
+                    models.DecimalField(decimal_places=2, default=0, max_digits=19),
+                ),
+                ("pe_quantile", models.IntegerField(default=50)),
+                (
+                    "portfolio",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="portfolio_policy",
+                        to="fin.portfolio",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.AddField(
-            model_name='portfolio',
-            name='tickers',
-            field=models.ManyToManyField(through='fin.PortfolioTicker', to='fin.Ticker'),
+            model_name="portfolio",
+            name="tickers",
+            field=models.ManyToManyField(
+                through="fin.PortfolioTicker", to="fin.Ticker"
+            ),
         ),
         migrations.AddField(
-            model_name='portfolio',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            model_name="portfolio",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL
+            ),
         ),
         migrations.CreateModel(
-            name='ISharesSourceParams',
+            name="ISharesSourceParams",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('data_type', models.CharField(max_length=20)),
-                ('file_name', models.CharField(max_length=20)),
-                ('file_type', models.CharField(max_length=20)),
-                ('source', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='fin.source')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("data_type", models.CharField(max_length=20)),
+                ("file_name", models.CharField(max_length=20)),
+                ("file_type", models.CharField(max_length=20)),
+                (
+                    "source",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE, to="fin.source"
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='IndexTicker',
+            name="IndexTicker",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('updated', models.DateTimeField(auto_now=True)),
-                ('raw_data', models.JSONField(default=dict)),
-                ('weight', models.DecimalField(decimal_places=10, max_digits=19, validators=[django.core.validators.MinValueValidator(1e-06), django.core.validators.MaxValueValidator(1.000001)])),
-                ('index', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='index', to='fin.index')),
-                ('ticker', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ticker', to='fin.ticker')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("updated", models.DateTimeField(auto_now=True)),
+                ("raw_data", models.JSONField(default=dict)),
+                (
+                    "weight",
+                    models.DecimalField(
+                        decimal_places=10,
+                        max_digits=19,
+                        validators=[
+                            django.core.validators.MinValueValidator(1e-06),
+                            django.core.validators.MaxValueValidator(1.000001),
+                        ],
+                    ),
+                ),
+                (
+                    "index",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="index",
+                        to="fin.index",
+                    ),
+                ),
+                (
+                    "ticker",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="ticker",
+                        to="fin.ticker",
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='index',
-            name='source',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='fin.source'),
+            model_name="index",
+            name="source",
+            field=models.OneToOneField(
+                on_delete=django.db.models.deletion.CASCADE, to="fin.source"
+            ),
         ),
         migrations.AddField(
-            model_name='index',
-            name='tickers',
-            field=models.ManyToManyField(through='fin.IndexTicker', to='fin.Ticker'),
+            model_name="index",
+            name="tickers",
+            field=models.ManyToManyField(through="fin.IndexTicker", to="fin.Ticker"),
         ),
         migrations.CreateModel(
-            name='ExanteSettings',
+            name="ExanteSettings",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('exante_account_id', models.CharField(max_length=50)),
-                ('iss', models.CharField(max_length=50)),
-                ('sub', models.CharField(max_length=50)),
-                ('portfolio', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='fin.portfolio')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("exante_account_id", models.CharField(max_length=50)),
+                ("iss", models.CharField(max_length=50)),
+                ("sub", models.CharField(max_length=50)),
+                (
+                    "portfolio",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE, to="fin.portfolio"
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Account',
+            name="Account",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('updated', models.DateTimeField(auto_now=True)),
-                ('name', models.CharField(max_length=100)),
-                ('currency', models.CharField(choices=[('CAD', 'Canadian Dollar'), ('EUR', 'Euro'), ('UAH', 'Ukrainian Hryvnia'), ('USD', 'United States Dollar')], max_length=3)),
-                ('value', models.DecimalField(decimal_places=2, default=0, max_digits=19)),
-                ('portfolio', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='accounts', to='fin.portfolio')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("updated", models.DateTimeField(auto_now=True)),
+                ("name", models.CharField(max_length=100)),
+                (
+                    "currency",
+                    models.CharField(
+                        choices=[
+                            ("CAD", "Canadian Dollar"),
+                            ("EUR", "Euro"),
+                            ("UAH", "Ukrainian Hryvnia"),
+                            ("USD", "United States Dollar"),
+                        ],
+                        max_length=3,
+                    ),
+                ),
+                (
+                    "value",
+                    models.DecimalField(decimal_places=2, default=0, max_digits=19),
+                ),
+                (
+                    "portfolio",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="accounts",
+                        to="fin.portfolio",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='TickerStatement',
+            name="TickerStatement",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('updated', models.DateTimeField(auto_now=True)),
-                ('name', models.CharField(choices=[('capital_lease_obligations', 'Capital Lease Obligations'), ('net_income', 'Net Income'), ('outstanding_shares', 'Outstanding Shares'), ('price', 'Price'), ('short_term_debt', 'Short Term Debt'), ('total_assets', 'Total Assets'), ('total_long_term_debt', 'Total Long Term Debt'), ('total_revenue', 'Total Revenue'), ('total_shareholder_equity', 'Total Shareholder Equity')], max_length=50)),
-                ('fiscal_date_ending', models.DateField()),
-                ('value', models.DecimalField(decimal_places=2, max_digits=19)),
-                ('ticker', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ticker_statements', to='fin.ticker')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("updated", models.DateTimeField(auto_now=True)),
+                (
+                    "name",
+                    models.CharField(
+                        choices=[
+                            ("capital_lease_obligations", "Capital Lease Obligations"),
+                            ("net_income", "Net Income"),
+                            ("outstanding_shares", "Outstanding Shares"),
+                            ("price", "Price"),
+                            ("short_term_debt", "Short Term Debt"),
+                            ("total_assets", "Total Assets"),
+                            ("total_long_term_debt", "Total Long Term Debt"),
+                            ("total_revenue", "Total Revenue"),
+                            ("total_shareholder_equity", "Total Shareholder Equity"),
+                        ],
+                        max_length=50,
+                    ),
+                ),
+                ("fiscal_date_ending", models.DateField()),
+                ("value", models.DecimalField(decimal_places=2, max_digits=19)),
+                (
+                    "ticker",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="ticker_statements",
+                        to="fin.ticker",
+                    ),
+                ),
             ],
             options={
-                'unique_together': {('fiscal_date_ending', 'name', 'ticker_id')},
+                "unique_together": {("fiscal_date_ending", "name", "ticker_id")},
             },
         ),
         migrations.AddIndex(
-            model_name='ticker',
-            index=models.Index(fields=['company_name'], name='fin_ticker_company_e63386_idx'),
+            model_name="ticker",
+            index=models.Index(
+                fields=["company_name"], name="fin_ticker_company_e63386_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='ticker',
-            index=models.Index(fields=['country'], name='fin_ticker_country_ce69e7_idx'),
+            model_name="ticker",
+            index=models.Index(
+                fields=["country"], name="fin_ticker_country_ce69e7_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='ticker',
-            index=models.Index(fields=['industry'], name='fin_ticker_industr_fcc10f_idx'),
+            model_name="ticker",
+            index=models.Index(
+                fields=["industry"], name="fin_ticker_industr_fcc10f_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='ticker',
-            index=models.Index(fields=['sector'], name='fin_ticker_sector_d03a15_idx'),
+            model_name="ticker",
+            index=models.Index(fields=["sector"], name="fin_ticker_sector_d03a15_idx"),
         ),
         migrations.AddIndex(
-            model_name='ticker',
-            index=models.Index(fields=['symbol'], name='fin_ticker_symbol_dcd8b8_idx'),
+            model_name="ticker",
+            index=models.Index(fields=["symbol"], name="fin_ticker_symbol_dcd8b8_idx"),
         ),
         migrations.AddConstraint(
-            model_name='ticker',
-            constraint=models.CheckConstraint(check=models.Q(('price__gt', 0)), name='ticker_price_non_negative'),
+            model_name="ticker",
+            constraint=models.CheckConstraint(
+                check=models.Q(("price__gt", 0)), name="ticker_price_non_negative"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='ticker',
-            constraint=models.UniqueConstraint(fields=('stock_exchange', 'symbol', 'cusip', 'isin', 'sedol'), name='stock_exchange_symbol_unique'),
+            model_name="ticker",
+            constraint=models.UniqueConstraint(
+                fields=("stock_exchange", "symbol", "cusip", "isin", "sedol"),
+                name="stock_exchange_symbol_unique",
+            ),
         ),
         migrations.AddIndex(
-            model_name='portfolioticker',
-            index=models.Index(fields=['portfolio'], name='fin_portfol_portfol_8f19db_idx'),
+            model_name="portfolioticker",
+            index=models.Index(
+                fields=["portfolio"], name="fin_portfol_portfol_8f19db_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='portfolioticker',
-            index=models.Index(fields=['ticker'], name='fin_portfol_ticker__44841e_idx'),
+            model_name="portfolioticker",
+            index=models.Index(
+                fields=["ticker"], name="fin_portfol_ticker__44841e_idx"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='portfolioticker',
-            constraint=models.UniqueConstraint(fields=('portfolio_id', 'ticker_id'), name='portfolio_id_ticker_id_unique'),
+            model_name="portfolioticker",
+            constraint=models.UniqueConstraint(
+                fields=("portfolio_id", "ticker_id"),
+                name="portfolio_id_ticker_id_unique",
+            ),
         ),
         migrations.AddIndex(
-            model_name='portfolio',
-            index=models.Index(fields=['name'], name='fin_portfol_name_a7ed17_idx'),
+            model_name="portfolio",
+            index=models.Index(fields=["name"], name="fin_portfol_name_a7ed17_idx"),
         ),
         migrations.AddIndex(
-            model_name='portfolio',
-            index=models.Index(fields=['user'], name='fin_portfol_user_id_b18df3_idx'),
+            model_name="portfolio",
+            index=models.Index(fields=["user"], name="fin_portfol_user_id_b18df3_idx"),
         ),
         migrations.AddIndex(
-            model_name='indexticker',
-            index=models.Index(fields=['index'], name='fin_indexti_index_i_f63d2b_idx'),
+            model_name="indexticker",
+            index=models.Index(fields=["index"], name="fin_indexti_index_i_f63d2b_idx"),
         ),
         migrations.AddIndex(
-            model_name='indexticker',
-            index=models.Index(fields=['ticker'], name='fin_indexti_ticker__64cd02_idx'),
+            model_name="indexticker",
+            index=models.Index(
+                fields=["ticker"], name="fin_indexti_ticker__64cd02_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='indexticker',
-            index=models.Index(fields=['weight'], name='fin_indexti_weight_d585d3_idx'),
+            model_name="indexticker",
+            index=models.Index(fields=["weight"], name="fin_indexti_weight_d585d3_idx"),
         ),
         migrations.AddConstraint(
-            model_name='indexticker',
-            constraint=models.UniqueConstraint(fields=('index_id', 'ticker_id'), name='index_ticker_unique'),
+            model_name="indexticker",
+            constraint=models.UniqueConstraint(
+                fields=("index_id", "ticker_id"), name="index_ticker_unique"
+            ),
         ),
         migrations.AddIndex(
-            model_name='index',
-            index=models.Index(fields=['source'], name='fin_index_source__7c40b4_idx'),
+            model_name="index",
+            index=models.Index(fields=["source"], name="fin_index_source__7c40b4_idx"),
         ),
         migrations.AddIndex(
-            model_name='account',
-            index=models.Index(fields=['name'], name='fin_account_name_bad83d_idx'),
+            model_name="account",
+            index=models.Index(fields=["name"], name="fin_account_name_bad83d_idx"),
         ),
         migrations.AddIndex(
-            model_name='account',
-            index=models.Index(fields=['currency'], name='fin_account_currenc_038c9a_idx'),
+            model_name="account",
+            index=models.Index(
+                fields=["currency"], name="fin_account_currenc_038c9a_idx"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='account',
-            constraint=models.UniqueConstraint(fields=('currency', 'portfolio_id'), name='currency_portfolio_id_unique'),
+            model_name="account",
+            constraint=models.UniqueConstraint(
+                fields=("currency", "portfolio_id"), name="currency_portfolio_id_unique"
+            ),
         ),
         migrations.AlterField(
-            model_name='account',
-            name='currency',
-            field=models.CharField(choices=[('CAD', 'Canadian Dollar'), ('CHF', 'Swiss franc'), ('EUR', 'Euro'), ('GBP', 'Pound sterling'), ('UAH', 'Ukrainian Hryvnia'), ('USD', 'United States Dollar')], max_length=3),
+            model_name="account",
+            name="currency",
+            field=models.CharField(
+                choices=[
+                    ("CAD", "Canadian Dollar"),
+                    ("CHF", "Swiss franc"),
+                    ("EUR", "Euro"),
+                    ("GBP", "Pound sterling"),
+                    ("UAH", "Ukrainian Hryvnia"),
+                    ("USD", "United States Dollar"),
+                ],
+                max_length=3,
+            ),
         ),
         migrations.AlterModelOptions(
-            name='isharessourceparams',
-            options={'verbose_name': 'IShares Source Parameter'},
+            name="isharessourceparams",
+            options={"verbose_name": "IShares Source Parameter"},
         ),
         migrations.AlterField(
-            model_name='source',
-            name='parser_name',
-            field=models.CharField(choices=[('AmplifyParser', 'AmplifyParser'), ('InvescoCSVParser', 'InvescoCSVParser'), ('ISharesParser', 'ISharesParser'), ('VanguardParser', 'VanguardParser')], max_length=50),
+            model_name="source",
+            name="parser_name",
+            field=models.CharField(
+                choices=[
+                    ("AmplifyParser", "AmplifyParser"),
+                    ("InvescoCSVParser", "InvescoCSVParser"),
+                    ("ISharesParser", "ISharesParser"),
+                    ("VanguardParser", "VanguardParser"),
+                ],
+                max_length=50,
+            ),
         ),
         migrations.AlterField(
-            model_name='ticker',
-            name='price',
+            model_name="ticker",
+            name="price",
             field=models.DecimalField(decimal_places=10, max_digits=19),
         ),
     ]
