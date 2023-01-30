@@ -51,15 +51,6 @@ services:
     ports:
       - 5432:5432
 
-  flower:
-    image: mher/flower
-    command: celery flower --broker=redis://redis:6379/0 --port=8888
-    container_name: flower
-    ports:
-      - 8888:8888
-    depends_on:
-      - celery
-
   nginx:
     build: ./nginx
     container_name: nginx

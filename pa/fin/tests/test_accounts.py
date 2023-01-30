@@ -15,7 +15,9 @@ class AccountTests(BaseTestCase):
     """
 
     def setUp(self) -> None:
-        self.user = User.objects.create(username='test_user', email='test_user@gmail.com')
+        self.user = User.objects.create(
+            username="test_user", email="test_user@gmail.com"
+        )
         self.login(self.user)
         self.test_objects = []
         for _ in range(0, 3):
@@ -25,8 +27,8 @@ class AccountTests(BaseTestCase):
         """
         Tests GET request of accounts list
         """
-        url = reverse('account-list')
+        url = reverse("account-list")
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, HTTP_200_OK)
-        self.assertEqual(response.json()['count'], 3)
+        self.assertEqual(response.json()["count"], 3)

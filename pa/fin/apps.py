@@ -8,4 +8,5 @@ class FinConfig(AppConfig):
     """
     App config
     """
-    name = 'fin'
+
+    name = "fin"

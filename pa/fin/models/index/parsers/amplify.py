@@ -19,6 +19,7 @@ class AmplifyTicker(TickerDataClass):
     """
     Class represents Amplify raw ticker data
     """
+
     company_name: str
     cusip: str
     stock_exchange_id: int
@@ -29,7 +30,9 @@ class AmplifyTicker(TickerDataClass):
         if (ticker_qs := Ticker.objects.filter(cusip=self.cusip)).exists():
             return ticker_qs.first()
 
-        if ticker := Ticker.find_by_symbol_and_stock_exchange_id(self.symbol, self.stock_exchange_id):
+        if ticker := Ticker.find_by_symbol_and_stock_exchange_id(
+            self.symbol, self.stock_exchange_id
+        ):
             if ticker.cusip is not None and ticker.cusip == self.cusip:
                 return ticker
 
@@ -41,6 +44,7 @@ class AmplifyIndexTicker(ParsedIndexTicker):
     """
     ParsedIndexTicker with AmplifyTicker
     """
+
     ticker: AmplifyTicker
 
 
@@ -48,7 +52,10 @@ class AmplifyParser(Parser):
     """
     Parser for Amplify ETFs
     """
-    user_agent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:89.0) Gecko/20100101 Firefox/89.0'
+
+    user_agent = (
+        "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:89.0) Gecko/20100101 Firefox/89.0"
+    )
 
     def __init__(self, source):
         self.raw_data = None
@@ -57,20 +64,27 @@ class AmplifyParser(Parser):
         self.load_data()
 
     def load_data(self):
-        response = requests.get(self.source_url, headers={'User-Agent': self.user_agent})
+        response = requests.get(
+            self.source_url, headers={"User-Agent": self.user_agent}
+        )
         self.raw_data = io.StringIO(response.text)
 
     def parse(self):
-        index_name = 'IBUY'
-        cash_ticker = 'Cash&Other'
-        stock_exchanges_mapper = dict(StockExchangeAlias.objects.values_list('alias', 'stock_exchange_id'))
+        index_name = "IBUY"
+        cash_ticker = "Cash&Other"
+        stock_exchanges_mapper = dict(
+            StockExchangeAlias.objects.values_list("alias", "stock_exchange_id")
+        )
 
-        csv_file = pd.read_csv(self.raw_data, thousands=',')
-        ibuy_csv_rows = csv_file[(csv_file['Account'] == index_name) & (csv_file['StockTicker'] != cash_ticker)]
+        csv_file = pd.read_csv(self.raw_data, thousands=",")
+        ibuy_csv_rows = csv_file[
+            (csv_file["Account"] == index_name)
+            & (csv_file["StockTicker"] != cash_ticker)
+        ]
 
         amplify_index_tickers = []
         for _, row in ibuy_csv_rows.iterrows():
-            split_ticker_row = row['StockTicker'].split(' ')
+            split_ticker_row = row["StockTicker"].split(" ")
 
             stock_exchange_id = None
             if len(split_ticker_row) > 1:
@@ -82,11 +96,13 @@ class AmplifyParser(Parser):
                 cusip=row.CUSIP,
                 stock_exchange_id=(stock_exchange_id if stock_exchange_id else None),
                 symbol=symbol,
-                price=Decimal(row.MarketValue / row.Shares)
+                price=Decimal(row.MarketValue / row.Shares),
             )
-            amplify_index_tickers.append(AmplifyIndexTicker(
-                raw_data=json.loads(row.to_json()),
-                ticker=amplify_ticker,
-                weight=Decimal(row['Weightings'][:-1]))
+            amplify_index_tickers.append(
+                AmplifyIndexTicker(
+                    raw_data=json.loads(row.to_json()),
+                    ticker=amplify_ticker,
+                    weight=Decimal(row["Weightings"][:-1]),
+                )
             )
         return amplify_index_tickers

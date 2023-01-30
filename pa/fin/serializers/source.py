@@ -10,4 +10,4 @@ from fin.models.index import Source
 class SourceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Source
-        fields = ('id', 'name', 'url')
+        fields = ("id", "name", "url")

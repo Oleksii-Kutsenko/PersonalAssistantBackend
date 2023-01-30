@@ -18,6 +18,7 @@ class InvescoCSVTicker(TickerDataClass):
     """
     Class represents Invesco CSV raw ticker data
     """
+
     company_name: str
     cusip: str
     price: Decimal
@@ -30,7 +31,9 @@ class InvescoCSVTicker(TickerDataClass):
 
         ticker_qs = Ticker.objects.filter(symbol=self.symbol)
         if ticker_qs.count() > 1:
-            raise NotImplementedError('Cannot identify the stock security, there are need some extra actions')
+            raise NotImplementedError(
+                "Cannot identify the stock security, there are need some extra actions"
+            )
         if ticker_qs.count() == 1:
             ticker = ticker_qs.first()
             if ticker.cusip is not None and ticker.cusip == self.cusip:
@@ -43,6 +46,7 @@ class InvescoCSVIndexTicker(ParsedIndexTicker):
     """
     ParsedIndexTicker with InvescoCSVTicker
     """
+
     ticker: InvescoCSVTicker
 
 
@@ -50,6 +54,7 @@ class InvescoCSVParser(Parser):
     """
     Parser for Invesco indexes
     """
+
     updatable = False
 
     def __init__(self, _):
@@ -59,23 +64,28 @@ class InvescoCSVParser(Parser):
         raise NotImplementedError
 
     def parse(self):
-        cash_identifier = 'CASHUSD00'
+        cash_identifier = "CASHUSD00"
 
-        raw_index_ticker_rows = pd.read_csv(StringIO(self.csv_file), sep=',')
-        index_ticker_rows = raw_index_ticker_rows[raw_index_ticker_rows['Security Identifier'] != cash_identifier]
+        raw_index_ticker_rows = pd.read_csv(StringIO(self.csv_file), sep=",")
+        index_ticker_rows = raw_index_ticker_rows[
+            raw_index_ticker_rows["Security Identifier"] != cash_identifier
+        ]
 
         invesco_csv_index_tickers = []
         for _, row in index_ticker_rows.iterrows():
             invesco_csv_ticker = InvescoCSVTicker(
-                company_name=row['Name'],
-                cusip=row['Security Identifier'],
-                symbol=row['Holding Ticker'],
-                price=Decimal(row['MarketValue'].replace(',', '')) / int(row['Shares/Par Value'].replace(',', '')),
-                sector=row['Sector']
+                company_name=row["Name"],
+                cusip=row["Security Identifier"],
+                symbol=row["Holding Ticker"],
+                price=Decimal(row["MarketValue"].replace(",", ""))
+                / int(row["Shares/Par Value"].replace(",", "")),
+                sector=row["Sector"],
             )
-            invesco_csv_index_tickers.append(InvescoCSVIndexTicker(
-                raw_data=json.loads(row.to_json()),
-                ticker=invesco_csv_ticker,
-                weight=row['Weight'])
+            invesco_csv_index_tickers.append(
+                InvescoCSVIndexTicker(
+                    raw_data=json.loads(row.to_json()),
+                    ticker=invesco_csv_ticker,
+                    weight=row["Weight"],
+                )
             )
         return invesco_csv_index_tickers

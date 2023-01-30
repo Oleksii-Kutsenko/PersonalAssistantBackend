@@ -5,7 +5,11 @@ import os
 
 from django.urls import reverse
 from django.utils import timezone
-from rest_framework.status import HTTP_406_NOT_ACCEPTABLE, HTTP_202_ACCEPTED, HTTP_200_OK
+from rest_framework.status import (
+    HTTP_406_NOT_ACCEPTABLE,
+    HTTP_202_ACCEPTED,
+    HTTP_200_OK,
+)
 
 from fin.mixins import AdjustMixin
 from fin.models.index.index import Index
@@ -22,20 +26,23 @@ class PortfolioTests(BaseTestCase):
     """
     Tests for Portfolio class and related functionality
     """
+
     fixtures = [
-        'fin/tests/fixtures/index.json',
-        'fin/tests/fixtures/index_ticker.json',
-        'fin/tests/fixtures/portfolio.json',
-        'fin/tests/fixtures/portfolio_ticker.json',
-        'fin/tests/fixtures/sources.json',
-        'fin/tests/fixtures/stock_exchanges.json',
-        'fin/tests/fixtures/stock_exchanges_aliases.json',
-        'fin/tests/fixtures/tickers.json',
-        'fin/tests/fixtures/users.json'
+        "fin/tests/fixtures/index.json",
+        "fin/tests/fixtures/index_ticker.json",
+        "fin/tests/fixtures/portfolio.json",
+        "fin/tests/fixtures/portfolio_ticker.json",
+        "fin/tests/fixtures/sources.json",
+        "fin/tests/fixtures/stock_exchanges.json",
+        "fin/tests/fixtures/stock_exchanges_aliases.json",
+        "fin/tests/fixtures/tickers.json",
+        "fin/tests/fixtures/users.json",
     ]
 
     def setUp(self) -> None:
-        self.user = User.objects.create(username='test_user', email='test_user@gmail.com')
+        self.user = User.objects.create(
+            username="test_user", email="test_user@gmail.com"
+        )
         self.login(self.user)
 
         portfolio = Portfolio.objects.first()
@@ -46,34 +53,34 @@ class PortfolioTests(BaseTestCase):
         """
         Tests that portfolio adjusting works properly
         """
-        expected_tickers = {
-            'AAPL': 1,
-            'BAC': 1,
-            'GE': 1
-        }
+        expected_tickers = {"AAPL": 1, "BAC": 1, "GE": 1}
         portfolio_policy = PortfolioPolicyFactory()
         portfolio = portfolio_policy.portfolio
-        index = Index.objects.get(source__url='https://www.ishares.com/us/products/239724/'
-                                              'ishares-core-sp-total-us-stock-market-etf/1467271812596.ajax')
-        url = reverse('portfolios-adjust', kwargs={'pk': portfolio.id, 'index_id': index.id})
+        index = Index.objects.get(
+            source__url="https://www.ishares.com/us/products/239724/"
+            "ishares-core-sp-total-us-stock-market-etf/1467271812596.ajax"
+        )
+        url = reverse(
+            "portfolios-adjust", kwargs={"pk": portfolio.id, "index_id": index.id}
+        )
 
-        response = self.client.get(url, {'money': 200})
+        response = self.client.get(url, {"money": 200})
 
-        for ticker in response.data['tickers']:
-            self.assertEqual(expected_tickers[ticker['symbol']], ticker['amount'])
+        for ticker in response.data["tickers"]:
+            self.assertEqual(expected_tickers[ticker["symbol"]], ticker["amount"])
 
     def test_portfolio_displayable_status(self):
         """
         Tests that portfolio statuses displayed properly
         """
         portfolio = Portfolio.objects.first()
-        url = reverse('portfolios-detail', kwargs={'pk': portfolio.id})
+        url = reverse("portfolios-detail", kwargs={"pk": portfolio.id})
 
         for status in UpdatingStatus:
             portfolio.status = status.value
             portfolio.save()
             response = self.client.get(url)
-            self.assertEqual(response.data['status'], status.label)
+            self.assertEqual(response.data["status"], status.label)
 
     def test_portfolio_importing(self):
         """
@@ -81,13 +88,13 @@ class PortfolioTests(BaseTestCase):
         """
         portfolio = PortfolioFactory()
         ExanteSettingsFactory(
-            exante_account_id=os.environ.get('ACCOUNT_ID'),
-            iss=os.environ.get('ISS'),
-            sub=os.environ.get('SUB'),
-            portfolio=portfolio
+            exante_account_id=os.environ.get("ACCOUNT_ID"),
+            iss=os.environ.get("ISS"),
+            sub=os.environ.get("SUB"),
+            portfolio=portfolio,
         )
 
-        secret_key = os.environ.get('KEY')
+        secret_key = os.environ.get("KEY")
         portfolio.import_from_exante(secret_key)
 
         self.assertGreaterEqual(portfolio.accounts.count(), 1)
@@ -104,7 +111,7 @@ class PortfolioTests(BaseTestCase):
             (31838, 1),
             (31846, 1),
             (31847, 1),
-            (31885, 1)
+            (31885, 1),
         ]
         step = 200
 
@@ -112,7 +119,9 @@ class PortfolioTests(BaseTestCase):
         index = Index.objects.first()
 
         portfolio_query = PortfolioTicker.objects.filter(portfolio=portfolio)
-        adjusted_index = index.adjust(float(portfolio.total_tickers), step, AdjustMixin.default_adjust_options)
+        adjusted_index = index.adjust(
+            float(portfolio.total_tickers), step, AdjustMixin.default_adjust_options
+        )
         tickers_diff = Portfolio.tickers_difference(adjusted_index, portfolio_query)
 
         for i in range(0, 4):
@@ -124,7 +133,7 @@ class PortfolioTests(BaseTestCase):
         Tests that the breakdowns in the Portfolio model calculate properly
         """
         portfolio = Portfolio.objects.first()
-        url = reverse('portfolios-detail', kwargs={'pk': portfolio.id})
+        url = reverse("portfolios-detail", kwargs={"pk": portfolio.id})
         expected_industries = {}
         expected_sectors = {}
         portfolio_tickers = PortfolioTicker.objects.filter(portfolio=portfolio)
@@ -145,11 +154,11 @@ class PortfolioTests(BaseTestCase):
         response = self.client.get(url)
 
         given_sectors = {}
-        for sector in response.data['sectors_breakdown']:
-            given_sectors[sector['ticker__sector']] = sector['sum_cost']
+        for sector in response.data["sectors_breakdown"]:
+            given_sectors[sector["ticker__sector"]] = sector["sum_cost"]
         given_industries = {}
-        for industry in response.data['industries_breakdown']:
-            given_industries[industry['ticker__industry']] = industry['sum_cost']
+        for industry in response.data["industries_breakdown"]:
+            given_industries[industry["ticker__industry"]] = industry["sum_cost"]
 
         self.assertEqual(given_sectors, expected_sectors)
         self.assertEqual(given_industries, expected_industries)
@@ -159,8 +168,9 @@ class PortfolioTests(BaseTestCase):
         Tests that endpoint returns desirable responses
         """
         portfolio = Portfolio.objects.first()
-        update_portfolio_tickers_url = reverse('portfolios-update-tickers',
-                                               kwargs={'pk': portfolio.id})
+        update_portfolio_tickers_url = reverse(
+            "portfolios-update-tickers", kwargs={"pk": portfolio.id}
+        )
 
         response = self.client.put(update_portfolio_tickers_url)
         self.assertEqual(response.status_code, HTTP_202_ACCEPTED)

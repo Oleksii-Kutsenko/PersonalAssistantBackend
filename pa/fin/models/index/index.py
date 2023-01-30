@@ -15,16 +15,23 @@ class Index(TimeStampMixin):
     Index model
     """
 
-    source = models.OneToOneField('Source', on_delete=models.CASCADE, unique=True)
-    status = models.IntegerField(choices=UpdatingStatus.choices, default=UpdatingStatus.successfully_updated)
-    tickers = models.ManyToManyField(Ticker, through='fin.IndexTicker')
+    source = models.OneToOneField("Source", on_delete=models.CASCADE, unique=True)
+    status = models.IntegerField(
+        choices=UpdatingStatus.choices, default=UpdatingStatus.successfully_updated
+    )
+    tickers = models.ManyToManyField(Ticker, through="fin.IndexTicker")
 
     class Meta:
         """
         Index model indexes
         """
+
         indexes = [
-            models.Index(fields=['source', ]),
+            models.Index(
+                fields=[
+                    "source",
+                ]
+            ),
         ]
 
     def __str__(self):
@@ -36,20 +43,24 @@ class Index(TimeStampMixin):
         Calculate index adjusted by the amount of money
         """
 
-        tickers_query = IndexTicker.objects.filter(index=self) \
-            .exclude(ticker__id__in=options['skip_tickers']) \
-            .exclude(ticker__stock_exchange__available=False) \
-            .exclude(ticker__country__in=options['skip_countries']) \
-            .exclude(ticker__sector__in=options['skip_sectors']) \
-            .exclude(ticker__industry__in=options['skip_industries']) \
-            .exclude(ticker__price__gt=extra_money) \
-            .order_by('-weight')
+        tickers_query = (
+            IndexTicker.objects.filter(index=self)
+            .exclude(ticker__id__in=options["skip_tickers"])
+            .exclude(ticker__stock_exchange__available=False)
+            .exclude(ticker__country__in=options["skip_countries"])
+            .exclude(ticker__sector__in=options["skip_sectors"])
+            .exclude(ticker__industry__in=options["skip_industries"])
+            .exclude(ticker__price__gt=extra_money)
+            .order_by("-weight")
+        )
 
         if tickers_query.count() == 0:
-            raise Exception('Not enough data for adjusting')
+            raise Exception("Not enough data for adjusting")
 
-        dataset = list(tickers_query.values_list('ticker__id', 'ticker__price', 'weight'))
-        tickers_df = pd.DataFrame(dataset, columns=['id', 'price', 'weight'])
+        dataset = list(
+            tickers_query.values_list("ticker__id", "ticker__price", "weight")
+        )
+        tickers_df = pd.DataFrame(dataset, columns=["id", "price", "weight"])
 
         tickers_df.id = tickers_df.id.astype(object)
         tickers_df.price = tickers_df.price.astype(float)
@@ -79,12 +90,16 @@ class Index(TimeStampMixin):
         """
         Adjust the dataframe by given amount of money
         """
-        tickers_df['amount'] = tickers_df.weight * money / tickers_df.price
+        tickers_df["amount"] = tickers_df.weight * money / tickers_df.price
         tickers_df.amount = tickers_df.amount.round()
-        tickers_df['cost'] = tickers_df.amount * tickers_df.price
+        tickers_df["cost"] = tickers_df.amount * tickers_df.price
 
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        super().save(force_insert=False, force_update=False, using=None, update_fields=None)
+    def save(
+        self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
+        super().save(
+            force_insert=False, force_update=False, using=None, update_fields=None
+        )
         self.update()
 
     @transaction.atomic
@@ -104,8 +119,12 @@ class Index(TimeStampMixin):
         for parsed_index_ticker in parsed_index_tickers:
             ticker = parsed_index_ticker.ticker.get_ticker()
 
-            index_ticker = IndexTicker(index=self, raw_data=parsed_index_ticker.raw_data, ticker=ticker,
-                                       weight=parsed_index_ticker.weight)
+            index_ticker = IndexTicker(
+                index=self,
+                raw_data=parsed_index_ticker.raw_data,
+                ticker=ticker,
+                weight=parsed_index_ticker.weight,
+            )
             index_tickers.append(index_ticker)
 
         IndexTicker.objects.filter(index=self).delete()
@@ -116,25 +135,43 @@ class IndexTicker(TimeStampMixin):
     """
     M2M table between Index and Ticker models
     """
-    index = models.ForeignKey(Index, on_delete=models.CASCADE, related_name='index')
+
+    index = models.ForeignKey(Index, on_delete=models.CASCADE, related_name="index")
     raw_data = models.JSONField(default=dict)
-    ticker = models.ForeignKey(Ticker, on_delete=models.CASCADE, related_name='ticker')
-    weight = models.DecimalField(max_digits=MAX_DIGITS, decimal_places=10,
-                                 validators=[MinValueValidator(0.000001),
-                                             MaxValueValidator(1.000001)])
+    ticker = models.ForeignKey(Ticker, on_delete=models.CASCADE, related_name="ticker")
+    weight = models.DecimalField(
+        max_digits=MAX_DIGITS,
+        decimal_places=10,
+        validators=[MinValueValidator(0.000001), MaxValueValidator(1.000001)],
+    )
 
     def __str__(self):
-        return f'{self.index}.{self.ticker}'
+        return f"{self.index}.{self.ticker}"
 
     class Meta:
         """
         Model indexes
         """
+
         constraints = [
-            models.UniqueConstraint(fields=('index_id', 'ticker_id'), name='index_ticker_unique')
+            models.UniqueConstraint(
+                fields=("index_id", "ticker_id"), name="index_ticker_unique"
+            )
         ]
         indexes = [
-            models.Index(fields=['index', ]),
-            models.Index(fields=['ticker', ]),
-            models.Index(fields=['weight', ]),
+            models.Index(
+                fields=[
+                    "index",
+                ]
+            ),
+            models.Index(
+                fields=[
+                    "ticker",
+                ]
+            ),
+            models.Index(
+                fields=[
+                    "weight",
+                ]
+            ),
         ]

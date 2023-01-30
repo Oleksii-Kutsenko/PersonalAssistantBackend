@@ -15,6 +15,7 @@ class UserFactory(factory.DjangoModelFactory):
         """
         Meta
         """
+
         model = User
 
-    username = factory.Faker('pystr', max_chars=150)
+    username = factory.Faker("pystr", max_chars=150)

@@ -16,10 +16,10 @@ class FlattenMixin:
         """
         Overriding default to_representation function for riding nesting
         """
-        assert hasattr(self.Meta, 'flatten'), (
-            'Class {serializer_class} missing "Meta.flatten" attribute'.format(
-                serializer_class=self.__class__.__name__
-            )
+        assert hasattr(
+            self.Meta, "flatten"
+        ), 'Class {serializer_class} missing "Meta.flatten" attribute'.format(
+            serializer_class=self.__class__.__name__
         )
         # Get the current object representation
         rep = super().to_representation(obj)
@@ -37,6 +37,7 @@ class PrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
     """
     PrimaryKeyRelatedField with view name of the entities lookup
     """
+
     def __init__(self, **kwargs):
-        self.view_name = kwargs.pop('view_name')
+        self.view_name = kwargs.pop("view_name")
         super().__init__(**kwargs)

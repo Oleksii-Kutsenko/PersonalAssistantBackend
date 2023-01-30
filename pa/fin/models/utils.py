@@ -14,6 +14,7 @@ class TimeStampMixin(models.Model):
     """
     Mixin for created, updated fields
     """
+
     created = DateTimeField(auto_now_add=True)
     updated = DateTimeField(auto_now=True)
 
@@ -21,6 +22,7 @@ class TimeStampMixin(models.Model):
         """
         Model meta class
         """
+
         abstract = True
 
 
@@ -28,6 +30,7 @@ class UpdatingStatus(models.IntegerChoices):
     """
     Update statuses for models with tickers
     """
-    successfully_updated = 0, _('Successfully Updated')
-    updating = 1, _('Updating')
-    update_failed = 2, _('Update Failed')
+
+    successfully_updated = 0, _("Successfully Updated")
+    updating = 1, _("Updating")
+    update_failed = 2, _("Update Failed")

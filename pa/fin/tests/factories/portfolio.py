@@ -16,6 +16,7 @@ class PortfolioFactory(factory.DjangoModelFactory):
         """
         Meta
         """
+
         model = Portfolio
 
     user = factory.SubFactory(UserFactory)

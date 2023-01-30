@@ -16,6 +16,7 @@ class IndexFactory(factory.DjangoModelFactory):
         """
         Factory meta class
         """
+
         model = Index
 
     source = FuzzyChoice(choices=Source.objects.filter(updatable=True).all())

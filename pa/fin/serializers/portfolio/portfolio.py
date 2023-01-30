@@ -19,20 +19,23 @@ class AccountSerializer(serializers.ModelSerializer):
     """
     Serialization class for the Account model
     """
+
     id = serializers.IntegerField()
 
     class Meta:
         """
         Serializer meta class
         """
+
         model = Account
-        fields = ('id', 'name', 'currency', 'portfolio', 'value')
+        fields = ("id", "name", "currency", "portfolio", "value")
 
 
 class ExanteImportSerializer(serializers.Serializer):
     """
     Serializer for the importing portfolio from Exante
     """
+
     secret_key = serializers.CharField(write_only=True)
 
     def create(self, validated_data):
@@ -42,8 +45,10 @@ class ExanteImportSerializer(serializers.Serializer):
         """
         Check that portfolio has set exante settings
         """
-        if not hasattr(self.instance, 'exantesettings'):
-            raise ValidationError('Please set the exante portfolio settings to have ability import portfolio.')
+        if not hasattr(self.instance, "exantesettings"):
+            raise ValidationError(
+                "Please set the exante portfolio settings to have ability import portfolio."
+            )
         return super().validate(attrs)
 
     def update(self, instance, validated_data):
@@ -55,6 +60,7 @@ class PortfolioTickerSerializer(FlattenMixin, serializers.ModelSerializer):
     """
     Serializer for Ticker model inside Portfolio model
     """
+
     cost = SerializerMethodField(read_only=True)
 
     def get_cost(self, obj):
@@ -67,9 +73,10 @@ class PortfolioTickerSerializer(FlattenMixin, serializers.ModelSerializer):
         """
         Serializer meta class
         """
+
         model = PortfolioTicker
-        fields = ('amount', 'cost')
-        flatten = [('ticker', TickerSerializer)]
+        fields = ("amount", "cost")
+        flatten = [("ticker", TickerSerializer)]
         depth = 1
 
 
@@ -77,6 +84,7 @@ class PortfolioSerializer(serializers.ModelSerializer):
     """
     Serializer for Portfolio model
     """
+
     id = serializers.IntegerField(read_only=True)
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
@@ -84,14 +92,20 @@ class PortfolioSerializer(serializers.ModelSerializer):
         """
         Serializer meta class
         """
+
         model = Portfolio
-        fields = ('id', 'name', 'user',)
+        fields = (
+            "id",
+            "name",
+            "user",
+        )
 
 
 class DetailedPortfolioSerializer(PortfolioSerializer):
     """
     The portfolio serializer contains all fields of model
     """
+
     accounts = AccountSerializer(many=True, read_only=True)
     exantesettings = ExanteSettingsSerializer()
     industries_breakdown = SerializerMethodField(read_only=True)
@@ -107,24 +121,38 @@ class DetailedPortfolioSerializer(PortfolioSerializer):
         """
         Returns list of industries and their percentage in the portfolio
         """
-        decimal_field = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
-        cost = Cast(F('amount') * F('ticker__price'), decimal_field)
+        decimal_field = DecimalField(
+            max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES
+        )
+        cost = Cast(F("amount") * F("ticker__price"), decimal_field)
 
-        query = PortfolioTicker.objects.filter(portfolio=obj) \
-            .annotate(cost=cost).values('ticker__sector', 'ticker__industry') \
-            .annotate(sum_cost=Sum('cost')).order_by('-sum_cost').distinct()
+        query = (
+            PortfolioTicker.objects.filter(portfolio=obj)
+            .annotate(cost=cost)
+            .values("ticker__sector", "ticker__industry")
+            .annotate(sum_cost=Sum("cost"))
+            .order_by("-sum_cost")
+            .distinct()
+        )
         return query
 
     def get_sectors_breakdown(self, obj):
         """
         Returns list of sectors and their percentage in the portfolio
         """
-        decimal_field = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
-        cost = Cast(F('amount') * F('ticker__price'), decimal_field)
+        decimal_field = DecimalField(
+            max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES
+        )
+        cost = Cast(F("amount") * F("ticker__price"), decimal_field)
 
-        query = PortfolioTicker.objects.filter(portfolio=obj) \
-            .annotate(cost=cost).values('ticker__sector') \
-            .annotate(sum_cost=Sum('cost')).order_by('-sum_cost').distinct()
+        query = (
+            PortfolioTicker.objects.filter(portfolio=obj)
+            .annotate(cost=cost)
+            .values("ticker__sector")
+            .annotate(sum_cost=Sum("cost"))
+            .order_by("-sum_cost")
+            .distinct()
+        )
         return query
 
     def get_status(self, obj):
@@ -137,18 +165,23 @@ class DetailedPortfolioSerializer(PortfolioSerializer):
         """
         Returns portfolio tickers with their cost
         """
-        decimal_field = DecimalField(max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES)
-        cost = Cast(F('amount') * F('ticker__price'), decimal_field)
+        decimal_field = DecimalField(
+            max_digits=MAX_DIGITS, decimal_places=DECIMAL_PLACES
+        )
+        cost = Cast(F("amount") * F("ticker__price"), decimal_field)
 
-        portfolio_tickers = PortfolioTicker.objects.filter(portfolio=obj) \
-            .annotate(cost=cost).order_by('-cost')
+        portfolio_tickers = (
+            PortfolioTicker.objects.filter(portfolio=obj)
+            .annotate(cost=cost)
+            .order_by("-cost")
+        )
         return PortfolioTickerSerializer(portfolio_tickers, many=True).data
 
     def get_tickers_last_updated(self, obj):
         """
         Returns portfolio tickers last updated time
         """
-        return obj.tickers.aggregate(Min('updated')).get('updated__min') or obj.updated
+        return obj.tickers.aggregate(Min("updated")).get("updated__min") or obj.updated
 
     def get_total(self, obj):
         """
@@ -173,15 +206,26 @@ class DetailedPortfolioSerializer(PortfolioSerializer):
         Validate that portfolio_policy field is unchangeable
         """
         if self.instance and self.instance != value:
-            raise ValidationError('Portfolio Policy field is unchangeable')
+            raise ValidationError("Portfolio Policy field is unchangeable")
         return value
 
     class Meta:
         """
         Meta
         """
+
         model = PortfolioSerializer.Meta.model
-        fields = ('accounts', 'exantesettings', 'industries_breakdown', 'portfolio_policy',
-                  'sectors_breakdown', 'status', 'tickers', 'tickers_last_updated', 'total', 'total_accounts',
-                  'total_tickers') + PortfolioSerializer.Meta.fields
+        fields = (
+            "accounts",
+            "exantesettings",
+            "industries_breakdown",
+            "portfolio_policy",
+            "sectors_breakdown",
+            "status",
+            "tickers",
+            "tickers_last_updated",
+            "total",
+            "total_accounts",
+            "total_tickers",
+        ) + PortfolioSerializer.Meta.fields
         depth = 1

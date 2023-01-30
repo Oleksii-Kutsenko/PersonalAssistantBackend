@@ -9,6 +9,7 @@ class BaseTestCase(APITestCase):
     """
     Class that help login client
     """
+
     def login(self, user):
         """
         User login.
@@ -18,4 +19,6 @@ class BaseTestCase(APITestCase):
         user.set_password(password)
         user.save()
 
-        assert self.client.login(request=HttpRequest(), username=user.username, password=password)
+        assert self.client.login(
+            request=HttpRequest(), username=user.username, password=password
+        )

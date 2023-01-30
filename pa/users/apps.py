@@ -8,4 +8,5 @@ class UserConfig(AppConfig):
     """
     Users app config
     """
-    name = 'users'
+
+    name = "users"

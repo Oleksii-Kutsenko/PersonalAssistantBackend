@@ -12,12 +12,13 @@ class AVTests(BaseTestCase):
     """
     Tests for Alpha Vantage API
     """
+
     def test_av_wait(self):
         """
         Tests an awaiting of Alpha Vantage client
         """
         time.sleep(AlphaVantage.STEP)
-        test_symbol = 'AAPL'
+        test_symbol = "AAPL"
 
         av_api = AlphaVantage()
         for _ in range(5):
